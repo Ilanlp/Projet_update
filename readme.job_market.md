@@ -320,3 +320,22 @@ Le script génère trois types de fichiers dans le dossier `job_data`:
 ## Licence
 
 Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+
+
+## installer python3.11 (python3.8 ne prend pas en charge les bibliothèques)
+
+1- sortir de son .env (deactivate)
+
+2- faire dans son terminal 
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.11 python3.11-venv python3.11-dev
+
+puis ecris ca dans le terminal pour tester : python3.11 --version
+
+3-creer un environnement virtuel python 3.11 : 
+
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+
