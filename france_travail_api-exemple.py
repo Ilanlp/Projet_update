@@ -1,7 +1,15 @@
 from france_travail_api import FranceTravailAPI, SearchParams
+from dotenv import load_dotenv
+import os
+
+# Chargement des variables d'environnements
+load_dotenv()
+
+client_id = os.getenv("FRANCE_TRAVAIL_ID")
+client_secret = os.getenv("FRANCE_TRAVAIL_KEY")
 
 # Initialisation avec votre token
-api = FranceTravailAPI("votre_token_ici")
+api = FranceTravailAPI(client_id, client_secret)
 
 # Création des paramètres de recherche
 params = SearchParams(

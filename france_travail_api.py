@@ -8,6 +8,8 @@ from typing import List, Dict, Optional, Any, Literal, Union
 from datetime import datetime
 import requests
 from pydantic import BaseModel, Field, ConfigDict, HttpUrl
+from dotenv import load_dotenv
+import os
 
 
 # Configuration de base pour tous les modèles
@@ -243,21 +245,50 @@ class FranceTravailAPI:
     Requêteur automatique pour l'API Offres d'emploi de France Travail
     """
     BASE_URL = "https://api.francetravail.io/partenaire/offresdemploi"
+    TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=/partenaire"
     VERSION = "v2"
     
-    def __init__(self, token: str):
+    def __init__(self, client_id: str, client_secret: str):
         """
         Initialise le requêteur avec un token d'authentification
         
         Args:
-            token (str): Token d'authentification OAuth2
+            client_id: Votre identifiant d'application France Travail
+            client_secret: Votre clé d'API France Travail
         """
+        token = self.get_token(client_id, client_secret)
         self.token = token
         self.headers = {
             "Authorization": f"Bearer {token}",
             "Accept": "application/json"
         }
     
+    def get_token(self, client_id: str, client_secret: str):
+        """
+        Récupération du token 
+        
+        Args:
+            client_id: Votre identifiant d'application France Travail
+            client_secret: Votre clé d'API France Travail
+        """
+        response = requests.post(self.TOKEN_URL, data={
+                "grant_type": "client_credentials",
+                "client_id":client_id,
+                "client_secret":client_secret,
+                "scope": "api_offresdemploiv2 o2dsoffre"
+            }
+        )
+
+        if response.status_code == 204:
+            return {}  # Aucun résultat
+        
+        if response.status_code in (200, 206):
+            return response.json()['access_token']
+        
+        error_message = f"Erreur {response.status_code}: {response.text}"
+        raise Exception(error_message)
+
+
     def _build_url(self, endpoint: str) -> str:
         """
         Construit l'URL complète pour un endpoint
@@ -382,10 +413,17 @@ class FranceTravailAPI:
 # Exemple d'utilisation
 if __name__ == "__main__":
     # Token d'exemple (à remplacer par un vrai token)
-    token = "votre_token_ici"
+    #token = "votre_token_ici"
+
+    # Chargement des variables d'environnements
+    load_dotenv()
+
+    client_id = os.getenv("FRANCE_TRAVAIL_ID")
+    client_secret = os.getenv("FRANCE_TRAVAIL_KEY")
+
     
     # Initialisation de l'API
-    api = FranceTravailAPI(token)
+    api = FranceTravailAPI(client_id,client_secret)
     
     # Exemple de recherche d'offres d'emploi
     search_params = SearchParams(

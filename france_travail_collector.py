@@ -15,6 +15,7 @@ import logging
 from datetime import datetime, timedelta
 import pandas as pd
 from france_travail_api import FranceTravailAPI, SearchParams
+from dotenv import load_dotenv
 
 # Configuration de la journalisation
 logging.basicConfig(
@@ -25,7 +26,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-TOKEN = "votre_token_ici"  # À remplacer par votre token
+load_dotenv()
+
+CLIENT_ID = os.getenv("FRANCE_TRAVAIL_ID")
+CLIENT_SECRET = os.getenv("FRANCE_TRAVAIL_KEY")
+
+#TOKEN = "votre_token_ici"  # À remplacer par votre token
 OUTPUT_DIR = "data"
 DELAY_BETWEEN_REQUESTS = 1  # Délai en secondes entre les requêtes
 MONTHS_TO_COLLECT = 12  # Nombre de mois à collecter (maximum recommandé: 12)
@@ -36,7 +42,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def get_rome_codes():
     """Récupère la liste des codes ROME depuis l'API référentiel"""
-    api = FranceTravailAPI(TOKEN)
+    api = FranceTravailAPI(CLIENT_ID,CLIENT_SECRET)
     try:
         metiers = api.get_referential("metiers")
         return [metier.code for metier in metiers]
@@ -137,7 +143,7 @@ def extract_job_offers(rome_code, start_date, end_date):
     """
     Extrait les offres d'emploi pour un code ROME et une période spécifique
     """
-    api = FranceTravailAPI(TOKEN)
+    api = FranceTravailAPI(CLIENT_ID,CLIENT_SECRET)
     all_offers = []
 
     # Paramètres de recherche initiaux
