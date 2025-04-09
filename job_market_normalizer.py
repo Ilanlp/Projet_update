@@ -65,7 +65,7 @@ class JobDataNormalizer:
     """
 
     def __init__(
-        self, adzuna_app_id: str, adzuna_app_key: str, france_travail_token: str
+        self, adzuna_app_id: str, adzuna_app_key: str, france_travail_id: str, france_travail_key: str
     ):
         """
         Initialise le normalisateur avec les identifiants d'API
@@ -73,10 +73,11 @@ class JobDataNormalizer:
         Args:
             adzuna_app_id: ID d'application Adzuna
             adzuna_app_key: Clé API Adzuna
-            france_travail_token: Token d'authentification France Travail
+            france_travail_client_id: ID d'identification France Travail
+            france_travail_client_secret: Clé secret d'identification France Travail
         """
         self.adzuna_client = AdzunaClient(adzuna_app_id, adzuna_app_key)
-        self.france_travail_api = FranceTravailAPI(france_travail_token)
+        self.france_travail_api = FranceTravailAPI(france_travail_id, france_travail_key)
 
         # Mappings pour les types de contrat
         # Ces mappings vont aider à normaliser les données entre les sources
@@ -817,17 +818,26 @@ async def main():
     # Récupérer les identifiants d'API depuis les variables d'environnement
     adzuna_app_id = environ.get("ADZUNA_APP_ID")
     adzuna_app_key = environ.get("ADZUNA_APP_KEY")
-    france_travail_token = environ.get("FRANCE_TRAVAIL_TOKEN")
+    #france_travail_token = environ.get("FRANCE_TRAVAIL_TOKEN")
+    france_travail_id = environ.get("FRANCE_TRAVAIL_ID")
+    france_travail_key = environ.get("FRANCE_TRAVAIL_KEY")
+
+
 
     # Vérifier que les variables d'environnement sont définies
-    if not all([adzuna_app_id, adzuna_app_key, france_travail_token]):
+    if not all([adzuna_app_id, adzuna_app_key, france_travail_id, france_travail_key]):
         missing_vars = []
         if not adzuna_app_id:
             missing_vars.append("ADZUNA_APP_ID")
         if not adzuna_app_key:
             missing_vars.append("ADZUNA_APP_KEY")
-        if not france_travail_token:
-            missing_vars.append("FRANCE_TRAVAIL_TOKEN")
+        if not france_travail_id:
+            missing_vars.append('FRANCE_TRAVAIL_ID')
+        if not france_travail_key:
+            missing_vars.append('FRANCE_TRAVAIL_KEY')
+
+        #if not france_travail_token:
+        #    missing_vars.append("FRANCE_TRAVAIL_TOKEN")
 
         raise ValueError(
             f"Variables d'environnement manquantes: {', '.join(missing_vars)}. "
@@ -848,7 +858,7 @@ async def main():
 
     # Initialiser le normalisateur
     async with JobDataNormalizer(
-        adzuna_app_id, adzuna_app_key, france_travail_token
+        adzuna_app_id, adzuna_app_key, france_travail_id, france_travail_key
     ) as normalizer:
         # Récupérer et normaliser les données des deux sources
         normalized_jobs = await normalizer.fetch_and_normalize_all(
