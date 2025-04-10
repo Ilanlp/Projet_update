@@ -1,12 +1,31 @@
-// 📘 MCD enrichi pour application intelligente de matching d'emploi
-// Données issues de : Adzuna + France Travail + Formulaire Candidat
-// Chaque champ est documenté avec : Source / Transformation / Utilité
-// ---------------------------------------------------------------
+# 📘 MCD enrichi pour application intelligente de matching d'emploi
 
-aller sur le site : https://www.dbdiagram.io/home
+**Sources :** Adzuna, France Travail, Formulaire Candidat  
+**Objectif :** Construire une architecture flexible pour un moteur de matching emploi / candidat enrichi en NLP.
+
+---
+
+## 🧠 Explication globale
+
+Ce modèle permet :
+- De centraliser des données d’offres hétérogènes
+- De croiser les préférences multiples d’un candidat (lieu, contrat, entreprise…)
+- De générer un score d’adéquation avec des suggestions de formation
+- De visualiser les tendances marché par domaine, lieu, etc.
+
+---
+
+## 📎 Utilisation de dbdiagram.io
+
+Pour visualiser le MCD sous forme graphique :
+👉 [https://www.dbdiagram.io/home](https://www.dbdiagram.io/home)
+
+### 🔽 À copier-coller directement sur dbdiagram.io
 
 
-Explication : 
+
+<details>
+<summary>Clique ici pour afficher le code du MCD (.io)</summary>
 
 
 
@@ -204,7 +223,7 @@ Table MatchingCandidatOffre {
   suggestion_formation text // texte libre ou lien vers catalogue
 }
 
-
+</details>
 
 
 ## 🎯 Objectifs du modèle
