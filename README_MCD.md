@@ -48,6 +48,7 @@ Table OffreEmploi {
   salaire_max int // idem
   teletravail_possible boolean // détecté dans le texte (mots clés: "remote", "télétravail", etc.)
   score_attractivite float // score calculé pondérant salaire, techno, remote, contrat, localisation
+  code_ROME int // Code Rome 
 }
 
 
@@ -171,6 +172,12 @@ Table Candidat {
   remote_souhaite text // ex: "jamais", "1 ou 2j", "remote total" — texte libre
 }
 
+// 🔹 Table des soft skills
+Table Soft_skills {
+  id_soft_skills int [pk]
+  nom_skill varchar(50) // 
+}
+
 // 🔹 Table de liaison Candidat <-> Compétence
 Table Candidat_Competence {
   id_candidat int [ref: > Candidat.id_candidat, primary key]
@@ -222,6 +229,21 @@ Table MatchingCandidatOffre {
   manques text // liste des compétences manquantes
   suggestion_formation text // texte libre ou lien vers catalogue
 }
+
+// 🔹 Localisations préférées du candidat (multi-lieux)
+Table Candidat_formation {
+  id_candidat int [ref: > Candidat.id_candidat, primary key]
+  id_formation int [ref: > Formation.id_formation, primary key]
+  type_pref varchar(20) // optionnel : "principale", "secondaire", "remote"
+}
+
+// 🔹 Localisations préférées du candidat (multi-lieux)
+Table offre_soft_skills {
+  id_offre int [ref: > OffreEmploi.id_offre, primary key]
+  id_soft_skills int [ref: > Soft_skills.id_soft_skills, primary key]
+  type_pref varchar(20) // optionnel : "principale", "secondaire", "remote"
+}
+
 
 </details>
 
