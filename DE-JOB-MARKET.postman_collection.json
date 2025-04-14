@@ -1,0 +1,1906 @@
+{
+	"info": {
+		"_postman_id": "77c4c385-9eac-4d18-a38f-57cfba53ecc3",
+		"name": "DE-JOB-MARKET",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12180"
+	},
+	"item": [
+		{
+			"name": "FranceTravail",
+			"item": [
+				{
+					"name": "ROME V4.0 - Fiches ROME",
+					"item": [
+						{
+							"name": "Lister les fiches métier",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "hrihSNkR6bEWum_xOL0GEg-Mgd0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-fiches-metiers/v1/fiches-rome/fiche-metier?champs=code,metier(libelle,code)",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-fiches-metiers",
+										"v1",
+										"fiches-rome",
+										"fiche-metier"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "code,metier(libelle,code)"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lire une fiche métier",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "hrihSNkR6bEWum_xOL0GEg-Mgd0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-fiches-metiers/v1/fiches-rome/fiche-metier?champs=code,metier(libelle,code)",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-fiches-metiers",
+										"v1",
+										"fiches-rome",
+										"fiche-metier"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "code,metier(libelle,code)"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ROME 4.0 - Métiersv1",
+					"item": [
+						{
+							"name": "Lister les appellations",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "qDDX-xEBt5OSLb4MoPSCWtH2450",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-metiers/v1/metiers/appellation?champs=libelle,code",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-metiers",
+										"v1",
+										"metiers",
+										"appellation"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "libelle,libellecourt,code,romeparent",
+											"disabled": true
+										},
+										{
+											"key": "champs",
+											"value": "metier(emploireglemente,libelle,domaineprofessionnel(libelle,code,granddomaine(libelle,code)),code,emploicadre,riasecmineur,transitionnumerique,riasecmajeur,label,transitionecologiquedetaillee,codeisco,transitionecologique,transitiondemographique)",
+											"disabled": true
+										},
+										{
+											"key": "champs",
+											"value": "libelle,code"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rechercher une appellation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "tAwjDRAoEg1aHYZHSV4TaKv-MqI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-metiers/v1/metiers/appellation/requete?q=devops",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-metiers",
+										"v1",
+										"metiers",
+										"appellation",
+										"requete"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "devops"
+										},
+										{
+											"key": "champs",
+											"value": "488824",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lire une appellation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "hrihSNkR6bEWum_xOL0GEg-Mgd0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-metiers/v1/metiers/appellation/488824?champs=emploireglemente,libelle,obsolete,code,emploicadre,transitionnumerique,classification,competencescles(frequence,competence(libelle,@macrosavoiretreprofessionnel(riasecmajeur,riasecmineur),@competencedetaillee(riasecmajeur,riasecmineur),code,@macrosavoirfaire(riasecmajeur,riasecmineur),codeogr)),transitionecologiquedetaillee,appellationesco(libelle,uri),transitionecologique,transitiondemographique,libellecourt,datefin,metier(emploireglemente,libelle,domaineprofessionnel(libelle,granddomaine(libelle,code),code),code,emploicadre,riasecmineur,transitionnumerique,riasecmajeur,transitionecologiquedetaillee,codeisco,transitionecologique,transitiondemographique)&date=2025-01-28",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-metiers",
+										"v1",
+										"metiers",
+										"appellation",
+										"488824"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "emploireglemente,libelle,obsolete,code,emploicadre,transitionnumerique,classification,competencescles(frequence,competence(libelle,@macrosavoiretreprofessionnel(riasecmajeur,riasecmineur),@competencedetaillee(riasecmajeur,riasecmineur),code,@macrosavoirfaire(riasecmajeur,riasecmineur),codeogr)),transitionecologiquedetaillee,appellationesco(libelle,uri),transitionecologique,transitiondemographique,libellecourt,datefin,metier(emploireglemente,libelle,domaineprofessionnel(libelle,granddomaine(libelle,code),code),code,emploicadre,riasecmineur,transitionnumerique,riasecmajeur,transitionecologiquedetaillee,codeisco,transitionecologique,transitiondemographique)"
+										},
+										{
+											"key": "date",
+											"value": "2025-01-28"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ROME 4.0 - Compétences",
+					"item": [
+						{
+							"name": "Lister les catégories de savoirs",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "lwv7OlESGWJilcjCOIpofTcrqoM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-competences/v1/competences/categorie-savoirs?champs=libelle,code",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-competences",
+										"v1",
+										"competences",
+										"categorie-savoirs"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "libelle,code"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lire une catégorie de savoirs",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "Eo5Tz0riFIp2MnyAhju4fu_Gp0o",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-competences/v1/competences/categorie-savoirs",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-competences",
+										"v1",
+										"competences",
+										"categorie-savoirs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lister les compétences",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "Eo5Tz0riFIp2MnyAhju4fu_Gp0o",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-competences/v1/competences/competence?champs=libelle,code",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-competences",
+										"v1",
+										"competences",
+										"competence"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "libelle,code"
+										},
+										{
+											"key": "code-ogr",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "champs",
+											"value": "@competencedetaillee(riasecmineur,macrocompetence(libelle,transferable,@macrosavoiretreprofessionnel(qualiteprofessionnelle),souscategorie,code,riasecmineur,codearborescence,objectif(libelle,enjeu(libelle,code,codearborescence,domainecompetence(libelle,code,codearborescence)),code,codearborescence),codeogr,maturite,riasecmajeur),riasecmajeur)",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lire une compétence",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "Eo5Tz0riFIp2MnyAhju4fu_Gp0o",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-competences/v1/competences/competence/100161?champs=libelle,code",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-competences",
+										"v1",
+										"competences",
+										"competence",
+										"100161"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "libelle,code"
+										},
+										{
+											"key": "code-ogr",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "champs",
+											"value": "libelle,@competencedetaillee(macrocompetence(libelle,transferable,souscategorie,code,riasecmineur,definition,codeogr,maturite,riasecmajeur,@macrosavoiretreprofessionnel(qualiteprofessionnelle),codearborescence,objectif(codearborescence,libelle,enjeu(codearborescence,libelle,code,domainecompetence(codearborescence,libelle,code)),code)),riasecmajeur,riasecmineur),obsolete,code,competenceesco(libelle,uri),transitionecologique,transitionnumerique,codeogr,@macrocompetence(transferable,@macrosavoiretreprofessionnel(qualiteprofessionnelle),souscategorie,riasecmineur,definition,codearborescence,objectif(codearborescence,libelle,enjeu(codearborescence,libelle,code,domainecompetence(codearborescence,libelle,code)),code),maturite,riasecmajeur),@savoir(categoriesavoir(libelle,categorie(libelle,code),code)),datefin",
+											"disabled": true
+										},
+										{
+											"key": "date",
+											"value": "2022-05-28",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lister les compétences détaillés",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "Eo5Tz0riFIp2MnyAhju4fu_Gp0o",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/rome-competences/v1/competences/competence-detaillee?champs=macrocompetence(libelle,transferable,@macrosavoiretreprofessionnel(qualiteprofessionnelle),souscategorie,code,riasecmineur,codearborescence,objectif(libelle,enjeu(libelle,code,codearborescence,domainecompetence(libelle,code,codearborescence)),code,codearborescence),codeogr,maturite,riasecmajeur)",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"rome-competences",
+										"v1",
+										"competences",
+										"competence-detaillee"
+									],
+									"query": [
+										{
+											"key": "champs",
+											"value": "libelle,code",
+											"disabled": true
+										},
+										{
+											"key": "code-ogr",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "champs",
+											"value": "macrocompetence(libelle,transferable,@macrosavoiretreprofessionnel(qualiteprofessionnelle),souscategorie,code,riasecmineur,codearborescence,objectif(libelle,enjeu(libelle,code,codearborescence,domainecompetence(libelle,code,codearborescence)),code,codearborescence),codeogr,maturite,riasecmajeur)"
+										},
+										{
+											"key": "riasec-majeur",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "riasec-mineur",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Marché du travail",
+					"item": [
+						{
+							"name": "Stats des demandeurs d'emploi inscrits en fin de trimestre (DE_1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "9tvBo24CMR6BDRWe2WpeSfv2MeI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer 9tvBo24CMR6BDRWe2WpeSfv2MeI",
+										"name": "authorization",
+										"type": "text"
+									},
+									{
+										"key": "Cookie",
+										"value": "BIGipServerVS_EX035-VIPA-A4PMEX_HTTP.app~POOL_EX035-VIPA-A4PMEX_HTTP=4160096778.9038.0000",
+										"name": "cookie",
+										"type": "text"
+									},
+									{
+										"key": "Cache-Control",
+										"value": "no-cache",
+										"name": "cache-control",
+										"type": "text"
+									},
+									{
+										"key": "Postman-Token",
+										"value": "<calculated when request is sent>",
+										"name": "postman-token",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"name": "content-type",
+										"type": "text"
+									},
+									{
+										"key": "Content-Length",
+										"value": "<calculated when request is sent>",
+										"name": "content-length",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "<calculated when request is sent>",
+										"name": "host",
+										"type": "text"
+									},
+									{
+										"key": "User-Agent",
+										"value": "PostmanRuntime/7.39.1",
+										"name": "user-agent",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*",
+										"name": "accept",
+										"type": "text"
+									},
+									{
+										"key": "Accept-Encoding",
+										"value": "gzip, deflate, br",
+										"name": "accept-encoding",
+										"type": "text"
+									},
+									{
+										"key": "Connection",
+										"value": "keep-alive",
+										"name": "connection",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"codeTypeTerritoire\": \"REG\",\n    \"codeTerritoire\": \"75\",\n    \"codeTypeActivite\": \"ROME\",\n    \"codeActivite\": \"A1203\",\n    \"codeTypePeriode\": \"TRIMESTRE\",\n    \"codeTypeNomenclature\": \"CATCAND\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/stats-offres-demandes-emploi/v1/indicateur/stat-demandeurs",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"stats-offres-demandes-emploi",
+										"v1",
+										"indicateur",
+										"stat-demandeurs"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Romeo",
+					"item": [
+						{
+							"name": "Prédiction des appellations métier du ROME",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1sDotq31JCPwiAZSn11KTyAg1U8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"appellations\": [\n    {\n      \"intitule\": \"data\",\n      \"identifiant\": \"123456\",\n      \"contexte\": \"analyse de donnees\"\n    }\n  ],\n  \"options\": {\n    \"nomAppelant\": \"francetravail\",\n    \"nbResultats\": 5,\n    \"seuilScorePrediction\": 0.7\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/romeo/v2/predictionMetiers",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"romeo",
+										"v2",
+										"predictionMetiers"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "La Bonne Boitev2",
+					"item": [
+						{
+							"name": "Recherche d'entreprise avec potentiel d'embauche à partir d'un métier et d'un emplacement",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "MY9JnI2Uu2H3pFr5zb4ilTKc-eg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/labonneboite/v2/recherche?city=[\"Metz\",\"Paris\",\"Dijon\",\"Marseille\"]&job=devops",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"labonneboite",
+										"v2",
+										"recherche"
+									],
+									"query": [
+										{
+											"key": "bbox",
+											"value": "-1.5|47.2|-1.6|47.3",
+											"disabled": true
+										},
+										{
+											"key": "city",
+											"value": "[\"Metz\",\"Paris\",\"Dijon\",\"Marseille\"]"
+										},
+										{
+											"key": "citycode",
+											"value": "[\"75000\"]",
+											"disabled": true
+										},
+										{
+											"key": "department",
+											"value": "[\"Ile-de-France\"]",
+											"disabled": true
+										},
+										{
+											"key": "department_number",
+											"value": "[92,93,75,77,91]",
+											"disabled": true
+										},
+										{
+											"key": "distance",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "domain",
+											"value": "[\"M18\",\"M14\"]",
+											"disabled": true
+										},
+										{
+											"key": "granddomain",
+											"value": "[\"A\",\"B\"]",
+											"disabled": true
+										},
+										{
+											"key": "job",
+											"value": "devops"
+										},
+										{
+											"key": "latitude",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "location",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "longitude",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "naf",
+											"value": "[\"9499Z\",\"5610C\"]",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "page_size",
+											"value": "10",
+											"disabled": true
+										},
+										{
+											"key": "postcode",
+											"value": "[\"57000\"]",
+											"disabled": true
+										},
+										{
+											"key": "region",
+											"value": "[\"Pays de la Loire\"]",
+											"disabled": true
+										},
+										{
+											"key": "region_number",
+											"value": "[32]",
+											"disabled": true
+										},
+										{
+											"key": "rome",
+											"value": "[\"M1811\",\"M1405\"]",
+											"disabled": true
+										},
+										{
+											"key": "sort_by",
+											"value": "hiring_potential",
+											"disabled": true
+										},
+										{
+											"key": "sort_direction",
+											"value": "desc",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Informations sur un territoirev1",
+					"item": [
+						{
+							"name": "Stats sur l'Indicateur global de dynamique de l’emploi sur le territoire sélectionné (DYN_1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "YfCyuzPXsNCTrNP4pvXlgR0W-XY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer YfCyuzPXsNCTrNP4pvXlgR0W-XY",
+										"name": "authorization",
+										"type": "text"
+									},
+									{
+										"key": "Cookie",
+										"value": "BIGipServerVS_EX035-VIPA-A4PMEX_HTTP.app~POOL_EX035-VIPA-A4PMEX_HTTP=4160096778.9038.0000",
+										"name": "cookie",
+										"type": "text"
+									},
+									{
+										"key": "Cache-Control",
+										"value": "no-cache",
+										"name": "cache-control",
+										"type": "text"
+									},
+									{
+										"key": "Postman-Token",
+										"value": "<calculated when request is sent>",
+										"name": "postman-token",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"name": "content-type",
+										"type": "text"
+									},
+									{
+										"key": "Content-Length",
+										"value": "<calculated when request is sent>",
+										"name": "content-length",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "<calculated when request is sent>",
+										"name": "host",
+										"type": "text"
+									},
+									{
+										"key": "User-Agent",
+										"value": "PostmanRuntime/7.39.1",
+										"name": "user-agent",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*",
+										"name": "accept",
+										"type": "text"
+									},
+									{
+										"key": "Accept-Encoding",
+										"value": "gzip, deflate, br",
+										"name": "accept-encoding",
+										"type": "text"
+									},
+									{
+										"key": "Connection",
+										"value": "keep-alive",
+										"name": "connection",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"codeTypeTerritoire\": \"REG\",\n  \"codeTerritoire\": \"75\",\n  \"codeTypeActivite\": \"MOYENNE\",\n  \"codeActivite\": \"MOYENNE\",\n  \"codeTypePeriode\": \"TRIMESTRE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/stats-informations-territoire/v1/indicateur/stat-dynamique-emploi",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"stats-informations-territoire",
+										"v1",
+										"indicateur",
+										"stat-dynamique-emploi"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Stats sur les établissements d'entreprise (ETAB_1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "YfCyuzPXsNCTrNP4pvXlgR0W-XY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer YfCyuzPXsNCTrNP4pvXlgR0W-XY",
+										"name": "authorization",
+										"type": "text"
+									},
+									{
+										"key": "Cookie",
+										"value": "BIGipServerVS_EX035-VIPA-A4PMEX_HTTP.app~POOL_EX035-VIPA-A4PMEX_HTTP=4160096778.9038.0000",
+										"name": "cookie",
+										"type": "text"
+									},
+									{
+										"key": "Cache-Control",
+										"value": "no-cache",
+										"name": "cache-control",
+										"type": "text"
+									},
+									{
+										"key": "Postman-Token",
+										"value": "<calculated when request is sent>",
+										"name": "postman-token",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"name": "content-type",
+										"type": "text"
+									},
+									{
+										"key": "Content-Length",
+										"value": "<calculated when request is sent>",
+										"name": "content-length",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "<calculated when request is sent>",
+										"name": "host",
+										"type": "text"
+									},
+									{
+										"key": "User-Agent",
+										"value": "PostmanRuntime/7.39.1",
+										"name": "user-agent",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*",
+										"name": "accept",
+										"type": "text"
+									},
+									{
+										"key": "Accept-Encoding",
+										"value": "gzip, deflate, br",
+										"name": "accept-encoding",
+										"type": "text"
+									},
+									{
+										"key": "Connection",
+										"value": "keep-alive",
+										"name": "connection",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"codeTypeTerritoire\": \"REG\",\n  \"codeTerritoire\": \"75\",\n  \"codeTypeActivite\": \"NAF88\",\n  \"codeActivite\": \"01\",\n  \"codeTypePeriode\": \"ANNEE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/stats-informations-territoire/v1/indicateur/stat-etablissements",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"stats-informations-territoire",
+										"v1",
+										"indicateur",
+										"stat-etablissements"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Stats sur les salariés (SAL_1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "YfCyuzPXsNCTrNP4pvXlgR0W-XY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer YfCyuzPXsNCTrNP4pvXlgR0W-XY",
+										"name": "authorization",
+										"type": "text"
+									},
+									{
+										"key": "Cookie",
+										"value": "BIGipServerVS_EX035-VIPA-A4PMEX_HTTP.app~POOL_EX035-VIPA-A4PMEX_HTTP=4160096778.9038.0000",
+										"name": "cookie",
+										"type": "text"
+									},
+									{
+										"key": "Cache-Control",
+										"value": "no-cache",
+										"name": "cache-control",
+										"type": "text"
+									},
+									{
+										"key": "Postman-Token",
+										"value": "<calculated when request is sent>",
+										"name": "postman-token",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"name": "content-type",
+										"type": "text"
+									},
+									{
+										"key": "Content-Length",
+										"value": "<calculated when request is sent>",
+										"name": "content-length",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "<calculated when request is sent>",
+										"name": "host",
+										"type": "text"
+									},
+									{
+										"key": "User-Agent",
+										"value": "PostmanRuntime/7.39.1",
+										"name": "user-agent",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*",
+										"name": "accept",
+										"type": "text"
+									},
+									{
+										"key": "Accept-Encoding",
+										"value": "gzip, deflate, br",
+										"name": "accept-encoding",
+										"type": "text"
+									},
+									{
+										"key": "Connection",
+										"value": "keep-alive",
+										"name": "connection",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"codeTypeTerritoire\": \"REG\",\n  \"codeTerritoire\": \"75\",\n  \"codeTypeActivite\": \"ROME\",\n  \"codeActivite\": \"A1203\",\n  \"codeTypePeriode\": \"ANNEE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/stats-informations-territoire/v1/indicateur/stat-salaries",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"stats-informations-territoire",
+										"v1",
+										"indicateur",
+										"stat-salaries"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Offres d'emploiv2",
+					"item": [
+						{
+							"name": "Rechercher des offres",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "FZTOTd6DjqHenffjeXaYe65f3e8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?codeROME=M1811&maxCreationDate=2025-02-15T07:18:25Z&minCreationDate=2025-02-01T14:52:00Z&origineOffre=1",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"offresdemploi",
+										"v2",
+										"offres",
+										"search"
+									],
+									"query": [
+										{
+											"key": "codeROME",
+											"value": "M1811"
+										},
+										{
+											"key": "commune",
+											"value": "62041",
+											"disabled": true
+										},
+										{
+											"key": "publieeDepuis",
+											"value": "7",
+											"disabled": true
+										},
+										{
+											"key": "maxCreationDate",
+											"value": "2025-02-15T07:18:25Z"
+										},
+										{
+											"key": "minCreationDate",
+											"value": "2025-02-01T14:52:00Z"
+										},
+										{
+											"key": "origineOffre",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Consulter un détail d'offre",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "FZTOTd6DjqHenffjeXaYe65f3e8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/188DDRG",
+									"protocol": "https",
+									"host": [
+										"api",
+										"francetravail",
+										"io"
+									],
+									"path": [
+										"partenaire",
+										"offresdemploi",
+										"v2",
+										"offres",
+										"188DDRG"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "access-token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache",
+								"name": "cache-control",
+								"type": "text"
+							},
+							{
+								"key": "Postman-Token",
+								"value": "<calculated when request is sent>",
+								"name": "postman-token",
+								"type": "text"
+							},
+							{
+								"key": "Host",
+								"value": "<calculated when request is sent>",
+								"name": "host",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.39.1",
+								"name": "user-agent",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*",
+								"name": "accept",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br",
+								"name": "accept-encoding",
+								"type": "text"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive",
+								"name": "connection",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "api_offresdemploiv2 o2dsoffre api_rome-competencesv1 api_rome-fiches-metiersv1 nomenclatureRome api_rome-metiersv1 api_stats-offres-demandes-emploiv1 offresetdemandesemploi api_labonneboitev2 search office api_romeov2 api_stats-informations-territoirev1 infosterritoire",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=/partenaire",
+							"protocol": "https",
+							"host": [
+								"entreprise",
+								"francetravail",
+								"fr"
+							],
+							"path": [
+								"connexion",
+								"oauth2",
+								"access_token"
+							],
+							"query": [
+								{
+									"key": "realm",
+									"value": "/partenaire"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Adzuna",
+			"item": [
+				{
+					"name": "version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.adzuna.com/v1/api/version?app_id={{application_id}}&app_key={{application_keys}}&content-type=application/json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"adzuna",
+								"com"
+							],
+							"path": [
+								"v1",
+								"api",
+								"version"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "{{application_id}}"
+								},
+								{
+									"key": "app_key",
+									"value": "{{application_keys}}"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "simple job query",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.adzuna.com/v1/api/jobs/fr/search/1?app_id={{application_id}}&app_key={{application_keys}}&results_per_page=20&what=Conductrice%20d%27engins%20agricoles&content-type=application/json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"adzuna",
+								"com"
+							],
+							"path": [
+								"v1",
+								"api",
+								"jobs",
+								"fr",
+								"search",
+								"1"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "{{application_id}}"
+								},
+								{
+									"key": "app_key",
+									"value": "{{application_keys}}"
+								},
+								{
+									"key": "results_per_page",
+									"value": "20"
+								},
+								{
+									"key": "what",
+									"value": "Conductrice%20d%27engins%20agricoles"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json"
+								},
+								{
+									"key": "category",
+									"value": "it-jobs",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "complex job query",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.adzuna.com:80/v1/api/jobs/fr/search/1?app_id={{application_id}}&app_key={{application_keys}}&results_per_page=20&what=devops&what_exclude=java&where=paris&sort_by=salary&salary_min=30000&full_time=1&permanent=1&content-type=application/json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"adzuna",
+								"com"
+							],
+							"port": "80",
+							"path": [
+								"v1",
+								"api",
+								"jobs",
+								"fr",
+								"search",
+								"1"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "{{application_id}}"
+								},
+								{
+									"key": "app_key",
+									"value": "{{application_keys}}"
+								},
+								{
+									"key": "results_per_page",
+									"value": "20"
+								},
+								{
+									"key": "what",
+									"value": "devops"
+								},
+								{
+									"key": "what_exclude",
+									"value": "java"
+								},
+								{
+									"key": "where",
+									"value": "paris"
+								},
+								{
+									"key": "sort_by",
+									"value": "salary"
+								},
+								{
+									"key": "salary_min",
+									"value": "30000"
+								},
+								{
+									"key": "full_time",
+									"value": "1"
+								},
+								{
+									"key": "permanent",
+									"value": "1"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://api.adzuna.com/v1/api/jobs/fr/categories?app_id={{application_id}}&app_key={{application_keys}}&content-type=application/json",
+							"protocol": "http",
+							"host": [
+								"api",
+								"adzuna",
+								"com"
+							],
+							"path": [
+								"v1",
+								"api",
+								"jobs",
+								"fr",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "{{application_id}}"
+								},
+								{
+									"key": "app_key",
+									"value": "{{application_keys}}"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tp_companies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://api.adzuna.com/v1/api/jobs/fr/top_companies?app_id={{application_id}}&app_key={{application_keys}}&content-type=application/json&category=it-jobs&what=data%20ingenieur",
+							"protocol": "http",
+							"host": [
+								"api",
+								"adzuna",
+								"com"
+							],
+							"path": [
+								"v1",
+								"api",
+								"jobs",
+								"fr",
+								"top_companies"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "{{application_id}}"
+								},
+								{
+									"key": "app_key",
+									"value": "{{application_keys}}"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json"
+								},
+								{
+									"key": "category",
+									"value": "it-jobs"
+								},
+								{
+									"key": "what",
+									"value": "data%20ingenieur"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "societe.com",
+			"item": [
+				{
+					"name": "search entreprise",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.societe.com/api/v1/entreprise/search?nom=datascientest&token={{societe-com_api_key}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"societe",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"entreprise",
+								"search"
+							],
+							"query": [
+								{
+									"key": "nom",
+									"value": "datascientest"
+								},
+								{
+									"key": "token",
+									"value": "{{societe-com_api_key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "credits",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.societe.com/api/v1/infoclient?token={{societe-com_api_key}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"societe",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"infoclient"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{societe-com_api_key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Muse",
+			"item": [
+				{
+					"name": "jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://www.themuse.com/api/public/jobs?page=1&level=Entry%20Level&api_key={{muse_api_key}}",
+							"protocol": "https",
+							"host": [
+								"www",
+								"themuse",
+								"com"
+							],
+							"path": [
+								"api",
+								"public",
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "descending",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "company",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "IT",
+									"disabled": true
+								},
+								{
+									"key": "level",
+									"value": "Entry%20Level"
+								},
+								{
+									"key": "location",
+									"value": "Flexible%20%2F%20Remote",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Software%20Engineer",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Software%20Engineering",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "France",
+									"disabled": true
+								},
+								{
+									"key": "api_key",
+									"value": "{{muse_api_key}}"
+								},
+								{
+									"key": "category",
+									"value": "Data%20and%20Analytics",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "jobs/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://www.themuse.com/api/public/jobs/15000562?api_key={{muse_api_key}}",
+							"protocol": "https",
+							"host": [
+								"www",
+								"themuse",
+								"com"
+							],
+							"path": [
+								"api",
+								"public",
+								"jobs",
+								"15000562"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{muse_api_key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "companies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://www.themuse.com/api/public/companies?api_key={{muse_api_key}}&page=1",
+							"protocol": "https",
+							"host": [
+								"www",
+								"themuse",
+								"com"
+							],
+							"path": [
+								"api",
+								"public",
+								"companies"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{muse_api_key}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "descending",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "industry",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "companies/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://www.themuse.com/api/public/companies/15000562?api_key={{muse_api_key}}",
+							"protocol": "https",
+							"host": [
+								"www",
+								"themuse",
+								"com"
+							],
+							"path": [
+								"api",
+								"public",
+								"companies",
+								"15000562"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{muse_api_key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "coaches",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://www.themuse.com/api/public/coaches",
+							"protocol": "https",
+							"host": [
+								"www",
+								"themuse",
+								"com"
+							],
+							"path": [
+								"api",
+								"public",
+								"coaches"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
