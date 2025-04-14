@@ -8,10 +8,11 @@
 ## 🧠 Explication globale
 
 Ce modèle permet :
-- De centraliser des données d’offres hétérogènes
-- De croiser les préférences multiples d’un candidat (lieu, contrat, entreprise…)
-- De générer un score d’adéquation avec des suggestions de formation
-- De visualiser les tendances marché par domaine, lieu, etc.
+
+* De centraliser des données d’offres hétérogènes
+* De croiser les préférences multiples d’un candidat (lieu, contrat, entreprise…)
+* De générer un score d’adéquation avec des suggestions de formation
+* De visualiser les tendances marché par domaine, lieu, etc.
 
 ---
 
@@ -22,12 +23,8 @@ Pour visualiser le MCD sous forme graphique :
 
 ### 🔽 À copier-coller directement sur dbdiagram.io
 
-
-
 <details>
 <summary>Clique ici pour afficher le code du MCD (.io)</summary>
-
-
 
 // 🔹 Table des offres d'emploi
 Table OffreEmploi {
@@ -36,7 +33,7 @@ Table OffreEmploi {
   id_lieu int [ref: > Lieu.id_lieu] // FK vers localisation
   id_date int [ref: > Date_calendar.id_date]
   id_entreprise int [ref: > Entreprise.id_entreprise] // FK vers l'employeur
-  id_domaine int [pk] // table domaine 
+  id_domaine int [pk] // table domaine
   titre text // source: (title / intitule)
   description text // source: description
   date_publication datetime // source: created / dateCreation : normalisation du format
@@ -48,11 +45,10 @@ Table OffreEmploi {
   salaire_max int // idem
   teletravail_possible boolean // détecté dans le texte (mots clés: "remote", "télétravail", etc.)
   score_attractivite float // score calculé pondérant salaire, techno, remote, contrat, localisation
-  code_ROME int // Code Rome 
+  code_ROME int // Code Rome
 }
 
-
-// 🔹 Table des dates 
+// 🔹 Table des dates
 Table Date_calendar {
   id_date int [pk]
   full_date date // ex: 2025-04-10
@@ -64,7 +60,6 @@ Table Date_calendar {
   semaine int // numéro de semaine
   jour_semaine varchar(20) // Lundi, Mardi, etc.
 }
-
 
 // 🔹 Table des localisations géographiques
 Table Lieu {
@@ -78,7 +73,6 @@ Table Lieu {
   latitude float // source directe (France Travail)
   longitude float // idem
 }
-
 
 // 🔹 Table des entreprises
 Table Entreprise {
@@ -100,7 +94,6 @@ Table DomaineEntreprise {
   id_domaine_ent int [pk]
   nom varchar(50) // ex: "Banque", "Retail", "Transport", "Santé", etc.
 }
-
 
 // 🔹 Table des contrats
 Table Contrat {
@@ -143,13 +136,11 @@ Table Offre_CompetenceTech {
   //exigence boolean // A ENLEVER  NLP : si compétence obligatoire ou souhaitée
 }
 
-
 // 🔹 Domaine data (standardisé)
 Table DomaineData {
   id_domaine int [pk]
   nom varchar(30) // ex: "ML", "BI", "Data Eng", "Data Analyst", etc.
 }
-
 
 // 🔹 Table de liaison CompétenceTech <-> DomaineData
 Table Competence_Domaine {
@@ -159,8 +150,6 @@ Table Competence_Domaine {
   // Cette table permet de relier une compétence à plusieurs domaines
   // Exemple : Python → ML + Data Eng + BI
 }
-
-
 
 // 🔹 Table des candidats (mise à jour avec des FK vers d'autres tables)
 Table Candidat {
@@ -175,7 +164,7 @@ Table Candidat {
 // 🔹 Table des soft skills
 Table Soft_skills {
   id_soft_skills int [pk]
-  nom_skill varchar(50) // 
+  nom_skill varchar(50) //
 }
 
 // 🔹 Table de liaison Candidat <-> Compétence
@@ -184,7 +173,6 @@ Table Candidat_Competence {
   id_competence int [ref: > CompetenceTech.id_competence, primary key]
   niveau int // niveau perçu ou auto-évalué : 1 (débutant) à 5 (expert)
 }
-
 
 // 🔹 Domaine data préféré du candidat (s'il peut en choisir plusieurs)
 Table Candidat_DomaineData {
@@ -218,7 +206,6 @@ Table Candidat_DomaineEntreprise {
   // Ex : secteurs préférés : Santé + Banque
 }
 
-
 // 🔹 Table de matching entre offre et candidat
 Table MatchingCandidatOffre {
   id_matching int [pk]
@@ -244,17 +231,15 @@ Table offre_soft_skills {
   type_pref varchar(20) // optionnel : "principale", "secondaire", "remote"
 }
 
-
 </details>
-
 
 ## 🎯 Objectifs du modèle
 
-- Fournir un moteur de **recommandation d’offres** intelligent et personnalisé.
-- Identifier les **compétences manquantes** pour un candidat et recommander des **formations ciblées**.
-- Analyser les **tendances du marché** (salaires, technos, régions) par domaine data.
-- Gérer des **préférences complexes et multiples** côté candidat (plusieurs lieux, contrats, types d’entreprises…).
-- Intégrer des données **structurées + enrichies via NLP**.
+* Fournir un moteur de **recommandation d’offres** intelligent et personnalisé.
+* Identifier les **compétences manquantes** pour un candidat et recommander des **formations ciblées**.
+* Analyser les **tendances du marché** (salaires, technos, régions) par domaine data.
+* Gérer des **préférences complexes et multiples** côté candidat (plusieurs lieux, contrats, types d’entreprises…).
+* Intégrer des données **structurées + enrichies via NLP**.
 
 ---
 
@@ -262,35 +247,35 @@ Table offre_soft_skills {
 
 ### 🔹 1. Offres d’emploi
 
-- `OffreEmploi` contient les informations principales de chaque offre.
-- Reliée à :
-  - `Contrat` (CDI, Freelance…)
-  - `Lieu` (géolocalisation)
-  - `Entreprise`
-  - `DomaineData` (ML, BI…)
-  - `Date_calendar` (calendrier analytique)
-- Les compétences associées à chaque offre sont dans `Offre_CompetenceTech`.
+* `OffreEmploi` contient les informations principales de chaque offre.
+* Reliée à :
+* * `Contrat` (CDI, Freelance…)
+* * `Lieu` (géolocalisation)
+* * `Entreprise`
+* * `DomaineData` (ML, BI…)
+* * `Date_calendar` (calendrier analytique)
+* Les compétences associées à chaque offre sont dans `Offre_CompetenceTech`.
 
 ---
 
 ### 🔹 2. Candidats
 
-- `Candidat` stocke les données personnelles + préférences.
-- Table flexible : toutes les **préférences multiples** sont gérées via des tables de liaison :
-  - `Candidat_Contrat`
-  - `Candidat_TypeEntreprise`
-  - `Candidat_DomaineEntreprise`
-  - `Candidat_DomaineData`
-  - `Candidat_Lieu`
-- Les compétences sont listées dans `Candidat_Competence` avec un **niveau de maîtrise (1 à 5)**.
+* `Candidat` stocke les données personnelles + préférences.
+* Table flexible : toutes les **préférences multiples** sont gérées via des tables de liaison :
+* * `Candidat_Contrat`
+* * `Candidat_TypeEntreprise`
+* * `Candidat_DomaineEntreprise`
+* * `Candidat_DomaineData`
+* * `Candidat_Lieu`
+* Les compétences sont listées dans `Candidat_Competence` avec un **niveau de maîtrise (1 à 5)**.
 
 ---
 
 ### 🔹 3. Matching intelligent
 
-- `MatchingCandidatOffre` est le **pivot du moteur de recommandation**.
-- Contient :
-  - `score_tech` : matching de compétences
-  - `score_global` : matching global pondéré
-  - `manques` : liste des compétences absentes
-  - `suggestion_formation` : lien ou nom de formation recommandée
+* `MatchingCandidatOffre` est le **pivot du moteur de recommandation**.
+* Contient :
+* * `score_tech` : matching de compétences
+* * `score_global` : matching global pondéré
+* * `manques` : liste des compétences absentes
+* * `suggestion_formation` : lien ou nom de formation recommandée
