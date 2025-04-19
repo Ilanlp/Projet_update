@@ -14,9 +14,10 @@ import argparse
 import json
 from rich.console import Console
 from rich.table import Table
+from pathlib import Path
 
 # Importer notre client Adzuna
-from adzuna_api import (
+from .adzuna_api import (
     AdzunaClient,
     CountryCode,
     Job,
@@ -283,7 +284,7 @@ class AdzunaDataAnalyzer:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # 1. Export CSV
-        csv_path = f"{output_dir}/jobs_{timestamp}.csv"
+        csv_path = f"{output_dir}jobs_{timestamp}.csv"
         df.to_csv(csv_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
         print(f"Données exportées en CSV: {csv_path}")
 
@@ -600,6 +601,10 @@ async def main():
     # Récupérer les identifiants d'API depuis les variables d'environnement
     app_id = os.getenv("ADZUNA_APP_ID")
     app_key = os.getenv("ADZUNA_APP_KEY")
+    path = os.getenv("OUTPUT_DIR")
+
+    path_absolu = Path(__file__).resolve()
+    output_path = f"{path_absolu.parents[3]}/{path}"
 
     # Vérifier que les identifiants sont présents
     if not app_id or not app_key:
@@ -730,7 +735,7 @@ async def main():
 
             # Exporter les données si demandé
             if args.export:
-                await analyzer.export_data(df)
+                await analyzer.export_data(df, output_path)
 
             # Générer des graphiques si demandé
             if args.charts:

@@ -9,15 +9,14 @@ en utilisant une approche par catégories et périodes pour maximiser la couvert
 import os
 import json
 import csv
-import time
 import asyncio
 import logging
 import httpx
 from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Set, Any, Tuple, Optional
+from typing import List, Dict, Set, Any, Tuple
 from pydantic import TypeAdapter
 
-from adzuna_api import AdzunaClient, CountryCode, Job, Category, AdzunaClientError
+from adzuna import AdzunaClient, CountryCode, Job, Category, AdzunaClientError
 
 # Configuration du logging
 logger = logging.getLogger(__name__)

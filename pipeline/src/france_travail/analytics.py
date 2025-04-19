@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 from datetime import datetime
-from france_travail_api import FranceTravailAPI, SearchParams
+
+from .france_travail_api import FranceTravailAPI, SearchParams
 
 # Configuration du style des visualisations
 plt.style.use("ggplot")
@@ -773,9 +774,11 @@ class FranceTravailAnalytics:
             # Identifier les colonnes avec des objets complexes (dictionnaires, listes)
             if df_clean[col].apply(lambda x: isinstance(x, (dict, list))).any():
                 df_clean[col] = df_clean[col].apply(
-                    lambda x: json.dumps(x, ensure_ascii=False, default=str)
-                    if pd.notna(x)
-                    else None
+                    lambda x: (
+                        json.dumps(x, ensure_ascii=False, default=str)
+                        if pd.notna(x)
+                        else None
+                    )
                 )
 
         # 2. Nettoyer les valeurs non exportables
@@ -785,20 +788,21 @@ class FranceTravailAnalytics:
 
             # Convertir les autres types complexes en chaînes
             df_clean[col] = df_clean[col].apply(
-                lambda x: str(x)
-                if not isinstance(x, (str, int, float, bool, type(None)))
-                else x
+                lambda x: (
+                    str(x)
+                    if not isinstance(x, (str, int, float, bool, type(None)))
+                    else x
+                )
             )
 
             # Supprimer les caractères problématiques pour CSV
             if df_clean[col].dtype == "object":  # Colonnes textuelles
                 df_clean[col] = df_clean[col].apply(
-                    lambda x: str(x)
-                    .replace("\r", " ")
-                    .replace("\n", " ")
-                    .replace("\t", " ")
-                    if isinstance(x, str)
-                    else x
+                    lambda x: (
+                        str(x).replace("\r", " ").replace("\n", " ").replace("\t", " ")
+                        if isinstance(x, str)
+                        else x
+                    )
                 )
 
         # 3. Traiter les caractères spéciaux dans les noms de colonnes
@@ -811,9 +815,9 @@ class FranceTravailAnalytics:
         max_length = 32767  # Limite pour une cellule
         for col in df_clean.select_dtypes(include=["object"]).columns:
             df_clean[col] = df_clean[col].apply(
-                lambda x: x[:max_length]
-                if isinstance(x, str) and len(x) > max_length
-                else x
+                lambda x: (
+                    x[:max_length] if isinstance(x, str) and len(x) > max_length else x
+                )
             )
 
         return df_clean

@@ -1,7 +1,8 @@
 import os
 import asyncio
-from adzuna_api import AdzunaClient, CountryCode
 from dotenv import load_dotenv
+
+from .adzuna_api import AdzunaClient, CountryCode
 
 
 async def main():

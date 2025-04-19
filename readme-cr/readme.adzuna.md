@@ -207,22 +207,22 @@ if __name__ == "__main__":
 
 ## 📊 Application d'analyse des offres d'emploi
 
-Le script `adzuna_app.py` fournit une interface en ligne de commande pour analyser facilement les offres d'emploi. Il propose plusieurs commandes pour rechercher, analyser et visualiser les données d'emploi.
+Le script `analytics.py` fournit une interface en ligne de commande pour analyser facilement les offres d'emploi. Il propose plusieurs commandes pour rechercher, analyser et visualiser les données d'emploi.
 
 ### Exemples d'utilisation
 
 ```bash
 # Rechercher des offres d'emploi
-python adzuna_app.py search --what "data engineer" --where "Paris" --max-results 50 --export --charts
+python -m adzuna.analytics search --what "data engineer" --where "Paris" --max-results 50 --export --charts
 
 # Analyser les compétences les plus demandées pour un poste
-python adzuna_app.py skills --job-title "devops engineer" --top 15
+python -m adzuna.analytics skills --job-title "devops engineer" --top 15
 
 # Comparer les statistiques d'emploi entre différentes villes
-python adzuna_app.py compare --job-title "software developer" --locations "Paris" "Lyon" "Marseille" "Toulouse"
+python -m adzuna.analytics compare --job-title "software developer" --locations "Paris" "Lyon" "Marseille" "Toulouse"
 
 # Lister les catégories d'emploi disponibles
-python adzuna_app.py categories
+python -m adzuna.analytics categories
 ```
 
 ### Fonctionnalités de l'application

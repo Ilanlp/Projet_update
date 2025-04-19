@@ -20,15 +20,11 @@ import logging
 import argparse
 import httpx
 from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Set, Optional, Any, Tuple
-from pathlib import Path
-import pandas as pd
+from typing import List, Dict, Set, Any, Tuple
 from dotenv import load_dotenv
-from enum import Enum
-from job_market_normalizer import NormalizedJobOffer, JobDataNormalizer
 
 # Importer notre client Adzuna (ajustez le chemin d'importation si nécessaire)
-from adzuna_api import AdzunaClient, CountryCode, Job, AdzunaClientError, Category
+from .adzuna_api import AdzunaClient, CountryCode, Job, AdzunaClientError, Category
 
 
 # Configuration du logging
@@ -325,14 +321,9 @@ class AdzunaDataCollector:
                                         has_more_results = False
                                     continue
                                 
-                                
-                                normalizer = JobDataNormalizer(os.getenv("ADZUNA_APP_ID"),os.getenv("ADZUNA_APP_KEY"),os.getenv("FRANCE_TRAVAIL_ID"),os.getenv("FRANCE_TRAVAIL_KEY"))
-
                                 # Transforme chaque offre au format CSV et l'écrit
                                 for job in filtered_jobs:
-                                    #job_data = self._job_to_dict(job)
-                                    job_data = normalizer.normalize_adzuna_job(job.model_dump())
-                                    job_data = job_data.model_dump()
+                                    job_data = self._job_to_dict(job)
                                     writer.writerow(job_data)
                                     csv_file.flush()  # S'assurer que les données sont écrites sur le disque
                                     
@@ -438,6 +429,7 @@ class AdzunaDataCollector:
         
         Returns:
             Liste des noms de colonnes pour le CSV
+        """
         return [
             "id", "title", "description", "created", "redirect_url",
             "salary_min", "salary_max", "salary_is_predicted",
@@ -447,35 +439,7 @@ class AdzunaDataCollector:
             "location_area_4", "location_area_5", "location_area_6", "location_area_7",
             "company_display_name", "company_canonical_name"
         ]
-        """
-        return [
-                "id",
-                "source",
-                "title",
-                "description",
-                "company_name",
-                "location_name",
-                "latitude",
-                "longitude",
-                "date_created",
-                "date_updated",
-                "contract_type",
-                "contract_duration",
-                "working_hours",
-                "salary_min",
-                "salary_max",
-                "salary_currency",
-                "salary_period",
-                "experience_required",
-                "category",
-                "sector",
-                "application_url",
-                "source_url",
-                "skills",
-                "remote_work",
-                "is_handicap_accessible"
-        ]
-
+    
     async def _save_checkpoint(self):
         """Sauvegarde l'état de progression"""
         checkpoint_data = {
