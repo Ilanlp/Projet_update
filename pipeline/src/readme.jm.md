@@ -84,6 +84,9 @@ Le normalisateur utilise un syst√®me de correspondance pour harmoniser les donn√
 | source_url             | redirect_url          | origineOffre.urlOrigine     |
 | skills                 | N/A                   | competences[].libelle       |
 | is_handicap_accessible | N/A                   | accessibleTH                |
+| CodeRome               | N/A                   | RomeCode                    |
+| Langues                | N/A                   | langues[].libelle           |
+| DateExtraction         | N/A                   | N/A                         |
 
 ### Normalisation des valeurs
 
