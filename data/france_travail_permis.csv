@@ -1,0 +1,21 @@
+,code,libelle
+0,AM,AM - Cyclomoteur <= 50 cm3
+1,A1,A1 - Motocyclette <=125 cm3
+2,A2,A2 - Moto <= 600 cm3
+3,A,A - Moto
+4,B1,B1 - Quadricycle
+5,B,B - Véhicule léger
+6,B96,"B mention 96 - VL + remorque (PTAC < 4,25 T)"
+7,EB,EB - Véhicule léger + remorque
+8,B79,B mention 79.06 (= EB)
+9,BE,"BE - Véhicule léger + remorque  (PTAC > 4,25 T)"
+10,C1,"C1 - Poids lourd < 7,5 T"
+11,C1E,"C1E - Poids lourd < 7,5 T + remorque"
+12,C,C - Poids lourd
+13,CE,CE - Poids lourd + remorque  (= EC)
+14,EC,EC - Poids lourd + remorque
+15,D1,D1 - Transport de personnes <= 16 places
+16,D1E,D1E - Transport de personnes <= 16 P + remorque
+17,D,D - Transport de personnes
+18,DE,DE - Transport de personnes + remorque (= ED)
+19,ED,ED - Transport de personnes + remorque
