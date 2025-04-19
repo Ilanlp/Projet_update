@@ -23,11 +23,10 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Set, Any, Tuple
 from pathlib import Path
 from dotenv import load_dotenv
-from jm_normalizer import JobDataNormalizer
 
 # Importer notre client Adzuna (ajustez le chemin d'importation si nécessaire)
 from adzuna import AdzunaClient, CountryCode, Job, AdzunaClientError, Category
-
+from jm_normalizer import JobDataNormalizer
 
 # Configuration du logging
 logging.basicConfig(
