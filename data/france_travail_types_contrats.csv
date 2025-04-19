@@ -1,0 +1,12 @@
+,code,libelle
+0,CDI,Contrat à durée indéterminée
+1,CDD,Contrat à durée déterminée
+2,MIS,Mission intérimaire
+3,SAI,Contrat travail saisonnier
+4,CCE,Profession commerciale
+5,FRA,Franchise
+6,LIB,Profession libérale
+7,REP,Reprise d'entreprise
+8,TTI,Contrat travail temporaire insertion
+9,DDI,Contrat durée déterminée insertion
+10,DIN,CDI Intérimaire
