@@ -9,14 +9,13 @@ en utilisant une approche par départements et périodes pour maximiser la couve
 import os
 import json
 import csv
-import time
 import asyncio
 import logging
 import re
 from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Set, Any, Tuple, Optional
+from typing import List, Dict, Set, Any, Tuple
 
-from france_travail_api import FranceTravailAPI, SearchParams
+from france_travail import FranceTravailAPI, SearchParams
 
 # Configuration du logging
 logger = logging.getLogger(__name__)

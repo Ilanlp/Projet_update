@@ -1,7 +1,15 @@
-from france_travail_analytics import FranceTravailAnalytics
+from .analytics import FranceTravailAnalytics
+from dotenv import load_dotenv
+import os
+
+# Chargement des variables d'environnements
+load_dotenv()
+
+client_id = os.getenv("FRANCE_TRAVAIL_ID")
+client_secret = os.getenv("FRANCE_TRAVAIL_KEY")
 
 # Initialisation de l'analyseur
-analyzer = FranceTravailAnalytics("g6Poi0LIMv4VRkPnsH7tQuFfurU")
+analyzer = FranceTravailAnalytics("TOKEN")
 
 # Recherche d'offres avec des critères spécifiques
 offres_df = analyzer.search_offers(

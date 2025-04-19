@@ -11,18 +11,24 @@ Returns:
 List[Referentiel]: Liste des éléments du référentiel
 """
 
-from france_travail_api import FranceTravailAPI
+import os
 from dotenv import load_dotenv
 import pandas as pd
 from pprint import pprint
-import os
 from collections import defaultdict
+from pathlib import Path
+
+from .france_travail_api import FranceTravailAPI
 
 # Chargement des variables d'environnements
 load_dotenv()
 
 client_id = os.getenv("FRANCE_TRAVAIL_ID")
 client_secret = os.getenv("FRANCE_TRAVAIL_KEY")
+OUTPUT_DIR = os.getenv("OUTPUT_DIR")
+
+path_absolu = Path(__file__).resolve()
+OUTPUT_DIR = f"{path_absolu.parents[3]}/{OUTPUT_DIR}"
 
 # Initialisation avec votre token
 api = FranceTravailAPI(client_id, client_secret)
@@ -46,7 +52,7 @@ def save_to_csv(libelle, ref):
     ref_dict = flatten_list_by_shema(ref)
     ref_df = pd.DataFrame(ref_dict)
     pprint(ref_df.head(5))
-    ref_df.to_csv(f"./data/{libelle}.csv", sep=",")
+    ref_df.to_csv(f"{OUTPUT_DIR}{libelle}.csv", sep=",")
 
 
 appellations = api.get_referential("appellations")
@@ -89,8 +95,8 @@ save_to_csv("france_travail_regions", regions)
 secteursActivites = api.get_referential("secteursActivites")
 save_to_csv("france_travail_secteurs_activites", secteursActivites)
 
-themes = api.get_referential("domaines")
-save_to_csv("france_travail_secteurs_activites", secteursActivites)
+themes = api.get_referential("themes")
+save_to_csv("france_travail_themes", themes)
 
 typesContrats = api.get_referential("typesContrats")
 save_to_csv("france_travail_types_contrats", typesContrats)

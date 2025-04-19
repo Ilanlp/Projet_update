@@ -1,10 +1,12 @@
 import os
 import asyncio
-from adzuna_api import AdzunaClient, CountryCode
 from dotenv import load_dotenv
 from pprint import pprint
 import pandas as pd
 from collections import defaultdict
+from pathlib import Path
+
+from .adzuna_api import AdzunaClient, CountryCode
 
 
 async def main():
@@ -14,6 +16,10 @@ async def main():
     # Initialiser le client
     app_id = os.getenv("ADZUNA_APP_ID")
     app_key = os.getenv("ADZUNA_APP_KEY")
+    path = os.getenv("OUTPUT_DIR")
+
+    path_absolu = Path(__file__).resolve()
+    output_path = f"{path_absolu.parents[3]}/{path}"
 
     client = AdzunaClient(app_id, app_key)
 
@@ -35,13 +41,11 @@ async def main():
             ref_dict = flatten_list_by_shema(ref)
             ref_df = pd.DataFrame(ref_dict)
             pprint(ref_df.head(5))
-            ref_df.to_csv(f"./data/adzuna_{libelle}.csv", sep=",")
+            ref_df.to_csv(f"{output_path}/adzuna_{libelle}.csv", sep=",")
 
         categories = await client.get_categories(CountryCode.FR)
         print(len(categories.results))
         save_to_csv("categories", categories.results)
-        
-        
 
     finally:
         # Fermer le client

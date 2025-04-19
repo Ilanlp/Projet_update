@@ -1,0 +1,45 @@
+from .france_travail_api import FranceTravailAPI
+from .models import (
+    SearchParams,
+    ResultatRecherche,
+    Offre,
+    Referentiel,
+    Commune,
+    Departement,    
+    Region,
+    LieuTravail,
+    Entreprise,
+    Formation,
+    Langue,
+    Permis,
+    Competence,
+    QualitePro,
+    Contact,
+    Agence,
+    PartenaireOffre,
+    OrigineOffre,
+)
+
+__all__ = [
+    "FranceTravailAPI",
+    "SearchParams",
+    "ResultatRecherche",
+    "Offre",
+    "Referentiel",
+    "Commune",
+    "Departement",
+    "Region",
+    "LieuTravail",
+    "Entreprise",
+    "Formation",
+    "Langue",
+    "Permis",
+    "Competence",
+    "QualitePro",
+    "Contact",
+    "Agence",
+    "PartenaireOffre",
+    "OrigineOffre",
+]
+
+print("Le package 'france-travail' a été chargé")

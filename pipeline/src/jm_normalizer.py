@@ -8,18 +8,18 @@ Version 1.1 - Mise à jour pour retirer le paramètre sort_dir non supporté par
 import asyncio
 import pandas as pd
 import numpy as np
-from typing import List, Dict, Optional, Any, Union
+from typing import List, Dict, Optional, Any
 from datetime import datetime
 import logging
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import json
 import os
 import dotenv
 from os import environ
 
 # Import des clients API
-from adzuna_api import AdzunaClient, CountryCode, SortBy
-from france_travail_api import FranceTravailAPI, SearchParams as FranceSearchParams
+from adzuna import AdzunaClient, CountryCode, SortBy
+from france_travail import FranceTravailAPI, SearchParams as FranceSearchParams
 
 # Configuration du logging
 logging.basicConfig(
@@ -65,7 +65,11 @@ class JobDataNormalizer:
     """
 
     def __init__(
-        self, adzuna_app_id: str, adzuna_app_key: str, france_travail_id: str, france_travail_key: str
+        self,
+        adzuna_app_id: str,
+        adzuna_app_key: str,
+        france_travail_id: str,
+        france_travail_key: str,
     ):
         """
         Initialise le normalisateur avec les identifiants d'API
@@ -77,7 +81,9 @@ class JobDataNormalizer:
             france_travail_client_secret: Clé secret d'identification France Travail
         """
         self.adzuna_client = AdzunaClient(adzuna_app_id, adzuna_app_key)
-        self.france_travail_api = FranceTravailAPI(france_travail_id, france_travail_key)
+        self.france_travail_api = FranceTravailAPI(
+            france_travail_id, france_travail_key
+        )
 
         # Mappings pour les types de contrat
         # Ces mappings vont aider à normaliser les données entre les sources
@@ -686,7 +692,7 @@ class JobDataNormalizer:
         """
         # Nettoyer le nom de fichier
         safe_filename = self._sanitize_filename(filename)
-        filepath = f"{safe_filename}.csv"
+        filepath = f"{filename}.csv"
 
         try:
             # Utiliser le mode quoting=csv.QUOTE_ALL pour s'assurer que tous les champs sont bien échappés
@@ -818,11 +824,9 @@ async def main():
     # Récupérer les identifiants d'API depuis les variables d'environnement
     adzuna_app_id = environ.get("ADZUNA_APP_ID")
     adzuna_app_key = environ.get("ADZUNA_APP_KEY")
-    #france_travail_token = environ.get("FRANCE_TRAVAIL_TOKEN")
+    # france_travail_token = environ.get("FRANCE_TRAVAIL_TOKEN")
     france_travail_id = environ.get("FRANCE_TRAVAIL_ID")
     france_travail_key = environ.get("FRANCE_TRAVAIL_KEY")
-
-
 
     # Vérifier que les variables d'environnement sont définies
     if not all([adzuna_app_id, adzuna_app_key, france_travail_id, france_travail_key]):
@@ -832,11 +836,10 @@ async def main():
         if not adzuna_app_key:
             missing_vars.append("ADZUNA_APP_KEY")
         if not france_travail_id:
-            missing_vars.append('FRANCE_TRAVAIL_ID')
+            missing_vars.append("FRANCE_TRAVAIL_ID")
         if not france_travail_key:
-            missing_vars.append('FRANCE_TRAVAIL_KEY')
-
-        #if not france_travail_token:
+            missing_vars.append("FRANCE_TRAVAIL_KEY")
+        # if not france_travail_token:
         #    missing_vars.append("FRANCE_TRAVAIL_TOKEN")
 
         raise ValueError(
@@ -845,7 +848,9 @@ async def main():
         )
 
     # Créer le dossier de sortie si nécessaire
-    output_dir = environ.get("OUTPUT_DIR", "./data/")
+    output = environ.get("OUTPUT_DIR", "./data/")
+    output_dir = f"../../{output}"
+
     os.makedirs(output_dir, exist_ok=True)
 
     # Paramètres de recherche (avec valeurs par défaut depuis les variables d'environnement)
