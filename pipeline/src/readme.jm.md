@@ -11,18 +11,18 @@ centraliser les données et d'en tirer un maximum d'informations pertinentes.
 
 #### 1. API France Travail
 
-* Très structurée, pas de redirection sur d’autres sources.
-* Permet d’accéder à plusieurs API et pas seulement les offres d’emploi : API compétences, API métier en vogue, API régions dynamiques…
+- Très structurée, pas de redirection sur d’autres sources.
+- Permet d’accéder à plusieurs API et pas seulement les offres d’emploi : API compétences, API métier en vogue, API régions dynamiques…
 
 #### 2. API The Muse
 
-* Il y’a des redirections dans les API, mais des redirection interne (sur le site the
-Muse). Donc La structure est homogène entre les pages, ce qui rend le
-scraping plus accessible et automatisable.
+- Il y’a des redirections dans les API, mais des redirection interne (sur le site the
+  Muse). Donc La structure est homogène entre les pages, ce qui rend le
+  scraping plus accessible et automatisable.
 
 #### 3. API Adzuna
 
-* Redirections externes fréquentes (vers LinkedIn ou autres), rendant le scrapping plus difficile.
+- Redirections externes fréquentes (vers LinkedIn ou autres), rendant le scrapping plus difficile.
 
 ## Structure des données normalisées
 
@@ -55,6 +55,9 @@ Les données sont normalisées selon le modèle suivant:
 | skills                 | Compétences requises                             |
 | remote_work            | Télétravail possible                             |
 | is_handicap_accessible | Accessible aux travailleurs handicapés           |
+| CodeRome               | RomeCode                                         |
+| Langues                | Langues                                          |
+| DateExtraction         | DateExtraction                                   |
 
 ## Mapping entre les sources
 
@@ -86,7 +89,7 @@ Le normalisateur utilise un système de correspondance pour harmoniser les donn�
 | is_handicap_accessible | N/A                   | accessibleTH                |
 | CodeRome               | N/A                   | RomeCode                    |
 | Langues                | N/A                   | langues[].libelle           |
-| DateExtraction         | N/A                   | N/A                         |
+| DateExtraction         | N/A                   | datetime(now)               |
 
 ### Normalisation des valeurs
 
@@ -138,7 +141,7 @@ commun…).
 
 #### 2. Analyse poussées sur les conditions du travail
 
-* Des données essentielles sont présentes dans les descriptions de poste (travail le week-end, port de charges, primes, horaires…). Ce bloc de texte va devoir être analyser en profondeur pour voir ce que nous pouvons en retirer…
+- Des données essentielles sont présentes dans les descriptions de poste (travail le week-end, port de charges, primes, horaires…). Ce bloc de texte va devoir être analyser en profondeur pour voir ce que nous pouvons en retirer…
 
 Ci-dessous les informations intéressantes qu’on peut retrouver dans chaque description de
 poste (fait par catégorie ) :
@@ -166,34 +169,34 @@ Contraintes spécifiques flexibilité, disponibilité week-end filtrage contrain
 
 #### 3. Recommandation de formations stratégiques
 
-* Identification des compétences manquantes du candidat pour accéder à plus
-d’opportunités.
-« si tu avait Spark en plus, tu aurais accès à 45% d’offres supplémentaires »
-« 70% des entreprises ont Snowflake en compétences demandées »
-* Suggestions de formations pertinentes pour booster l’employabilité.
+- Identification des compétences manquantes du candidat pour accéder à plus
+  d’opportunités.
+  « si tu avait Spark en plus, tu aurais accès à 45% d’offres supplémentaires »
+  « 70% des entreprises ont Snowflake en compétences demandées »
+- Suggestions de formations pertinentes pour booster l’employabilité.
 
 #### 4. Recherche multi-lieux + accessibilité
 
-* L’utilisateur peut rechercher dans plusieurs villes en même temps.
-* Prise en compte du trajet domicile–travail (API OpenStreetMap) pour filtrer les offres accessibles en transport ou vélo.
+- L’utilisateur peut rechercher dans plusieurs villes en même temps.
+- Prise en compte du trajet domicile–travail (API OpenStreetMap) pour filtrer les offres accessibles en transport ou vélo.
 
 #### 5. Analyse dynamique du marché de l’emploi (API tendance de France Travail)
 
-* Visualisation des tendances : quelles compétences sont en hausse, quels métiers
-recrutent dans une région.
-* Statistiques personnalisées selon le profil du candidat.
+- Visualisation des tendances : quelles compétences sont en hausse, quels métiers
+  recrutent dans une région.
+- Statistiques personnalisées selon le profil du candidat.
 
 #### 6. Alertes intelligentes
 
-* Le système prévient l’utilisateur lorsqu’une offre très pertinente (>80% de matching)
-apparaît.
-* Suivi de l’évolution des offres (dernière mise à jour, pénurie de candidats, etc.).
+- Le système prévient l’utilisateur lorsqu’une offre très pertinente (>80% de matching)
+  apparaît.
+- Suivi de l’évolution des offres (dernière mise à jour, pénurie de candidats, etc.).
 
 #### 7. Score d’attractivité d’une offre (Maching Learning)
 
-* Calcul automatique d’un score combinant salaire, distance, compétences requises,
-avantages…
-* Classement des offres selon leur intérêt réel pour l’utilisateur.
+- Calcul automatique d’un score combinant salaire, distance, compétences requises,
+  avantages…
+- Classement des offres selon leur intérêt réel pour l’utilisateur.
 
 Cette vision dépasse la simple recherche d’emploi : on veut créer un copilote intelligent de carrière, capable d’analyser, guider, alerter et recommander de manière proactive.
 
@@ -201,21 +204,21 @@ Cette vision dépasse la simple recherche d’emploi : on veut créer un copilot
 
 ### API Adzuna
 
-* **Changement important** : Le paramètre `sort_dir` n'est plus supporté par l'API Adzuna depuis sa dernière mise à jour. Le script a été modifié pour utiliser uniquement le paramètre `sort_by` pour le tri.
-* **Pagination** : L'API Adzuna utilise un système de pagination basé sur des numéros de page (commençant à 1). Chaque page peut contenir jusqu'à 50 résultats maximum.
-* **Limitations** :
-  * Maximum de 50 résultats par page
-  * Le script gère automatiquement la récupération de plusieurs pages pour atteindre le nombre total de résultats demandés
-  * L'accès aux pages au-delà de la limite fixée par Adzuna peut générer des erreurs
+- **Changement important** : Le paramètre `sort_dir` n'est plus supporté par l'API Adzuna depuis sa dernière mise à jour. Le script a été modifié pour utiliser uniquement le paramètre `sort_by` pour le tri.
+- **Pagination** : L'API Adzuna utilise un système de pagination basé sur des numéros de page (commençant à 1). Chaque page peut contenir jusqu'à 50 résultats maximum.
+- **Limitations** :
+  - Maximum de 50 résultats par page
+  - Le script gère automatiquement la récupération de plusieurs pages pour atteindre le nombre total de résultats demandés
+  - L'accès aux pages au-delà de la limite fixée par Adzuna peut générer des erreurs
 
 ### API France Travail
 
-* **Pagination** : L'API France Travail utilise un système de pagination par plage (range) au format `p-d` où `p` est l'index (débutant à 0) du premier élément et `d` est l'index du dernier élément.
-* **Limitations** :
-  * La plage de résultats est limitée à 150 résultats maximum par requête
-  * L'index du premier élément ne doit pas dépasser 3000
-  * L'index du dernier élément ne doit pas dépasser 3149
-  * Le script gère ces limitations en ajustant automatiquement les paramètres de recherche
+- **Pagination** : L'API France Travail utilise un système de pagination par plage (range) au format `p-d` où `p` est l'index (débutant à 0) du premier élément et `d` est l'index du dernier élément.
+- **Limitations** :
+  - La plage de résultats est limitée à 150 résultats maximum par requête
+  - L'index du premier élément ne doit pas dépasser 3000
+  - L'index du dernier élément ne doit pas dépasser 3149
+  - Le script gère ces limitations en ajustant automatiquement les paramètres de recherche
 
 ## Installation
 
@@ -285,14 +288,14 @@ python job_data_normalizer.py
 
 Vous pouvez configurer les paramètres suivants dans votre fichier `.env`:
 
-* **ADZUNA_APP_ID**: Votre identifiant d'application Adzuna (obligatoire)
-* **ADZUNA_APP_KEY**: Votre clé API Adzuna (obligatoire)
-* **FRANCE_TRAVAIL_TOKEN**: Votre token d'accès France Travail (obligatoire)
-* **DEFAULT_SEARCH_TERMS**: Termes de recherche par défaut (optionnel)
-* **DEFAULT_LOCATION_ADZUNA**: Localisation par défaut pour Adzuna (optionnel)
-* **DEFAULT_LOCATION_FRANCE_TRAVAIL**: Localisation par défaut pour France Travail (optionnel)
-* **DEFAULT_MAX_RESULTS**: Nombre maximum de résultats par source (optionnel)
-* **OUTPUT_DIR**: Dossier de sortie pour les fichiers générés (optionnel, par défaut: "job_data")
+- **ADZUNA_APP_ID**: Votre identifiant d'application Adzuna (obligatoire)
+- **ADZUNA_APP_KEY**: Votre clé API Adzuna (obligatoire)
+- **FRANCE_TRAVAIL_TOKEN**: Votre token d'accès France Travail (obligatoire)
+- **DEFAULT_SEARCH_TERMS**: Termes de recherche par défaut (optionnel)
+- **DEFAULT_LOCATION_ADZUNA**: Localisation par défaut pour Adzuna (optionnel)
+- **DEFAULT_LOCATION_FRANCE_TRAVAIL**: Localisation par défaut pour France Travail (optionnel)
+- **DEFAULT_MAX_RESULTS**: Nombre maximum de résultats par source (optionnel)
+- **OUTPUT_DIR**: Dossier de sortie pour les fichiers générés (optionnel, par défaut: "job_data")
 
 ## Résultats
 

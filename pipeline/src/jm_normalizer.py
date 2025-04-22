@@ -12,13 +12,13 @@ from typing import List, Dict, Optional, Any
 from datetime import datetime
 import logging
 from pydantic import BaseModel
-import json
 import os
-import dotenv
+from dotenv import load_dotenv
 from os import environ
+from pathlib import Path
 
 # Import des clients API
-from adzuna import AdzunaClient, CountryCode, SortBy
+from adzuna import AdzunaClient, CountryCode, SortBy, SearchParams as AdzunaSearchParams
 from france_travail import FranceTravailAPI, SearchParams as FranceSearchParams
 
 # Configuration du logging
@@ -57,6 +57,9 @@ class NormalizedJobOffer(BaseModel):
     skills: Optional[List[str]] = None
     remote_work: Optional[bool] = None
     is_handicap_accessible: Optional[bool] = None
+    code_rome: Optional[str] = None
+    langues: Optional[List[str]] = None
+    date_extraction: Optional[datetime] = None
 
 
 class JobDataNormalizer:
@@ -131,7 +134,11 @@ class JobDataNormalizer:
         await self.close()
 
     async def fetch_adzuna_jobs(
-        self, search_terms: str, location: str = None, max_results: int = 100
+        self,
+        search_terms: str = None,
+        category: str = None,
+        location: str = None,
+        max_results: int = 100,
     ) -> List[Dict[str, Any]]:
         """
         Récupère les offres d'emploi depuis l'API Adzuna
@@ -156,6 +163,7 @@ class JobDataNormalizer:
         # Paramètres de recherche
         search_params = {
             "what": search_terms,
+            "category": category,
             "results_per_page": results_per_page,
             "sort_by": SortBy.DATE,
             # Note: Le paramètre sort_dir n'est plus supporté par l'API Adzuna
@@ -199,7 +207,11 @@ class JobDataNormalizer:
             return []
 
     def fetch_france_travail_jobs(
-        self, search_terms: str, location: str = None, max_results: int = 100
+        self,
+        search_terms: str,
+        code_rome: str = None,
+        location: str = None,
+        max_results: int = 100,
     ) -> List[Dict[str, Any]]:
         """
         Récupère les offres d'emploi depuis l'API France Travail
@@ -219,6 +231,7 @@ class JobDataNormalizer:
         # Configurer les paramètres de recherche
         search_params = FranceSearchParams(
             motsCles=search_terms,
+            codeROME=code_rome,
             range=f"0-{min(max_results-1, 150)}",  # Limité à 150 résultats maximum par l'API
             sort=1,  # Tri par date décroissant
         )
@@ -304,6 +317,9 @@ class JobDataNormalizer:
         salary_currency = "EUR"  # Par défaut pour la France
         salary_period = "annuel"  # Par défaut pour Adzuna
 
+        # date_extraction
+        date_extraction = datetime.now()
+
         # Créer l'offre normalisée
         normalized_job = NormalizedJobOffer(
             id=job["id"],
@@ -330,7 +346,10 @@ class JobDataNormalizer:
             source_url=job.get("redirect_url"),
             skills=None,  # Adzuna ne fournit pas cette information
             remote_work=None,  # Adzuna ne fournit pas cette information
-            is_handicap_accessible=None,  # Adzuna ne fournit pas cette information
+            is_handicap_accessible=None,
+            code_rome=None,  # Adzuna ne fournit pas cette information
+            langues=None,  # Adzuna ne fournit pas cette information
+            date_extraction=date_extraction,  # Adzuna ne fournit pas cette information
         )
 
         return normalized_job
@@ -449,6 +468,16 @@ class JobDataNormalizer:
         # Déterminer l'accessibilité aux travailleurs handicapés
         is_handicap_accessible = job.get("accessibleTH")
 
+        # Extraire le code ROME
+        code_rome = job.get("romeCode")
+
+        # Extraire les langues
+        langues = []
+        if job.get("langues"):
+            langues = [comp["libelle"] for comp in job["langues"] if "libelle" in comp]
+        # date_extraction
+        date_extraction = datetime.now()
+
         # Créer l'offre normalisée
         normalized_job = NormalizedJobOffer(
             id=job["id"],
@@ -476,12 +505,21 @@ class JobDataNormalizer:
             skills=skills if skills else None,
             remote_work=None,  # Il faudrait analyser le texte pour déterminer cela
             is_handicap_accessible=is_handicap_accessible,
+            code_rome=code_rome,  # France Travail ne fournit pas cette information
+            langues=(
+                langues if langues else None
+            ),  # France Travail ne fournit pas cette information
+            date_extraction=date_extraction,  # France Travail ne fournit pas cette information
         )
 
         return normalized_job
 
     async def fetch_and_normalize_adzuna(
-        self, search_terms: str, location: str = None, max_results: int = 100
+        self,
+        search_terms: str = None,
+        category: str = None,
+        location: str = None,
+        max_results: int = 100,
     ) -> List[NormalizedJobOffer]:
         """
         Récupère et normalise les offres d'emploi Adzuna
@@ -494,12 +532,18 @@ class JobDataNormalizer:
         Returns:
             Liste des offres d'emploi normalisées
         """
-        raw_jobs = await self.fetch_adzuna_jobs(search_terms, location, max_results)
+        raw_jobs = await self.fetch_adzuna_jobs(
+            search_terms, category, location, max_results
+        )
         normalized_jobs = [self.normalize_adzuna_job(job) for job in raw_jobs]
         return normalized_jobs
 
     def fetch_and_normalize_france_travail(
-        self, search_terms: str, location: str = None, max_results: int = 100
+        self,
+        search_terms: str = None,
+        code_rome: str = None,
+        location: str = None,
+        max_results: int = 100,
     ) -> List[NormalizedJobOffer]:
         """
         Récupère et normalise les offres d'emploi France Travail
@@ -512,14 +556,18 @@ class JobDataNormalizer:
         Returns:
             Liste des offres d'emploi normalisées
         """
-        raw_jobs = self.fetch_france_travail_jobs(search_terms, location, max_results)
+        raw_jobs = self.fetch_france_travail_jobs(
+            search_terms, code_rome, location, max_results
+        )
         normalized_jobs = [self.normalize_france_travail_job(job) for job in raw_jobs]
         return normalized_jobs
 
     async def fetch_and_normalize_all(
         self,
         search_terms: str,
+        category_adzuna: str = None,
         location_adzuna: str = None,
+        code_rome_france_travail: str = None,
         location_france_travail: str = None,
         max_results: int = 100,
     ) -> List[NormalizedJobOffer]:
@@ -537,12 +585,12 @@ class JobDataNormalizer:
         """
         # Récupérer les données d'Adzuna
         adzuna_jobs = await self.fetch_and_normalize_adzuna(
-            search_terms, location_adzuna, max_results
+            search_terms, category_adzuna, location_adzuna, max_results
         )
 
         # Récupérer les données de France Travail
         france_travail_jobs = self.fetch_and_normalize_france_travail(
-            search_terms, location_france_travail, max_results
+            search_terms, code_rome_france_travail, location_france_travail, max_results
         )
 
         # Combiner les résultats
@@ -815,16 +863,49 @@ class JobDataNormalizer:
         # Autres cas d'erreurs spécifiques peuvent être ajoutés ici
         return False
 
+def rechercher_par_mot_cle(df, mot_cle):
+    """Recherche des correspondances par mot-clé dans les descriptions"""
+    mask = (
+        df['description_adzuna'].str.contains(mot_cle, case=False) | 
+        df['description_rome'].str.contains(mot_cle, case=False)
+    )
+    return df[mask]
+
+def obtenir_parametres_recherche(mot_cle):
+    """
+    Fonction qui suggère les meilleurs paramètres de recherche pour un mot-clé donné
+    et qui peut être utilisée avec le script jm_normalizer.py
+    """
+    correspondance_df = pd.read_csv('./../../data/correspondance_adzuna_rome.csv')
+    
+    resultats = rechercher_par_mot_cle(correspondance_df, mot_cle)
+    
+    if resultats.empty:
+        print(f"Aucune correspondance trouvée pour '{mot_cle}'.")
+        return None, None
+    
+    # Grouper par catégorie Adzuna et prendre celle avec le plus de correspondances
+    meilleure_categorie = resultats['categorie_adzuna'].value_counts().index[0]
+    
+    # Filtrer les résultats pour cette catégorie et prendre le premier code ROME
+    meilleur_code_rome = resultats[resultats['categorie_adzuna'] == meilleure_categorie]['code_rome'].iloc[0]
+    
+    print(f"Meilleure catégorie Adzuna pour '{mot_cle}': {meilleure_categorie}")
+    print(f"Code ROME recommandé: {meilleur_code_rome}")
+    
+    print("\nCommande recommandée:")
+    print(f"python jm_normalizer.py --search \"{mot_cle}\" --category-adzuna \"{meilleure_categorie}\" --code-rome \"{meilleur_code_rome}\"")
+    
+    return meilleure_categorie, meilleur_code_rome
 
 async def main():
     """Fonction principale"""
     # Charger les variables d'environnement depuis un fichier .env si disponible
-    dotenv.load_dotenv()
+    load_dotenv()
 
     # Récupérer les identifiants d'API depuis les variables d'environnement
     adzuna_app_id = environ.get("ADZUNA_APP_ID")
     adzuna_app_key = environ.get("ADZUNA_APP_KEY")
-    # france_travail_token = environ.get("FRANCE_TRAVAIL_TOKEN")
     france_travail_id = environ.get("FRANCE_TRAVAIL_ID")
     france_travail_key = environ.get("FRANCE_TRAVAIL_KEY")
 
@@ -839,8 +920,6 @@ async def main():
             missing_vars.append("FRANCE_TRAVAIL_ID")
         if not france_travail_key:
             missing_vars.append("FRANCE_TRAVAIL_KEY")
-        # if not france_travail_token:
-        #    missing_vars.append("FRANCE_TRAVAIL_TOKEN")
 
         raise ValueError(
             f"Variables d'environnement manquantes: {', '.join(missing_vars)}. "
@@ -848,18 +927,21 @@ async def main():
         )
 
     # Créer le dossier de sortie si nécessaire
-    output = environ.get("OUTPUT_DIR", "./data/")
-    output_dir = f"../../{output}"
+    output = environ.get("OUTPUT_DIR", "data/")
 
+    path_absolu = Path(__file__).resolve()
+    output_dir = f"{path_absolu.parents[2]}/{output}"
+    
     os.makedirs(output_dir, exist_ok=True)
 
     # Paramètres de recherche (avec valeurs par défaut depuis les variables d'environnement)
-    search_terms = environ.get("DEFAULT_SEARCH_TERMS", "python data ingénieur")
-    location_adzuna = environ.get("DEFAULT_LOCATION_ADZUNA", "Paris")  # Pour Adzuna
-    location_france_travail = environ.get(
-        "DEFAULT_LOCATION_FRANCE_TRAVAIL", "75"
-    )  # Code département Paris pour France Travail
+    search_terms = environ.get("DEFAULT_SEARCH_TERMS")
+    location_adzuna = environ.get("DEFAULT_LOCATION_ADZUNA")  # Pour Adzuna
+    location_france_travail = environ.get("DEFAULT_LOCATION_FRANCE_TRAVAIL")  # Code département Paris pour France Travail
     max_results_per_source = int(environ.get("DEFAULT_MAX_RESULTS", "50"))
+
+    DEFAULT_CATEGORY_ADZUNA = environ.get("DEFAULT_CATEGORY_ADZUNA")
+    DEFAULT_CODE_ROME_FRANCE_TRAVAIL = environ.get("DEFAULT_CODE_ROME_FRANCE_TRAVAIL")
 
     # Initialiser le normalisateur
     async with JobDataNormalizer(
@@ -868,7 +950,9 @@ async def main():
         # Récupérer et normaliser les données des deux sources
         normalized_jobs = await normalizer.fetch_and_normalize_all(
             search_terms,
+            category_adzuna=DEFAULT_CATEGORY_ADZUNA,
             location_adzuna=location_adzuna,
+            code_rome_france_travail=DEFAULT_CODE_ROME_FRANCE_TRAVAIL,
             location_france_travail=location_france_travail,
             max_results=max_results_per_source,
         )
@@ -893,41 +977,41 @@ async def main():
                     ),
                 )
 
-        # Analyser les données
-        analysis = normalizer.process_and_analyze(df)
+        # # Analyser les données
+        # analysis = normalizer.process_and_analyze(df)
 
-        # Afficher un résumé de l'analyse
-        print("\n=== Analyse des offres d'emploi ===")
-        print(f"Nombre total d'offres: {analysis['total_offers']}")
-        print(f"\nRépartition par source:")
-        for source, count in analysis["sources"].items():
-            print(
-                f"- {source}: {count} offres ({count/analysis['total_offers']*100:.1f}%)"
-            )
+        # # Afficher un résumé de l'analyse
+        # print("\n=== Analyse des offres d'emploi ===")
+        # print(f"Nombre total d'offres: {analysis['total_offers']}")
+        # print(f"\nRépartition par source:")
+        # for source, count in analysis["sources"].items():
+        #     print(
+        #         f"- {source}: {count} offres ({count/analysis['total_offers']*100:.1f}%)"
+        #     )
 
-        print(f"\nTypes de contrat les plus courants:")
-        for contract, count in analysis["contracts"].items():
-            print(f"- {contract}: {count} offres")
+        # print(f"\nTypes de contrat les plus courants:")
+        # for contract, count in analysis["contracts"].items():
+        #     print(f"- {contract}: {count} offres")
 
-        if analysis["salary_stats"]:
-            print("\nStatistiques de salaire:")
-            if "min" in analysis["salary_stats"]:
-                min_stats = analysis["salary_stats"]["min"]
-                print(f"- Salaire minimum moyen: {min_stats['mean']:.2f}")
-                print(f"- Salaire minimum médian: {min_stats['median']:.2f}")
+        # if analysis["salary_stats"]:
+        #     print("\nStatistiques de salaire:")
+        #     if "min" in analysis["salary_stats"]:
+        #         min_stats = analysis["salary_stats"]["min"]
+        #         print(f"- Salaire minimum moyen: {min_stats['mean']:.2f}")
+        #         print(f"- Salaire minimum médian: {min_stats['median']:.2f}")
 
-            if "max" in analysis["salary_stats"]:
-                max_stats = analysis["salary_stats"]["max"]
-                print(f"- Salaire maximum moyen: {max_stats['mean']:.2f}")
-                print(f"- Salaire maximum médian: {max_stats['median']:.2f}")
+        #     if "max" in analysis["salary_stats"]:
+        #         max_stats = analysis["salary_stats"]["max"]
+        #         print(f"- Salaire maximum moyen: {max_stats['mean']:.2f}")
+        #         print(f"- Salaire maximum médian: {max_stats['median']:.2f}")
 
-        # Sauvegarder l'analyse dans un fichier JSON
-        analysis_filepath = os.path.join(
-            output_dir, f"analysis_{datetime.now().strftime('%Y%m%d')}.json"
-        )
-        with open(analysis_filepath, "w", encoding="utf-8") as f:
-            json.dump(analysis, f, indent=2, default=str)
-        print(f"\nAnalyse complète sauvegardée dans {analysis_filepath}")
+        # # Sauvegarder l'analyse dans un fichier JSON
+        # analysis_filepath = os.path.join(
+        #     output_dir, f"analysis_{datetime.now().strftime('%Y%m%d')}.json"
+        # )
+        # with open(analysis_filepath, "w", encoding="utf-8") as f:
+        #     json.dump(analysis, f, indent=2, default=str)
+        # print(f"\nAnalyse complète sauvegardée dans {analysis_filepath}")
 
 
 if __name__ == "__main__":
