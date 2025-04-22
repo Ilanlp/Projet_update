@@ -1,0 +1,152 @@
+nom,type
+Python,Language de programmation
+Java,Language de programmation
+JavaScript,Language de programmation
+TypeScript,Language de programmation
+SQL,Language de programmation
+R,Language de programmation
+C#,Language de programmation
+C++,Language de programmation
+Go,Language de programmation
+Rust,Language de programmation
+Django,Framework
+Flask,Framework
+Spring,Framework
+React,Framework
+Angular,Framework
+Vue.js,Framework
+Node.js,Framework
+Express.js,Framework
+TensorFlow,Framework
+PyTorch,Framework
+Scikit-learn,Framework
+Hadoop,Big Data
+Spark,Big Data
+Kafka,Big Data
+Airflow,Big Data
+Docker,DevOps
+Kubernetes,DevOps
+Terraform,DevOps
+Ansible,DevOps
+Jenkins,DevOps
+Git,DevOps
+AWS,Cloud
+Azure,Cloud
+GCP,Cloud
+Oracle,Base de données
+PostgreSQL,Base de données
+MySQL,Base de données
+MongoDB,Base de données
+Redis,Base de données
+Elasticsearch,Base de données
+Cassandra,Base de données
+Tableau,BI
+Power BI,BI
+Qlik,BI
+Looker,BI
+SAP,ERP
+Salesforce,CRM
+Jira,Gestion de projet
+Confluence,Gestion de projet
+Trello,Gestion de projet
+GitLab,Gestion de projet
+GitHub,Gestion de projet
+Linux,Système d'exploitation
+Windows,Système d'exploitation
+macOS,Système d'exploitation
+iOS,Mobile
+Android,Mobile
+React Native,Mobile
+Flutter,Mobile
+Swift,Mobile
+Kotlin,Mobile
+HTML,Web
+CSS,Web
+Bootstrap,Web
+Sass,Web
+Less,Web
+Webpack,Web
+Babel,Web
+Jest,Test
+Selenium,Test
+Cypress,Test
+JUnit,Test
+PyTest,Test
+Numpy,Data Science
+Pandas,Data Science
+Matplotlib,Data Science
+Seaborn,Data Science
+OpenCV,Data Science
+NLTK,Data Science
+SpaCy,Data Science
+BERT,Data Science
+GPT,Data Science
+LLM,Data Science
+MLOps,Data Science
+Data Engineering,Data Science
+Data Analysis,Data Science
+Data Visualization,Data Science
+Machine Learning,Data Science
+Deep Learning,Data Science
+Computer Vision,Data Science
+Natural Language Processing,Data Science
+Time Series Analysis,Data Science
+A/B Testing,Data Science
+Statistics,Data Science
+Data Mining,Data Science
+ETL,Data Science
+Data Warehousing,Data Science
+Data Modeling,Data Science
+Data Quality,Data Science
+Data Governance,Data Science
+Data Security,Data Science
+Data Privacy,Data Science
+Microservices,Architecture
+REST API,Architecture
+GraphQL,Architecture
+SOA,Architecture
+Event-Driven Architecture,Architecture
+Serverless,Architecture
+CI/CD,DevOps
+Monitoring,DevOps
+Logging,DevOps
+Alerting,DevOps
+Performance Optimization,DevOps
+Security,DevOps
+Networking,Infrastructure
+Virtualization,Infrastructure
+Load Balancing,Infrastructure
+High Availability,Infrastructure
+Disaster Recovery,Infrastructure
+Backup,Infrastructure
+Storage,Infrastructure
+Virtual Machines,Infrastructure
+Containers,Infrastructure
+Orchestration,Infrastructure
+Configuration Management,Infrastructure
+Infrastructure as Code,Infrastructure
+Cloud Architecture,Cloud
+Cloud Security,Cloud
+Cloud Networking,Cloud
+Cloud Storage,Cloud
+Cloud Computing,Cloud
+Serverless Computing,Cloud
+Edge Computing,Cloud
+Hybrid Cloud,Cloud
+Multi-Cloud,Cloud
+Cloud Migration,Cloud
+Cloud Cost Optimization,Cloud
+Cloud Performance,Cloud
+Cloud Monitoring,Cloud
+Cloud Automation,Cloud
+Cloud Governance,Cloud
+Cloud Compliance,Cloud
+Cloud Disaster Recovery,Cloud
+Cloud Backup,Cloud
+Cloud Storage,Cloud
+Cloud Database,Cloud
+Cloud Analytics,Cloud
+Cloud AI/ML,Cloud
+Cloud IoT,Cloud
+Cloud Blockchain,Cloud
+Cloud Quantum Computing,Cloud
