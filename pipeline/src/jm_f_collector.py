@@ -7,15 +7,20 @@ en utilisant une approche par départements et périodes pour maximiser la couve
 """
 
 import os
+from os import environ
+import sys
 import json
 import csv
 import asyncio
 import logging
 import re
+import argparse
+from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Set, Any, Tuple
 
 from france_travail import FranceTravailAPI, SearchParams
+from jm_normalizer import JobDataNormalizer, NormalizedJobOffer
 
 # Configuration du logging
 logger = logging.getLogger(__name__)
@@ -45,11 +50,9 @@ class FranceTravailHistoricalCollector:
         "971", "972", "973", "974", "976"  # DOM-TOM
     ]
     
-    # Liste des domaines d'emploi pour une recherche exhaustive
-    # Ces domaines correspondent aux classifications ROME utilisées par France Travail
-    DOMAINES = [
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"
-    ]
+    # Liste des codes ROME pour une recherche exhaustive
+    # Ces codes correspondent aux classifications ROME utilisées par France Travail    
+    CODE_ROME = ["M1811","M1827","M1851","K1906","M1405"]
     
     def __init__(
         self,
@@ -91,6 +94,9 @@ class FranceTravailHistoricalCollector:
         """
         Collecte les données d'offres d'emploi et les sauvegarde en CSV
         
+        Les données sont normalisées via NormalizedJobOffer avant d'être sauvegardées.
+        Le header du CSV correspond exactement aux propriétés de NormalizedJobOffer.
+        
         Args:
             output_file: Chemin du fichier CSV de sortie
             max_months: Nombre maximum de mois à remonter dans le temps
@@ -126,17 +132,35 @@ class FranceTravailHistoricalCollector:
         time_periods = self._generate_time_periods(max_months)
         logger.info(f"Collecte des données sur {len(time_periods)} périodes temporelles")
         
+        # Obtenir la liste des noms de champs à partir du modèle
+        fieldnames = list(NormalizedJobOffer.model_fields.keys())
+        logger.info(f"Utilisation de {len(fieldnames)} champs du modèle NormalizedJobOffer pour le CSV")
+        
         # Préparer le fichier CSV
         file_exists = os.path.exists(output_file)
         has_content = False
         
         if file_exists:
-            # Vérifier si le fichier contient des données
+            # Vérifier si le fichier contient des données et si les en-têtes correspondent
             try:
                 with open(output_file, 'r', newline='', encoding='utf-8') as f:
                     reader = csv.reader(f)
                     header = next(reader, None)
                     has_content = header is not None
+                    
+                    # Vérifier si les en-têtes existants correspondent au modèle NormalizedJobOffer
+                    if has_content and set(header) != set(fieldnames):
+                        logger.warning(
+                            "Le fichier existant a un schéma différent de NormalizedJobOffer. "
+                            "Un nouveau fichier sera créé."
+                        )
+                        # Renommer le fichier existant pour le préserver
+                        import shutil
+                        backup_file = f"{output_file}.bak_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                        shutil.copy2(output_file, backup_file)
+                        logger.info(f"Fichier existant copié vers {backup_file}")
+                        has_content = False
+                    
             except Exception as e:
                 logger.warning(f"Erreur lors de la lecture du fichier existant: {e}")
                 has_content = False
@@ -144,28 +168,34 @@ class FranceTravailHistoricalCollector:
         # Mode d'ouverture: 'a' (append) si le fichier existe et a du contenu, sinon 'w' (write)
         mode = 'a' if file_exists and has_content else 'w'
         
+        # Initialiser le normalisateur une seule fois en dehors de la boucle
+        normalizer = JobDataNormalizer(
+            environ.get("ADZUNA_APP_ID"),
+            environ.get("ADZUNA_APP_KEY"),
+            environ.get("FRANCE_TRAVAIL_ID"),
+            environ.get("FRANCE_TRAVAIL_KEY"),
+        )
+        
         with open(output_file, mode, newline='', encoding='utf-8') as csv_file:
-            # Définir les noms de champs
-            fieldnames = self._get_csv_fieldnames()
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             
             # Si on est en mode écriture, écrire l'en-tête
             if mode == 'w':
                 writer.writeheader()
-                logger.info(f"En-tête CSV écrit dans {output_file}")
+                logger.info(f"En-tête CSV écrit dans {output_file} avec les champs de NormalizedJobOffer")
             else:
                 logger.info(f"Ajout des données au fichier existant {output_file}")
             
             # Parcourir les départements
             for departement in self.DEPARTEMENTS:
-                for domaine in self.DOMAINES:
+                for code_rome in self.CODE_ROME:
                     for period_start, period_end in time_periods:
                         # Convertir les dates au format attendu par France Travail (YYYY-MM-DD)
                         date_debut = period_start.strftime('%Y-%m-%d')
                         date_fin = period_end.strftime('%Y-%m-%d')
                         
                         logger.info(
-                            f"Collecte des offres pour le département '{departement}', domaine '{domaine}' "
+                            f"Collecte des offres pour le département '{departement}', codeRome '{code_rome}' "
                             f"du {date_debut} au {date_fin}"
                         )
                         
@@ -182,7 +212,7 @@ class FranceTravailHistoricalCollector:
                                 search_params = SearchParams(
                                     motsCles=search_terms,
                                     departement=departement,
-                                    domaine=domaine,
+                                    codeROME=code_rome,
                                     dateCreationMin=date_debut,
                                     dateCreationMax=date_fin,
                                     range=f"{start_index}-{start_index + self.results_per_page - 1}",
@@ -223,30 +253,80 @@ class FranceTravailHistoricalCollector:
                                         filtered_jobs.append(job)
                                         self.collected_job_ids.add(job.id)
                                 
-                                # Écrire les offres dans le CSV
+                                # Normaliser et écrire les offres dans le CSV
                                 for job in filtered_jobs:
-                                    job_dict = self._job_to_dict(job)
-                                    writer.writerow(job_dict)
-                                    csv_file.flush()  # S'assurer que les données sont écrites sur le disque
-                                    
-                                    total_for_period += 1
-                                    self.total_collected += 1
+                                    try:
+                                        # Convertir l'objet Job en dictionnaire et le normaliser
+                                        job_dict = job.model_dump()
+                                        
+                                        # Normaliser l'offre en utilisant le modèle NormalizedJobOffer
+                                        normalized_job = normalizer.normalize_france_travail_job(job_dict)
+                                        
+                                        # Convertir l'offre normalisée en dictionnaire pour l'écriture CSV
+                                        normalized_dict = normalized_job.model_dump()
+                                        
+                                        # Vérifier que toutes les clés correspondent au schéma attendu
+                                        if set(normalized_dict.keys()) != set(fieldnames):
+                                            missing_keys = set(fieldnames) - set(normalized_dict.keys())
+                                            extra_keys = set(normalized_dict.keys()) - set(fieldnames)
+                                            
+                                            if missing_keys:
+                                                logger.warning(f"Clés manquantes dans l'offre normalisée: {missing_keys}")
+                                                # Ajouter les clés manquantes avec des valeurs None
+                                                for key in missing_keys:
+                                                    normalized_dict[key] = None
+                                            
+                                            if extra_keys:
+                                                logger.warning(f"Clés supplémentaires dans l'offre normalisée: {extra_keys}")
+                                                # Supprimer les clés supplémentaires
+                                                for key in extra_keys:
+                                                    del normalized_dict[key]
+                                        
+                                        # Sanitizer toutes les valeurs textuelles du dictionnaire
+                                        for key, value in normalized_dict.items():
+                                            if isinstance(value, str):
+                                                normalized_dict[key] = self._sanitize_text(value)
+                                            elif isinstance(value, list) and all(isinstance(item, str) for item in value):
+                                                normalized_dict[key] = [self._sanitize_text(item) for item in value]
+                                                
+                                        # Écrire l'offre normalisée dans le CSV
+                                        writer.writerow(normalized_dict)
+                                        csv_file.flush()  # S'assurer que les données sont écrites sur le disque
+                                        
+                                        total_for_period += 1
+                                        self.total_collected += 1
+                                        
+                                    except Exception as job_error:
+                                        logger.error(
+                                            f"Erreur lors de la normalisation/écriture de l'offre {job.id}: {job_error}",
+                                            exc_info=True
+                                        )
+                                        # Continuer avec l'offre suivante
                                 
                                 # Log de progression
                                 logger.info(f"Ajouté {len(filtered_jobs)} nouvelles offres. "
-                                           f"Total pour cette période: {total_for_period}")
+                                        f"Total pour cette période: {total_for_period}")
                                 
                                 # Sauvegarde périodique de l'état
                                 if self.total_collected % self.checkpoint_interval == 0:
                                     self._save_checkpoint(checkpoint_file)
                                 
                                 # Vérifier s'il y a plus de résultats
-                                total_results = results.totalResultats
-                                start_index += len(jobs)
+                                # L'API France Travail ne fournit pas d'attribut 'totalResultats'
+                                # Utiliser une stratégie alternative pour la pagination
                                 
-                                # Si on a récupéré toutes les offres ou si on a atteint la limite de l'API
-                                if start_index >= total_results or start_index >= 1000:  # 1000 est souvent la limite max de l'API
+                                # Enregistrer le nombre d'offres récupérées dans cette requête
+                                current_batch_size = len(jobs)
+                                start_index += current_batch_size
+                                
+                                # Déterminer s'il faut continuer la pagination en se basant sur le nombre d'offres retournées
+                                # Si on a reçu moins que le nombre maximum demandé, c'est probablement la fin
+                                # Ou si on a atteint la limite habituelle de l'API (1000 résultats max)
+                                if current_batch_size < self.results_per_page or start_index >= 1000:
                                     has_more_results = False
+                                    logger.info(f"Fin de la pagination: {current_batch_size} < {self.results_per_page} ou limite atteinte ({start_index})")
+                                else:
+                                    logger.info(f"Continuation de la pagination: {start_index} résultats traités jusqu'à présent")
                                 
                             except Exception as e:
                                 logger.error(f"Erreur non gérée lors de la collecte: {e}", exc_info=True)
@@ -257,129 +337,9 @@ class FranceTravailHistoricalCollector:
                         # Sauvegarde de l'état à la fin de chaque période
                         self._save_checkpoint(checkpoint_file)
         
-        logger.info(f"Collecte terminée! {self.total_collected} offres d'emploi collectées au total.")
+        logger.info(f"Collecte terminée! {self.total_collected} offres d'emploi normalisées collectées au total.")
         return output_file
-    
-    def _job_to_dict(self, job: Any) -> Dict[str, Any]:
-        """
-        Convertit un objet d'offre France Travail en dictionnaire plat pour le CSV
-        
-        Args:
-            job: Objet offre France Travail
-            
-        Returns:
-            Dictionnaire avec les données de l'offre d'emploi
-        """
-        # Convertir l'objet en dictionnaire
-        job_dict = {}
-        
-        # Identifiant et informations de base
-        job_dict["id"] = job.id
-        job_dict["titre"] = job.intitule
-        job_dict["description"] = job.description
-        job_dict["date_creation"] = job.dateCreation
-        job_dict["date_actualisation"] = job.dateActualisation
-        
-        # Type de contrat
-        job_dict["type_contrat"] = job.typeContrat
-        job_dict["type_contrat_libelle"] = job.typeContratLibelle
-        
-        # Durée du travail
-        job_dict["duree_travail"] = job.dureeTravail
-        job_dict["duree_travail_libelle"] = job.dureeTravailLibelle
-        job_dict["duree_travail_libelle_converti"] = job.dureeTravailLibelleConverti
-        
-        # Expérience
-        job_dict["experience_exige"] = job.experienceExige
-        job_dict["experience_libelle"] = job.experienceLibelle
-        
-        # Localisation
-        if job.lieuTravail:
-            job_dict["lieu_travail_libelle"] = job.lieuTravail.libelle
-            job_dict["lieu_travail_code_postal"] = job.lieuTravail.codePostal
-            job_dict["lieu_travail_commune"] = job.lieuTravail.commune
-            job_dict["lieu_travail_latitude"] = job.lieuTravail.latitude
-            job_dict["lieu_travail_longitude"] = job.lieuTravail.longitude
-        
-        # Entreprise
-        if job.entreprise:
-            job_dict["entreprise_nom"] = job.entreprise.nom
-            job_dict["entreprise_description"] = job.entreprise.description
-            
-        # Qualifications et compétences
-        job_dict["qualificationLibelle"] = job.qualificationLibelle
-        
-        job_dict["competences"] = ""
-        if job.competences:
-            competences = []
-            for comp in job.competences:
-                if comp.get("libelle"):
-                    competences.append(comp["libelle"])
-            job_dict["competences"] = "; ".join(competences)
-        
-        # Salaire
-        if job.salaire:
-            job_dict["salaire_libelle"] = job.salaire.libelle
-            job_dict["salaire_min"] = job.salaire.min
-            job_dict["salaire_max"] = job.salaire.max
-            job_dict["salaire_complement"] = job.salaire.complement
-        
-        # Formation
-        if job.formation:
-            job_dict["formation_libelle"] = job.formation.libelle
-            job_dict["formation_code"] = job.formation.codeFormation
-            job_dict["formation_domaine"] = job.formation.domaineLibelle
-        
-        # URLs et contact
-        if job.origineOffre and job.origineOffre.urlOrigine:
-            job_dict["url_origine"] = job.origineOffre.urlOrigine
-            
-        if job.contact:
-            if job.contact.urlPostulation:
-                job_dict["url_postulation"] = job.contact.urlPostulation
-            
-            contact_infos = []
-            if job.contact.nom:
-                contact_infos.append(f"Nom: {job.contact.nom}")
-            if job.contact.telephone:
-                contact_infos.append(f"Tél: {job.contact.telephone}")
-            if job.contact.email:
-                contact_infos.append(f"Email: {job.contact.email}")
-            if job.contact.commentaire:
-                contact_infos.append(f"Commentaire: {job.contact.commentaire}")
-            
-            job_dict["contact_info"] = " | ".join(contact_infos)
-        
-        # Métadonnées
-        job_dict["rome_code"] = job.romeCode
-        job_dict["rome_libelle"] = job.romeLibelle
-        job_dict["accessible_TH"] = job.accessibleTH
-        job_dict["qualite_paris_emploi"] = job.qualitesParisTjm
-        
-        return job_dict
-    
-    def _get_csv_fieldnames(self) -> List[str]:
-        """
-        Définit les noms de champs pour le CSV
-        
-        Returns:
-            Liste des noms de colonnes pour le CSV
-        """
-        return [
-            "id", "titre", "description", "date_creation", "date_actualisation",
-            "type_contrat", "type_contrat_libelle", 
-            "duree_travail", "duree_travail_libelle", "duree_travail_libelle_converti",
-            "experience_exige", "experience_libelle",
-            "lieu_travail_libelle", "lieu_travail_code_postal", "lieu_travail_commune", 
-            "lieu_travail_latitude", "lieu_travail_longitude",
-            "entreprise_nom", "entreprise_description",
-            "qualificationLibelle", "competences",
-            "salaire_libelle", "salaire_min", "salaire_max", "salaire_complement",
-            "formation_libelle", "formation_code", "formation_domaine",
-            "url_origine", "url_postulation", "contact_info",
-            "rome_code", "rome_libelle", "accessible_TH", "qualite_paris_emploi"
-        ]
-    
+
     def _generate_time_periods(self, max_months: int) -> List[Tuple[datetime, datetime]]:
         """
         Génère des périodes temporelles d'un mois, en remontant dans le temps
@@ -448,3 +408,114 @@ class FranceTravailHistoricalCollector:
         text = re.sub(r"[\x00-\x1F\x7F]", "", text)
         
         return text
+
+async def main():
+    """Fonction principale qui initialise et exécute le collecteur historique France Travail"""
+    
+    # Analyse des arguments de ligne de commande
+    parser = argparse.ArgumentParser(description='Collecteur historique de données France Travail')
+    parser.add_argument(
+        '--output', 
+        type=str, 
+        default=f'data/france_travail_jobs_{datetime.now().strftime("%Y%m%d")}.csv',
+        help='Chemin du fichier de sortie CSV'
+    )
+    parser.add_argument(
+        '--months', 
+        type=int, 
+        default=12,
+        help='Nombre de mois à remonter dans le passé'
+    )
+    parser.add_argument(
+        '--search', 
+        type=str, 
+        default=None,
+        help='Termes de recherche optionnels'
+    )
+    parser.add_argument(
+        '--results-per-page', 
+        type=int, 
+        default=150,
+        help='Nombre de résultats par page (max 150)'
+    )
+    parser.add_argument(
+        '--checkpoint-interval', 
+        type=int, 
+        default=100,
+        help='Intervalle de sauvegarde de l\'état (nombre d\'offres)'
+    )
+    parser.add_argument(
+        '--rate-limit-delay', 
+        type=float, 
+        default=1.0,
+        help='Délai entre les requêtes API en secondes'
+    )
+    
+    args = parser.parse_args()
+    
+    # Charger les variables d'environnement
+    load_dotenv()
+    # Récupérer les identifiants d'API depuis les variables d'environnement
+    adzuna_app_id = environ.get("ADZUNA_APP_ID")
+    adzuna_app_key = environ.get("ADZUNA_APP_KEY")
+    france_travail_id = environ.get("FRANCE_TRAVAIL_ID")
+    france_travail_key = environ.get("FRANCE_TRAVAIL_KEY")
+    
+    # Vérifier que les clés API sont bien définies
+    required_env_vars = [
+        'FRANCE_TRAVAIL_ID',
+        'FRANCE_TRAVAIL_KEY',
+        'ADZUNA_APP_ID',  # Nécessaire pour le normalisateur
+        'ADZUNA_APP_KEY'  # Nécessaire pour le normalisateur
+    ]
+    
+    missing_vars = [var for var in required_env_vars if not environ.get(var)]
+    if missing_vars:
+        logger.error(f"Variables d'environnement manquantes: {', '.join(missing_vars)}")
+        logger.error("Veuillez définir ces variables dans un fichier .env ou dans l'environnement")
+        return 1
+    
+    # Création du client France Travail
+    try:
+        france_travail_api = FranceTravailAPI(
+            client_id=environ.get('FRANCE_TRAVAIL_ID'),
+            client_secret=environ.get('FRANCE_TRAVAIL_KEY')
+        )
+        
+        # Initialisation du collecteur
+        collector = FranceTravailHistoricalCollector(
+            france_travail_api=france_travail_api,
+            results_per_page=args.results_per_page,
+            rate_limit_delay=args.rate_limit_delay,
+            checkpoint_interval=args.checkpoint_interval
+        )
+        
+        # Lancement de la collecte
+        logger.info(f"Démarrage de la collecte pour {args.months} mois")
+        if args.search:
+            logger.info(f"Termes de recherche: {args.search}")
+        logger.info(f"Fichier de sortie: {args.output}")
+        
+        output_file = await collector.collect_data(
+            output_file=args.output,
+            max_months=args.months,
+            search_terms=args.search
+        )
+        
+        logger.info(f"Collecte terminée avec succès! Données enregistrées dans {output_file}")
+        return 0
+        
+    except Exception as e:
+        logger.error(f"Erreur lors de l'exécution du collecteur: {e}", exc_info=True)
+        return 1
+
+if __name__ == "__main__":
+    try:
+        exit_code = asyncio.run(main())
+        sys.exit(exit_code)
+    except KeyboardInterrupt:
+        logger.info("Collecte interrompue par l'utilisateur")
+        sys.exit(130)
+    except Exception as e:
+        logger.exception(f"Erreur non gérée: {e}")
+        sys.exit(1)

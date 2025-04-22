@@ -187,6 +187,10 @@ class ResultatRecherche(FranceTravailModel):
 
 # Classes pour les paramètres de recherche
 class SearchParams(FranceTravailModel):
+    """
+    Modèle pour les paramètres de recherche
+    Gère également la conversion des énumérations
+    """
     range: Optional[str] = Field(default="0-49", description="Pagination des données. Format : p-d, p est l'index du premier élément, d est l'index du dernier élément")
     sort: Optional[Union[str, int]] = Field(default=1, description="Tri des résultats (0: pertinence, 1: date, 2: distance)")
     domaine: Optional[str] = Field(default=None, description="Domaine de l'offre")
