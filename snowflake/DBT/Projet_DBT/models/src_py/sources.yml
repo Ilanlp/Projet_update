@@ -1,0 +1,25 @@
+# models/sources.yml
+version: 2
+
+sources:
+  - name: dim_tables
+    database: PFR
+    schema: PUBLIC
+    tables:
+      - name: faits_offres
+        identifier: FAITS_OFFRES
+        description: "Table des faits à implémenter"
+      - name: dim_lieu
+        identifier: DIM_LIEU
+        description: "Table des dimensions géographiques (code postal, ville…)"
+      - name: dim_contrat
+        identifier: DIM_CONTRAT
+        description: "Table des dimensions des contrats"
+
+  - name: raw_tables
+    database: PFR
+    schema: RAW
+    tables:
+      - name: analyses
+        identifier: ANALYSES
+        description: "Table d’analyses brutes des offres"

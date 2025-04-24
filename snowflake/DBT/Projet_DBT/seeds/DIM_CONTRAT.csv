@@ -1,0 +1,9 @@
+id_contrat,type_contrat
+1,CDI
+2,CDD
+3,Intérim
+4,Stage
+5,Freelance
+6,Alternance
+7,Temps Plein
+8,Temps Partiel
