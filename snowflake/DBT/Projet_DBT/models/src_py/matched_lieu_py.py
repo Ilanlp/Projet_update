@@ -60,7 +60,7 @@ def model(dbt, session):
 
     # 3. Fenêtre pour ne garder que le meilleur match par id,
     #    ou la ligne brute si aucun match (flags=0, distance_km=NULL)
-    w = Window.partition_by("id").order_by(
+    w = Window.partition_by("id_local").order_by(
         col("is_coord").desc(),      # 1) matching géographique
         col("distance_km").asc(),    #    + la plus petite distance
         col("is_name").desc(),       # 2) matching ville
