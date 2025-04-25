@@ -38,6 +38,8 @@ models:
         materialized: table  
       matched_contrat_py:
         materialized: table
+      matched_lieu_py2:
+        materialized: table
     
                
     
