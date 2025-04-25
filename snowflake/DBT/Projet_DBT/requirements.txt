@@ -1,0 +1,2 @@
+pip install dbt core
+pip install python_snowflake_connector
