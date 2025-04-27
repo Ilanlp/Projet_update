@@ -20,6 +20,7 @@ def model(dbt, session):
     name_match   = lower(raw["location_name"]).contains(lower(dim_lieu["ville"]))
     dept_match   = lower(raw["location_name"]).contains(lower(dim_lieu["departement"]))
     region_match = lower(raw["location_name"]).contains(lower(dim_lieu["region"]))
+    pays_match = lower(raw["location_name"]).contains(lower(dim_lieu["pays"]))
 
     # 2. Matching géographique (Haversine)
     lat1 = radians(raw["latitude"]);  lon1 = radians(raw["longitude"])
@@ -30,18 +31,27 @@ def model(dbt, session):
     distance_km = lit(6371) * c
     coord_match = distance_km < lit(10)
 
-    # 3. Fallback “France” → Paris
-    france_exact  = lower(raw["location_name"]) == lit("france")
-    france_match  = france_exact & (lower(dim_lieu["ville"]) == lit("paris"))
 
     # 4. Fallback code département (2 chiffres)
-    dept_code = expr("regexp_substr(location_name, '^(\d{2})')")
+    #dept_code = expr("regexp_substr(location_name, '\\d{2}')")
+    dept_code = expr(
+    """
+    regexp_substr(
+      cast(location_name AS string),
+      '\\s*([0-9]{2})\\s*',    -- tolère espaces avant/après
+      1,                        -- position de départ
+      1,                        -- 1ère occurrence
+      'e',                      -- mode extraction
+      1                         -- renvoie seulement le groupe 1 (les deux chiffres)
+    )
+    """
+)
     dept_code_match = dept_code.is_not_null() & (dim_lieu["code_postal"].substr(1,2) == dept_code)
 
     # 5. Jointure LEFT avec tous les critères
     join_cond = (
         coord_match
-        | france_match
+        | pays_match
         | dept_code_match
         | name_match
         | dept_match
@@ -58,7 +68,7 @@ def model(dbt, session):
                dim_lieu["id_lieu"],
                dim_lieu["ville"].alias("dim_ville"),
                when(coord_match,     1).otherwise(0).alias("is_coord"),
-               when(france_match,    1).otherwise(0).alias("is_france"),
+               when(pays_match,    1).otherwise(0).alias("is_france"),
                when(dept_code_match, 1).otherwise(0).alias("is_dept_code"),
                when(name_match,      1).otherwise(0).alias("is_name"),
                when(dept_match,      1).otherwise(0).alias("is_dept"),
@@ -72,11 +82,11 @@ def model(dbt, session):
     w = Window.partition_by("id_local").order_by(
         col("is_coord").desc(),
         col("distance_km").asc(),
-        col("is_france").desc(),
-        col("is_dept_code").desc(),
         col("is_name").desc(),
+        col("is_dept_code").desc(),
         col("is_dept").desc(),
         col("is_region").desc(),
+        col("is_france").desc(),
         col("population").desc()
     )
 

@@ -32,14 +32,22 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   projet_dbt:
     +python: true
-    src_py:                      # sous-répertoire `models/src/`
-      # Les étapes intermédiaires
-      matched_lieu_py:
-        materialized: table  
-      matched_contrat_py:
-        materialized: table
-      matched_lieu_py2:
-        materialized: table
+    src:
+      src_py:   
+        +materialized: table
+        +schema: silver                   
+        # Les étapes intermédiaires
+        matched_lieu_py:
+        matched_contrat_py:
+        matched_lieu_py2:
+          
+      src_sql:
+        +materialized: table
+        +schema: SILVER                       # sous-répertoire `models/src/`
+        # Les étapes intermédiaires
+        matched_lieu_sql:
+          materialized: table  
+      
     
                
     
@@ -47,6 +55,7 @@ models:
       # Le modèle final
       fait_offres_py:            # nom du fichier sans extension
         materialized: incremental
+        schema: GOLD_ETOILE
         unique_key: id_local
         incremental_strategy: merge
         merge_update_columns: ['id_lieu', 'id_contrat']  # ne fait que des INSERT, jamais de UPDATE

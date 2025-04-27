@@ -16,7 +16,7 @@ sources:
         identifier: DIM_CONTRAT
         description: "Table des dimensions des contrats"
 
-  - name: raw_tables
+  - name: raw
     database: PFR
     schema: RAW
     tables:
