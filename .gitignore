@@ -179,3 +179,5 @@ logs
 .DS_Store
 all-in-one.py
 ia.md 
+seeds/*.csv
+.cursor/
