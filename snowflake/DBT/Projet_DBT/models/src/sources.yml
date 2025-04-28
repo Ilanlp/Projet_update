@@ -15,8 +15,11 @@ sources:
       - name: dim_contrat
         identifier: DIM_CONTRAT
         description: "Table des dimensions des contrats"
+      - name: dim_entreprise2
+        identifier: dim_entreprise2
+        description: "Table des dimensions des entreprise"
 
-  - name: raw_tables
+  - name: raw
     database: PFR
     schema: RAW
     tables:
