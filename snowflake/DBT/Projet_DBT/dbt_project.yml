@@ -35,11 +35,11 @@ models:
     src:
       src_py:   
         +materialized: table
-        +schema: silver                   
+        +schema: SILVER                   
         # Les étapes intermédiaires
         matched_lieu_py:
         matched_contrat_py:
-        matched_lieu_py2:
+        matched_entreprise_py:
           
       src_sql:
         +materialized: table
