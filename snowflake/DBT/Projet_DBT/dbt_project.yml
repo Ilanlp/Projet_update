@@ -42,7 +42,7 @@ models:
         matched_entreprise_py:
           
       src_sql:
-        +materialized: table
+        +materialized: ephemeral
         +schema: SILVER                       # sous-répertoire `models/src/`
         # Les étapes intermédiaires
         matched_lieu_sql:
