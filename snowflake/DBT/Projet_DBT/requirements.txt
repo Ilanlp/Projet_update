@@ -1,5 +1,4 @@
-pip install dbt core
-pip install python_snowflake_connector
-# activez votre venv, puis :
-pip install "snowflake-snowpark-python"
+dbt-core
+snowflake-connector-python
+snowflake-snowpark-python
 
