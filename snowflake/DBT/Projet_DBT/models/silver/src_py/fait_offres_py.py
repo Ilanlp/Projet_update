@@ -12,7 +12,7 @@ def model(dbt, session):
     )
 
     # 2️⃣ Charger la source RAW
-    raw = session.table('RAW.ANALYSES')
+    raw = session.table('RAW.RAW_OFFRE')
 
     # 3️⃣ Récupérer directement les DataFrames des refs
     lieu_df    = dbt.ref('matched_lieu_py')

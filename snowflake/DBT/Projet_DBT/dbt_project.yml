@@ -1,4 +1,3 @@
-
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
@@ -32,39 +31,49 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   projet_dbt:
     +python: true
-    src:
-      src_py:   
+    
+    # Modèles Silver
+    silver:
+      +materialized: table
+      +schema: SILVER
+      
+      src_py:
         +materialized: table
-        +schema: SILVER                   
-        # Les étapes intermédiaires
         matched_lieu_py:
         matched_contrat_py:
         matched_entreprise_py:
-          
-      src_sql:
-        +materialized: ephemeral
-        +schema: SILVER                       # sous-répertoire `models/src/`
-        # Les étapes intermédiaires
-        matched_lieu_sql:
-          materialized: table  
       
+      src_sql:
+        +materialized: table
+        matched_lieu_sql:
     
-               
-    
-      # … ajoutez un fichier par matching
-      # Le modèle final
-      fait_offres_py:            # nom du fichier sans extension
+    # Modèles Gold
+    gold:
+      +materialized: table
+      +schema: GOLD
+      
+      fait_offres_py:
         materialized: incremental
-        schema: GOLD_ETOILE
         unique_key: id_local
         incremental_strategy: merge
-        merge_update_columns: ['id_lieu', 'id_contrat']  # ne fait que des INSERT, jamais de UPDATE
-        post-hook:
-            - "DROP TABLE IF EXISTS {{ ref('matched_lieu_py') }}"
-            - "DROP TABLE IF EXISTS {{ ref('matched_contrat_py') }}"
+        merge_update_columns: ['id_lieu', 'id_contrat']
 
-        
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view
+
+seeds:
+  projet_dbt:
+    # Seeds dans le schéma RAW
+    RAW_OFFRE:
+      +schema: RAW
     
+    # Seeds dans le schéma SILVER
+    DIM_LIEU:
+      +schema: SILVER
+    
+    DIM_CONTRAT:
+      +schema: SILVER
+    
+    DIM_ENTREPRISE:
+      +schema: SILVER

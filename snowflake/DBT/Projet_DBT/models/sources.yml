@@ -6,27 +6,28 @@ sources:
     database: PFR
     schema: SILVER
     tables:
-      - name: dim_lieu
+      - name: DIM_LIEU
         identifier: DIM_LIEU
         description: "Table des dimensions géographiques (code postal, ville…)"
-      - name: dim_contrat
+      - name: DIM_CONTRAT
         identifier: DIM_CONTRAT
         description: "Table des dimensions des contrats"
-      - name: dim_entreprise
-        identifier: dim_entreprise
+      - name: DIM_ENTREPRISE
+        identifier: DIM_ENTREPRISE
         description: "Table des dimensions des entreprises"
+
+  - name: gold_tables
+    database: PFR
     schema: GOLD
     tables:
       - name: FAIT_OFFRE
         identifier: FAIT_OFFRE
         description: "Table des faits à implémenter"
 
-
-
-  - name: raw
+  - name: RAW
     database: PFR
     schema: RAW
     tables:
       - name: RAW_OFFRE
         identifier: RAW_OFFRE
-        description: "Table d’analyses brutes des offres"
+        description: "Table d'analyses brutes des offres"

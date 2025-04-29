@@ -6,8 +6,8 @@ from snowflake.snowpark.functions import (
 from snowflake.snowpark.window import Window
 
 def model(dbt, session):
-    raw         = session.table("RAW.ANALYSES")
-    dim_contrat = session.table("PUBLIC.DIM_CONTRAT")
+    raw         = session.table("RAW.RAW_OFFRE")
+    dim_contrat = session.table("SILVER.DIM_CONTRAT")
 
     # 1) Matchings exact & partiel
     exact_match_raw   = lower(raw["contract_type"]) \
