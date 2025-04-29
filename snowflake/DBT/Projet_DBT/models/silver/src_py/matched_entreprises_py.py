@@ -1,33 +1,48 @@
-from snowflake.snowpark.functions import col, lower, lit, when, row_number
+from snowflake.snowpark.functions import (
+    split, lower, when, lit, col, row_number, element_at,trim,translate
+)
 from snowflake.snowpark.window import Window
 
 def model(dbt, session):
     raw = session.table("RAW.RAW_OFFRE")
     dim = session.table("SILVER.DIM_ENTREPRISE")
 
-    # 1) Matching exact et partiel (insensible à la casse)
+      # 0) Nettoyer les espaces en début/fin
+    raw_clean = trim(raw["company_name"])   # ou ltrim(raw["company_name"])
+    dim_clean = trim(dim["nom_entreprise"])
+
+
+    # 1) Extraction du premier mot (élément 1 de l'array)
+    raw_first = element_at(split(raw_clean, lit(" ")), 0)
+    dim_first = element_at(split(dim_clean, lit(" ")), 0)
+
+    # 2) Conditions de matching
     exact_match = lower(raw["company_name"]) == lower(dim["nom_entreprise"])
-    partial_match = lower(raw["company_name"]).contains(lower(dim["nom_entreprise"]))
-    partial_match_bis = lower(dim["nom_entreprise"]).contains(lower(raw["company_name"]))
+    first_word_match = lower(dim_first) == lower(raw_first)
+    
+    
 
-    join_cond = exact_match | partial_match | partial_match_bis
+    # Création de la condition de jointure
+    join_cond = exact_match | first_word_match
 
+    # Jointure avec les tables
     df = (
         raw.join(dim, join_cond, how="left")
            .select(
                raw["id"],
                raw["id_local"],
                raw["company_name"],
+               raw_first,
+               dim_first,
                dim["SIREN"],
-               dim["nom_entreprise"].alias("dim_nom_entreprise"),
+               dim["nom_entreprise"].alias("nom_entreprise"),
                when(exact_match, lit(1)).otherwise(lit(0)).alias("is_exact"),
-               when(partial_match, lit(1)).otherwise(lit(0)).alias("is_partial"),
-               when(partial_match_bis, lit(1)).otherwise(lit(0)).alias("is_partial_bis"),
+               when(first_word_match, lit(1)).otherwise(lit(0)).alias("is_first_word"),
                dim["Categorie_entreprise"]
            )
     )
 
-    # 2) Priorité catégorie entreprise
+    # 3) Priorité catégorie entreprise
     priority = when(df["Categorie_entreprise"] == "GE",  lit(1)) \
                .when(df["Categorie_entreprise"] == "ETI", lit(2)) \
                .when(df["Categorie_entreprise"] == "PME", lit(3)) \
@@ -36,19 +51,17 @@ def model(dbt, session):
 
     df = df.with_column("priority", priority)
 
-    # 3) Fenêtre de ranking : exact > partiel > catégorie
+    # 4) Fenêtre de ranking : exact > premier mot > partiel > catégorie
     w = Window.partition_by("id_local").order_by(
-        col("priority").asc(),
         col("is_exact").desc(),
-        col("is_partial_bis").desc(),
-        col("is_partial").desc()
-        
+        col("is_first_word").desc(),
+        col("priority").asc()
     )
 
     best = (
         df.with_column("rn", row_number().over(w))
           .filter(col("rn") == 1)
-          .drop("rn", "priority", "is_exact", "is_partial")
+          .drop("rn", "priority", "is_exact", "is_first_word")
     )
 
     return best
