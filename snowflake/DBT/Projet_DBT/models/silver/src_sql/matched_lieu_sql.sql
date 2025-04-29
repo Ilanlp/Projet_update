@@ -12,7 +12,7 @@ with raw as (
         location_name,
         latitude,
         longitude
-    from {{ source('raw', 'raw_offre') }}
+    from {{ source('RAW', 'RAW_OFFRE') }}
 ),
 
 -- Table des lieux
@@ -27,7 +27,7 @@ dim_lieu as (
         longitude as lon2,
         population,
         code_postal
-    from {{ source('dim_tables', 'dim_lieu') }}
+    from {{ source('dim_tables', 'DIM_LIEU') }}
 ),
 
 -- Calcul des différents critères de matching
