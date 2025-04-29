@@ -2,8 +2,8 @@ from snowflake.snowpark.functions import col, lower, lit, when, row_number
 from snowflake.snowpark.window import Window
 
 def model(dbt, session):
-    raw = session.table("RAW.ANALYSES")
-    dim = session.table("PUBLIC.DIM_ENTREPRISE2")
+    raw = session.table("RAW.RAW_OFFRE")
+    dim = session.table("SILVER.DIM_ENTREPRISE")
 
     # 1) Matching exact et partiel (insensible à la casse)
     exact_match = lower(raw["company_name"]) == lower(dim["nom_entreprise"])
