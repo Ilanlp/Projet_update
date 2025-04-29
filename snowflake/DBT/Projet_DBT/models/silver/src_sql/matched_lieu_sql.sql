@@ -12,7 +12,7 @@ with raw as (
         location_name,
         latitude,
         longitude
-    from {{ source('raw', 'analyses') }}
+    from {{ source('raw', 'raw_offre') }}
 ),
 
 -- Table des lieux

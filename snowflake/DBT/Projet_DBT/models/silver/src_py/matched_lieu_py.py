@@ -13,8 +13,8 @@ from snowflake.snowpark.window import Window
 # - fallback code département → ville la plus peuplée du code postal
 
 def model(dbt, session):
-    raw      = session.table("RAW.ANALYSES")
-    dim_lieu = session.table("PUBLIC.DIM_LIEU")
+    raw      = session.table("RAW.RAW_OFFRE")
+    dim_lieu = session.table("SILVER.DIM_LIEU")
 
     # 1. Matching textuel existant
     name_match   = lower(raw["location_name"]).contains(lower(dim_lieu["ville"]))
