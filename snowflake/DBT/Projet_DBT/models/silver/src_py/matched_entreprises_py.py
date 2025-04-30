@@ -4,7 +4,7 @@ from snowflake.snowpark.functions import (
 from snowflake.snowpark.window import Window
 
 def model(dbt, session):
-    raw = session.table("RAW.RAW_OFFRE")
+    raw = session.table("RAW.RAW_OFFRE_BIS")
     dim = session.table("SILVER.DIM_ENTREPRISE")
 
       # 0) Nettoyer les espaces en début/fin

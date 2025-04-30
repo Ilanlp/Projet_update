@@ -72,6 +72,12 @@ seeds:
     DIM_LIEU:
       +schema: SILVER
     
+    DIM_TELETRAVAIL:
+      +schema: SILVER
+
+    DIM_SENIORITE:
+      +schema: SILVER
+    
     DIM_CONTRAT:
       +schema: SILVER
     
