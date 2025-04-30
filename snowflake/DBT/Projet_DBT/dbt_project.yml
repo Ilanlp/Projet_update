@@ -46,6 +46,9 @@ models:
       src_sql:
         +materialized: table
         matched_lieu_sql:
+        matched_domaine:
+        matched_competence:
+
     
     # Modèles Gold
     gold:
@@ -67,6 +70,10 @@ seeds:
     # Seeds dans le schéma RAW
     RAW_OFFRE:
       +schema: RAW
+
+    RAW_METIERS:
+      +schema: RAW
+
     
     # Seeds dans le schéma SILVER
     DIM_LIEU:
@@ -76,4 +83,19 @@ seeds:
       +schema: SILVER
     
     DIM_ENTREPRISE:
+      +schema: SILVER
+
+    DIM_DOMAINES:
+      +schema: SILVER
+
+    DIM_COMPETENCES:
+      +schema: SILVER
+
+    DIM_APPELLATIONS:
+      +schema: SILVER
+
+    DIM_ROMECODES:
+      +schema: SILVER
+
+    STOPWORDS_FR:
       +schema: SILVER
