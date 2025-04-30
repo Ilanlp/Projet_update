@@ -121,6 +121,7 @@ class JobDataNormalizer:
             "Expérience souhaitée": "Expérience souhaitée",
             "Expérience exigée": "Expérience exigée",
         }
+        self.appellations = self.set_appellations()
 
     async def close(self):
         """Ferme les connexions des clients API"""
@@ -132,6 +133,10 @@ class JobDataNormalizer:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
+
+    def set_appellations(self):
+        appellations = pd.read_csv("./../../data/RAW_METIERS.csv", sep=',')
+        self.get_appellations = appellations
 
     async def fetch_adzuna_jobs(
         self,
