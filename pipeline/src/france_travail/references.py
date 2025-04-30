@@ -28,7 +28,7 @@ client_secret = os.getenv("FRANCE_TRAVAIL_KEY")
 OUTPUT_DIR = os.getenv("OUTPUT_DIR")
 
 path_absolu = Path(__file__).resolve()
-OUTPUT_DIR = f"{path_absolu.parents[3]}/{OUTPUT_DIR}"
+OUTPUT_DIR = f"{path_absolu.parents[1]}/{OUTPUT_DIR}"
 
 # Initialisation avec votre token
 api = FranceTravailAPI(client_id, client_secret)
