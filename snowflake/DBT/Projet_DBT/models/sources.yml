@@ -15,6 +15,19 @@ sources:
       - name: DIM_ENTREPRISE
         identifier: DIM_ENTREPRISE
         description: "Table des dimensions des entreprises"
+      - name: DIM_DOMAINES
+        identifier: DIM_DOMAINES
+        description: "Table des dimensions des domaines"
+      - name: DIM_COMPETENCES
+        identifier: DIM_COMPETENCES
+        description: "Table des dimensions des competences"
+      - name: DIM_ROMECODES
+        identifier: DIM_ROMECODES
+        description: "Table des dimensions des romecodes"
+      - name: DIM_APPELLATIONS
+        identifier: DIM_APPELLATIONS
+        description: "Table des dimensions des appelations"
+
 
   - name: gold_tables
     database: PFR
@@ -31,3 +44,8 @@ sources:
       - name: RAW_OFFRE
         identifier: RAW_OFFRE
         description: "Table d'analyses brutes des offres"
+
+      - name: RAW_METIERS
+        identifier: RAW_METIERS
+        description: "Table brutes des metiers"
+
