@@ -135,7 +135,7 @@ class JobDataNormalizer:
         await self.close()
 
     def set_appellations(self):
-        appellations = pd.read_csv("./../../data/RAW_METIERS.csv", sep=',')
+        appellations = pd.read_csv("./data/RAW_METIERS.csv", sep=',')
         self.get_appellations = appellations
 
     async def fetch_adzuna_jobs(
@@ -935,7 +935,7 @@ async def main():
     output = environ.get("OUTPUT_DIR", "data/")
 
     path_absolu = Path(__file__).resolve()
-    output_dir = f"{path_absolu.parents[2]}/{output}"
+    output_dir = f"{path_absolu.parents[0]}/{output}"
     
     os.makedirs(output_dir, exist_ok=True)
 
