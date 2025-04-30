@@ -19,7 +19,7 @@ async def main():
     path = os.getenv("OUTPUT_DIR")
 
     path_absolu = Path(__file__).resolve()
-    output_path = f"{path_absolu.parents[3]}/{path}"
+    output_path = f"{path_absolu.parents[1]}/{path}"
 
     client = AdzunaClient(app_id, app_key)
 
