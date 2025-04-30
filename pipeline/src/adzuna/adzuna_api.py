@@ -6,6 +6,7 @@ Version améliorée qui évite les conversions automatiques problématiques des 
 from typing import List
 import httpx
 from pydantic import TypeAdapter
+import logging
 
 from .models import (
     JobSearchResults,
@@ -23,6 +24,9 @@ from .models import (
     SearchParams,
     Categories,
 )
+
+# Configuration du logging
+logger = logging.getLogger(__name__)
 
 
 class AdzunaClientError(Exception):
@@ -87,6 +91,9 @@ class AdzunaClient:
         api_params.update(params)
 
         try:
+            logger.info(
+                f"Requête de l'api adzuna : {endpoint} {api_params}"
+            )
             response = await self.client.get(endpoint, params=api_params)
             response.raise_for_status()
             return response.json()
