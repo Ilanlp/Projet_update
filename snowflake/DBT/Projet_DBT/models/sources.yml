@@ -44,8 +44,7 @@ sources:
       - name: RAW_OFFRE
         identifier: RAW_OFFRE
         description: "Table d'analyses brutes des offres"
-
+        
       - name: RAW_METIERS
         identifier: RAW_METIERS
         description: "Table brutes des metiers"
-
