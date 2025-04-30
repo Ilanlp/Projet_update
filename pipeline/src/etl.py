@@ -17,12 +17,12 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Définir explicitement la racine du projet
-project_root = "/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market"
+project_root = "."
 
 # Définir les chemins des dossiers spécifiques
-PIPELINE_DIR = os.path.join(project_root, "pipeline/src")
+PIPELINE_DIR = os.path.join(project_root, "")
 SNOWFLAKE_DIR = os.path.join(project_root, "snowflake")
-OUTPUT_DIR = os.path.join(project_root, "output")
+OUTPUT_DIR = os.path.join(project_root, "data")
 
 # Ajouter les dossiers au PYTHONPATH
 sys.path.insert(0, project_root)
@@ -108,16 +108,16 @@ class JobMarketIngestion:
             cmd = [sys.executable, self.normalizer_script]
 
             # Ajouter des paramètres optionnels si spécifiés dans les variables d'environnement
-            if os.getenv("DEFAULT_SEARCH_TERMS"):
-                cmd.extend(["--search", os.getenv("DEFAULT_SEARCH_TERMS")])
+            # if os.getenv("DEFAULT_SEARCH_TERMS"):
+            #     cmd.extend(["--search", os.getenv("DEFAULT_SEARCH_TERMS")])
 
-            if os.getenv("DEFAULT_CATEGORY_ADZUNA"):
-                cmd.extend(["--category-adzuna", os.getenv("DEFAULT_CATEGORY_ADZUNA")])
+            # if os.getenv("DEFAULT_CATEGORY_ADZUNA"):
+            #     cmd.extend(["--category-adzuna", os.getenv("DEFAULT_CATEGORY_ADZUNA")])
 
-            if os.getenv("DEFAULT_CODE_ROME_FRANCE_TRAVAIL"):
-                cmd.extend(
-                    ["--code-rome", os.getenv("DEFAULT_CODE_ROME_FRANCE_TRAVAIL")]
-                )
+            # if os.getenv("DEFAULT_CODE_ROME_FRANCE_TRAVAIL"):
+            #     cmd.extend(
+            #         ["--code-rome", os.getenv("DEFAULT_CODE_ROME_FRANCE_TRAVAIL")]
+            #     )
 
             # Définir l'environnement pour subprocess en incluant le PYTHONPATH actuel
             env = os.environ.copy()
@@ -219,7 +219,7 @@ class JobMarketIngestion:
                 capture_output=True,
                 text=True,
                 env=env,
-                cwd=self.snowflake_dir,  # Exécuter depuis le dossier snowflake
+                cwd=project_root,  # Exécuter depuis le dossier snowflake
             )
 
             # Vérifier si l'exécution a réussi
