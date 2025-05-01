@@ -181,7 +181,6 @@ def model(dbt, session):
                raw["id"].alias("id"),
                raw["ID_LOCAL"].alias("id_local"),
                dim_teletravail["id_teletravail"].alias("id_teletravail"),
-               raw["description"].alias("description"),
                when(exact_match_raw,   lit(1)).otherwise(lit(0)).alias("is_exact"),
                when(partial_match_raw, lit(1)).otherwise(lit(0)).alias("is_partial"),
                when(is_distance,       lit(1)).otherwise(lit(0)).alias("is_distance_regex"),

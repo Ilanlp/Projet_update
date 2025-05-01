@@ -20,7 +20,6 @@ matching as (
     select
         o.id_local,
         o.skills,
-        o.description,
         c.skill,
         c.id
     from offre o

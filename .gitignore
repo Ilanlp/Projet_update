@@ -179,6 +179,6 @@ logs
 .DS_Store
 all-in-one.py
 ia.md 
-seeds/*.csv
+seeds/DIM_ENTREPRISE.csv
 .cursor/
 scripts_Ilan/

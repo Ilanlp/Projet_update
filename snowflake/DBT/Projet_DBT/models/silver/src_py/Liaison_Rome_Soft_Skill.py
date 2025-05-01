@@ -1,31 +1,29 @@
-# models/src/matched_contrat_py_copy.py
-
-from snowflake.snowpark.functions import (
-    lower
-)
-from snowflake.snowpark.window import Window
+from snowflake.snowpark.functions import lower
 
 def model(dbt, session):
-    raw         = session.table("RAW.RAW_SOFTSKILL")
-    dim         = session.table("SILVER.DIM_SOFTSKILL")
-    
-    exact_match = lower(raw["SUMMARY"]) == lower(dim["SUMMARY"])
-   
-    
-    
+    # Chargement des tables
+    raw_ss        = session.table("RAW.RAW_SOFTSKILL").alias("rss")
+    dim_rome   = session.table("SILVER.DIM_ROMECODE").alias("d_rome")
+    dim_ss = session.table("SILVER.DIM_SOFTSKILL").alias("dss")
 
-    # Création de la condition de jointure
-    join_cond = exact_match
-
-    # Jointure avec les tables
-    df = (
-        raw.join(dim, join_cond, how="left")
-           .select(
-               raw["ID_ROME"],
-               dim['ID_SOFTSKILL'],
-               raw["SCORE"]
-
-           )
+    # Jointure sur code ROME
+    raw_with_rome = raw_ss.join(
+        dim_rome,
+        lower(raw_ss["CODE_ROME"]) == lower(dim_rome["CODE_ROME"]),
+        how="inner"
     )
 
-    return df
+    # Jointure sur appellation métier
+    joined = raw_with_rome.join(
+        dim_ss,
+        lower(raw_ss["SUMMARY"]) == lower(dim_ss["SUMMARY"]),
+        how="inner"
+    )
+
+    # Sélection uniquement des IDs
+    result = joined.select(
+        dim_rome["ID_ROME"].alias("id_rome"),
+        dim_ss["ID_SOFTSKILL"].alias("id_softskill")
+    ).distinct()
+
+    return result

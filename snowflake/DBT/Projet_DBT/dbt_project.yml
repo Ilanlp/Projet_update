@@ -56,11 +56,10 @@ models:
       +materialized: table
       +schema: GOLD
       
-      fait_offres_py:
-        materialized: incremental
-        unique_key: id_local
-        incremental_strategy: merge
-        merge_update_columns: ['id_lieu', 'id_contrat']
+      fait_offre_py:
+        materialized: table
+      
+
 
     # Config indicated by + and applies to all files under models/example/
     example:
