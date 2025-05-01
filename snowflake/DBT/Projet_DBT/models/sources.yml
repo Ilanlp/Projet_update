@@ -15,18 +15,21 @@ sources:
       - name: DIM_ENTREPRISE
         identifier: DIM_ENTREPRISE
         description: "Table des dimensions des entreprises"
-      - name: DIM_DOMAINES
-        identifier: DIM_DOMAINES
+      - name: DIM_DOMAINE
+        identifier: DIM_DOMAINE
         description: "Table des dimensions des domaines"
-      - name: DIM_COMPETENCES
-        identifier: DIM_COMPETENCES
+      - name: DIM_COMPETENCE
+        identifier: DIM_COMPETENCE
         description: "Table des dimensions des competences"
-      - name: DIM_ROMECODES
-        identifier: DIM_ROMECODES
+      - name: DIM_ROMECODE
+        identifier: DIM_ROMECODE
         description: "Table des dimensions des romecodes"
-      - name: DIM_APPELLATIONS
-        identifier: DIM_APPELLATIONS
-        description: "Table des dimensions des appelations"
+      - name: DIM_METIER
+        identifier: DIM_METIER
+        description: "Table des dimensions des metiers"
+      - name: DIM_DATE
+        identifier: DIM_DATE
+        description: "Table des dimensions des dates"
 
 
   - name: gold_tables
@@ -45,6 +48,6 @@ sources:
         identifier: RAW_OFFRE
         description: "Table d'analyses brutes des offres"
         
-      - name: RAW_METIERS
-        identifier: RAW_METIERS
+      - name: RAW_METIER
+        identifier: RAW_METIER
         description: "Table brutes des metiers"

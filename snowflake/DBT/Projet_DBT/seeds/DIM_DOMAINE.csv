@@ -1,0 +1,111 @@
+id_domaine,code_domaine,nom_domaine
+1,A11,Engins agricoles et forestiers
+2,A12,Espaces naturels et espaces verts
+3,A13,Etudes et assistance technique
+4,A14,Production
+5,A15,Soins aux animaux
+6,B11,Arts plastiques
+7,B12,Céramique
+8,B13,Décoration
+9,B14,Fibres et papier
+10,B15,Instruments de musique
+11,B16,"Métal, verre, bijouterie et horlogerie"
+12,B17,Taxidermie
+13,B18,Tissu et cuirs
+14,C11,Assurance
+15,C12,Banque
+16,C13,Finance
+17,C14,Gestion administrative banque et assurances
+18,C15,Immobilier
+19,D11,Commerce alimentaire et métiers de bouche
+20,D12,Commerce non alimentaire et de prestations de confort
+21,D13,Direction de magasin de détail
+22,D14,Force de vente
+23,D15,Grande distribution
+24,E11,Edition et communication
+25,E12,Images et sons
+26,E13,Industries graphiques
+27,E14,Publicité
+28,F11,Conception et études
+29,F12,Conduite et encadrement de chantier - travaux
+30,F13,Engins de chantier
+31,F14,Extraction
+32,F15,Montage de structures
+33,F16,Second oeuvre
+34,F17,Travaux et gros oeuvre
+35,G11,Accueil et promotion touristique
+36,G12,Animation d'activités de loisirs
+37,G13,"Conception, commercialisation et vente de produits touristiques"
+38,G14,Gestion et direction
+39,G15,Personnel d'étage en hôtellerie
+40,G16,Production culinaire
+41,G17,Accueil en hôtellerie
+42,G18,Service
+43,H11,Affaires et support technique client
+44,H12,"Conception, recherche, études et développement"
+45,H13,Hygiène Sécurité Environnement -HSE- industriels
+46,H14,Méthodes et gestion industrielles
+47,H15,Qualité et analyses industrielles
+48,H21,Alimentaire
+49,H22,Bois
+50,H23,Chimie et pharmacie
+51,H24,Cuir et textile
+52,H25,"Direction, encadrement et pilotage de fabrication et production industrielles"
+53,H26,Electronique et électricité
+54,H27,Energie
+55,H28,"Matériaux de construction, céramique et verre"
+56,H29,"Mécanique, travail des métaux et outillage"
+57,H31,Papier et carton
+58,H32,"Plastique, caoutchouc"
+59,H33,Préparation et conditionnement
+60,H34,Traitements thermiques et traitements de surfaces
+61,I11,Encadrement
+62,I12,Entretien technique
+63,I13,"Equipements de production, équipements collectifs"
+64,I14,Equipements domestiques et informatique
+65,I15,Travaux d'accès difficile
+66,I16,"Véhicules, engins, aéronefs"
+67,J11,Praticiens médicaux
+68,J12,Praticiens médico-techniques
+69,J13,Professionnels médico-techniques
+70,J14,Rééducation et appareillage
+71,J15,Soins paramédicaux
+72,K11,Accompagnement de la personne
+73,K12,"Action sociale, socio-éducative et socio-culturelle"
+74,K13,Aide à la vie quotidienne
+75,K14,Conception et mise en oeuvre des politiques publiques
+76,K15,Contrôle public
+77,K16,Culture et gestion documentaire
+78,K17,"Défense, sécurité publique et secours"
+79,K18,Développement territorial et emploi
+80,K19,Droit
+81,K21,Formation initiale et continue
+82,K22,Nettoyage et propreté industriels
+83,K23,Propreté et environnement urbain
+84,K24,Recherche
+85,K25,Sécurité privée
+86,K26,Services funéraires
+87,L11,Animation de spectacles
+88,L12,Artistes - interprètes du spectacle
+89,L13,Conception et production de spectacles
+90,L14,Sport professionnel
+91,L15,Techniciens du spectacle
+92,M11,Achats
+93,M12,Comptabilité et gestion
+94,M13,Direction d'entreprise
+95,M14,Organisation et études
+96,M15,Ressources humaines
+97,M16,Secrétariat et assistance
+98,M17,"Stratégie commerciale, marketing et supervision des ventes"
+99,M18,Systèmes d'information et de télécommunication
+100,N11,"Magasinage, manutention des charges et déménagement"
+101,N12,Organisation de la circulation des marchandises
+102,N13,Personnel d'encadrement de la logistique
+103,N21,Personnel navigant du transport aérien
+104,N22,Personnel sédentaire du transport aérien
+105,N31,Personnel navigant du transport maritime et fluvial
+106,N32,Personnel sédentaire du transport maritime et fluvial
+107,N41,Personnel de conduite du transport routier
+108,N42,Personnel d'encadrement du transport routier
+109,N43,Personnel navigant du transport terrestre
+110,N44,Personnel sédentaire du transport ferroviaire et réseau filo guidé

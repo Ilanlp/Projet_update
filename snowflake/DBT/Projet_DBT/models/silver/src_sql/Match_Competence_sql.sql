@@ -13,14 +13,13 @@ competence as (
     select 
         id,
         skill
-    from {{ref("DIM_COMPETENCES")}}
+    from {{ref("DIM_COMPETENCE")}}
 ),
 
 matching as (
     select
         o.id_local,
         o.skills,
-        o.description,
         c.skill,
         c.id
     from offre o

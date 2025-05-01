@@ -4,7 +4,7 @@ from snowflake.snowpark.functions import (
 from snowflake.snowpark.window import Window
 
 def model(dbt, session):
-    raw = session.table("RAW.RAW_OFFRE_BIS")
+    raw = session.table("RAW.RAW_OFFRE")
     dim = session.table("SILVER.DIM_ENTREPRISE")
 
       # 0) Nettoyer les espaces en début/fin
@@ -34,7 +34,7 @@ def model(dbt, session):
                raw["company_name"],
                raw_first,
                dim_first,
-               dim["SIREN"],
+               dim["ID_ENTREPRISE"],
                dim["nom_entreprise"].alias("nom_entreprise"),
                when(exact_match, lit(1)).otherwise(lit(0)).alias("is_exact"),
                when(first_word_match, lit(1)).otherwise(lit(0)).alias("is_first_word"),
@@ -47,7 +47,7 @@ def model(dbt, session):
                .when(df["Categorie_entreprise"] == "ETI", lit(2)) \
                .when(df["Categorie_entreprise"] == "PME", lit(3)) \
                .otherwise(lit(4)) \
-               .alias("priority")
+               .alias("priority") 
 
     df = df.with_column("priority", priority)
 
