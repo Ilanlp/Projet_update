@@ -2,14 +2,14 @@
 
 
 with 
-{{ tokenize_text(ref('DIM_DOMAINES'), 'id_domaine', 'nom', 'domaine') }},
-{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'sector', 'sector') }},
-{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'description', 'description') }},
+{{ tokenize_text(ref('DIM_DOMAINE'), 'id_domaine','nom_domaine', 'domaine') }},
+{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'sector','sector') }},
+{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'description','description') }},
 
 sector_matching as (
     SELECT
         d.id_domaine,
-        d.nom,
+        d.nom_domaine,
         s.sector,
         s.id_local,
         COUNT(*) as MATCHED_TOKENS,
@@ -18,13 +18,13 @@ sector_matching as (
     FROM domaine_no_stopwords d
     LEFT JOIN sector_no_stopwords s 
     ON s.TOKEN = d.TOKEN
-    GROUP BY s.id_local, s.sector, d.id_domaine, d.nom
+    GROUP BY s.id_local, s.sector, d.id_domaine, d.nom_domaine
 ),
 
 description_matching as (
     SELECT
         d.id_domaine,
-        d.nom,
+        d.nom_domaine,
         des.description,
         des.id_local,
         COUNT(*) as MATCHED_TOKENS,
@@ -33,7 +33,7 @@ description_matching as (
     FROM domaine_no_stopwords d
     LEFT JOIN description_no_stopwords des 
     ON des.TOKEN = d.TOKEN
-    GROUP BY des.id_local, des.description, d.id_domaine, d.nom
+    GROUP BY des.id_local, des.description, d.id_domaine, d.nom_domaine
     
 ),
 
@@ -56,7 +56,7 @@ description_token_counts as (
 sector_scored_matches AS (
     SELECT
         m.id_domaine,
-        m.nom,
+        m.nom_domaine,
         m.sector,
         m.id_local,
         m.MATCHED_TOKENS,
@@ -73,7 +73,7 @@ sector_scored_matches AS (
 desc_scored_matches as (
     SELECT
         m.id_domaine,
-        m.nom,
+        m.nom_domaine,
         m.description,
         m.id_local,
         m.MATCHED_TOKENS,
@@ -91,7 +91,7 @@ combined_scores AS (
     SELECT
         s.id_domaine,
         d.description,
-        s.nom,
+        s.nom_domaine,
         s.sector,
         s.id_local,
         s.MATCHED_TOKENS as S_MATCHED_TOKENS,
@@ -112,7 +112,7 @@ combined_scores AS (
     ON s.id_local = d.id_local
 )
 
-select id_domaine, nom, sector, id_local from combined_scores
+select id_domaine, nom_domaine, sector, id_local from combined_scores
 where rank = 1
 
 

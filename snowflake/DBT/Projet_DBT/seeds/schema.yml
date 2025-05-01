@@ -1,0 +1,11 @@
+version: 2
+
+seeds:
+  - name: DIM_ROMECODE
+    
+
+  - name: DIM_DOMAINE
+    
+
+  - name: DIM_METIER
+    

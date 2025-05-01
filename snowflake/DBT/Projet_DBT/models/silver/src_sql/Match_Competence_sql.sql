@@ -13,7 +13,7 @@ competence as (
     select 
         id,
         skill
-    from {{ref("DIM_COMPETENCES")}}
+    from {{ref("DIM_COMPETENCE")}}
 ),
 
 matching as (
