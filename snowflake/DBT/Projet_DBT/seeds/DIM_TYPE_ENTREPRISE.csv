@@ -1,0 +1,5 @@
+id_type_entreprise,type_entreprise,taille_min_salaries,taille_max_salaries,categorie_taille
+1,TPE,0,9,Très Petite Entreprise
+2,PME,10,249,Petite et Moyenne Entreprise
+3,ETI,250,4999,Entreprise de Taille Intermédiaire
+4,GE,5000,null,Grande Entreprise
