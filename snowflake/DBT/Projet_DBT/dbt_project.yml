@@ -39,15 +39,16 @@ models:
       
       src_py:
         +materialized: table
-        matched_lieu_py:
-        matched_contrat_py:
-        matched_entreprise_py:
-      
+        Match_Lieu_py:
+        Match_Contrat_py:
+        Match_Entreprise_py:
+        Liaison_Rome_Metier_py:
+        Liaison_Rome_Soft_Skill_py:
       src_sql:
         +materialized: table
-        matched_lieu_sql:
-        matched_domaine:
-        matched_competence:
+        Match_Lieu_sql:
+        Match_Domaine_sql:
+        Match_Competence_sql:
 
     
     # Modèles Gold
@@ -55,11 +56,10 @@ models:
       +materialized: table
       +schema: GOLD
       
-      fait_offres_py:
-        materialized: incremental
-        unique_key: id_local
-        incremental_strategy: merge
-        merge_update_columns: ['id_lieu', 'id_contrat']
+      fait_offre_py:
+        materialized: table
+      
+
 
     # Config indicated by + and applies to all files under models/example/
     example:
@@ -71,8 +71,11 @@ seeds:
     RAW_OFFRE:
       +schema: RAW
 
-    RAW_METIERS:
+    RAW_ROME_METIER:
       +schema: RAW
+
+    RAW_SOFTSKILL:
+      +schema : RAW
 
     
     # Seeds dans le schéma SILVER
@@ -91,17 +94,36 @@ seeds:
     DIM_ENTREPRISE:
       +schema: SILVER
 
-    DIM_DOMAINES:
+    DIM_DOMAINE:
+      +schema: SILVER
+      +column_types:
+        id_domaine: number
+        code_domaine: varchar
+        nom_domaine: varchar
+
+    DIM_COMPETENCE:
       +schema: SILVER
 
-    DIM_COMPETENCES:
+    DIM_METIER:
       +schema: SILVER
+      +column_types:
+        id_metier: number
+        code_appellation: varchar
+        nom_appellation: varchar
 
-    DIM_APPELLATIONS:
+    DIM_ROMECODE:
       +schema: SILVER
-
-    DIM_ROMECODES:
-      +schema: SILVER
+      +column_types:
+        id_rome: number
+        code_rome: varchar
 
     STOPWORDS_FR:
       +schema: SILVER
+
+    DIM_SOFTSKILL:
+      +schema: SILVER
+
+    DIM_DATE:
+      +schema: SILVER
+    
+ 
