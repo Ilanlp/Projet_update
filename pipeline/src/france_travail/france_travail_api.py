@@ -26,6 +26,9 @@ from .models import (
 )
 
 # Configuration du logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -140,7 +143,7 @@ class FranceTravailAPI:
             ResultatRecherche: Résultat de la recherche
         """
         endpoint = "offres/search"
-        logger.info(
+        logger.debug(
             f"search_offers params : {params}"
         )
         params_dict = params.model_dump(exclude_none=True)
