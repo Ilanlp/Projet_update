@@ -4,8 +4,8 @@ Ce script automatise le processus d'ingestion des données d'offres d'emploi pou
 
 ## Fonctionnalités
 
-- Exécution du normalisateur (`jm_normalizer.py`) pour collecter les nouvelles offres d'emploi
-- Chargement des données dans Snowflake (`snowflakeCSVLoader.py`) 
+- Exécution du normalisateur (`normalizer.py`) pour collecter les nouvelles offres d'emploi
+- Chargement des données dans Snowflake (`snowflakeCSVLoader.py`)
 - Journalisation détaillée de toutes les étapes
 - Mode test pour vérifier la configuration sans exécuter l'ingestion complète
 
@@ -19,7 +19,7 @@ Ce script automatise le processus d'ingestion des données d'offres d'emploi pou
 
 Le script attend la structure de dossiers suivante :
 
-```
+```txt
 /home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/
 ├── .env                  # Fichier contenant les variables d'environnement
 ├── pipeline/             # Dossier contenant les scripts de normalisation
@@ -34,9 +34,9 @@ Le script attend la structure de dossiers suivante :
 
 ### Variables d'environnement
 
-Créez un fichier `.env` à la racine du projet (`/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/.env`) avec les variables suivantes :
+Créez un fichier `.env` à la racine du projet (`./.env`) avec les variables suivantes :
 
-```
+```txt
 # Identifiants Snowflake
 SNOWFLAKE_USER=votre_utilisateur
 SNOWFLAKE_PASSWORD=votre_mot_de_passe
@@ -58,7 +58,7 @@ CODE_ROME=M1805
 Pour exécuter le script manuellement :
 
 ```bash
-python3 /home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/ingestion_autov4.py
+python etl.py
 ```
 
 ### Mode Test
@@ -66,10 +66,11 @@ python3 /home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/ingestion_aut
 Pour vérifier la configuration sans exécuter l'ingestion :
 
 ```bash
-python3 /home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/ingestion_autov4.py --test
+python etl.py --test
 ```
 
 Ce mode teste :
+
 - L'existence des scripts requis
 - La configuration des variables d'environnement
 
@@ -78,38 +79,43 @@ Ce mode teste :
 Pour automatiser l'exécution quotidienne à 2h du matin :
 
 1. Ouvrez l'éditeur crontab :
+
    ```bash
    crontab -e
    ```
 
 2. Ajoutez la ligne suivante :
-   ```
-   0 2 * * * /usr/bin/python3 /home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/scripts/job_market_ingestion.py >> /home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/logs/cron_execution.log 2>&1
+
+   ```crontab
+   0 2 * * * /usr/bin/python3 /$PATH/etl.py >> /$PATH/logs/cron.log 2>&1
    ```
 
 ## Journalisation
 
 Les journaux sont écrits dans :
-- `/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/logs/job_market_ingestion.log` (journal principal)
-- `/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/logs/cron_execution.log` (journal cron)
+
+- `/$PATH/pipeline/src/logs/job_market_ingestion.log` (journal principal)
+- `/$PATH/pipeline/src/logs/cron.log` (journal cron)
 
 Le fichier de journal principal contient des informations détaillées sur :
+
 - L'initialisation du script
 - Les chemins utilisés
-- L'exécution des commandes 
+- L'exécution des commandes
 - Les erreurs éventuelles
 
 ## Dépannage
 
 ### Le script ne trouve pas le fichier .env
 
-Vérifiez que le fichier `.env` existe à l'emplacement `/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/.env` et qu'il est lisible.
+Vérifiez que le fichier `.env` existe à l'emplacement `/$PATH/.env` et qu'il est lisible.
 
 ### Le script ne trouve pas les scripts de normalisation ou de chargement
 
 Vérifiez les chemins des dossiers et que les fichiers suivants existent :
-- `/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/pipeline/jm_normalizer.py`
-- `/home/ubuntu/JobMarket_Projet/mar25_bootcamp_de_job_market/snowflake/snowflakeCSVLoader.py`
+
+- `/$PATH/pipeline/src/normalizer.py`
+- `/$PATH/pipeline/src/snowflake/snowflakeCSVLoader.py`
 
 ### Erreurs d'authentification Snowflake
 
@@ -118,6 +124,7 @@ Vérifiez les variables d'environnement dans votre fichier `.env`.
 ### Aucun fichier CSV n'est généré
 
 Vérifiez les journaux pour comprendre pourquoi le normalisateur n'a pas généré de fichier CSV. Les raisons possibles incluent :
+
 - Problèmes d'accès aux API
 - Erreurs dans les paramètres de recherche
 - Aucune nouvelle offre d'emploi disponible
