@@ -46,9 +46,9 @@ SNOWFLAKE_DATABASE=votre_base
 SNOWFLAKE_SCHEMA=votre_schema
 
 # Paramètres de recherche (optionnels)
-DEFAULT_SEARCH_TERMS=data
-DEFAULT_CATEGORY_ADZUNA=it-jobs
-DEFAULT_CODE_ROME_FRANCE_TRAVAIL=M1805
+SEARCH_TERMS=data
+CATEGORY_ADZUNA=it-jobs
+CODE_ROME=M1805
 ```
 
 ## Utilisation
