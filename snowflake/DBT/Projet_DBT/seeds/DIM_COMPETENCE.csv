@@ -1,4 +1,4 @@
-id,skill,type
+id_competence,skill,type
 1,2D drafting,Design Software
 2,3D modeling,Design Software
 3,3D printing,Manufacturing Technology

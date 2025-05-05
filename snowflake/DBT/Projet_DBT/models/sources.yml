@@ -3,7 +3,7 @@ version: 2
 
 sources:
   - name: dim_tables
-    database: PFR
+    database: JOB_MARKET
     schema: SILVER
     tables:
       - name: DIM_LIEU
@@ -33,7 +33,7 @@ sources:
 
 
   - name: gold_tables
-    database: PFR
+    database: JOB_MARKET
     schema: GOLD
     tables:
       - name: FAIT_OFFRE
@@ -41,7 +41,7 @@ sources:
         description: "Table des faits à implémenter"
 
   - name: RAW
-    database: PFR
+    database: JOB_MARKET
     schema: RAW
     tables:
       - name: RAW_OFFRE

@@ -1,22 +1,31 @@
 import pandas as pd
+import numpy as np
+from dotenv import load_dotenv
 from faker import Faker
 from faker.providers import BaseProvider
 import random
-import csv
-import re
+import csv, re, shutil, os
 from typing import Any
 
-# Chargement des données de référence depuis les fichiers CSV
-df_communes = pd.read_csv("data/france_travail_communes.csv")
-df_departements = pd.read_csv("data/france_travail_departements.csv")
-df_regions = pd.read_csv("data/france_travail_regions.csv")
-df_formation = pd.read_csv("data/france_travail_niveaux_formations.csv")
-df_contracts = pd.read_csv("data/france_travail_types_contrats.csv")
-df_permis = pd.read_csv("data/france_travail_permis.csv")
-df_metiers = pd.read_csv("data/france_travail_metiers.csv")
-df_domaines = pd.read_csv("data/france_travail_domaines.csv")
-df_secteurs_activites = pd.read_csv("data/france_travail_secteurs_activites.csv")
+load_dotenv()
 
+
+# Chargement des données de référence depuis les fichiers CSV
+data_dir = '../data/'
+seeds_dir = '../../../snowflake/DBT/Projet_DBT/seeds'
+
+shutil.copytree(seeds_dir,data_dir,dirs_exist_ok=True)
+
+df_dim_competences = pd.read_csv(data_dir+"DIM_COMPETENCE.csv")
+df_dim_domaines = pd.read_csv(data_dir+"DIM_DOMAINE.csv")
+df_dim_seniorites = pd.read_csv(data_dir+"DIM_SENIORITE.csv")
+df_dim_contrats = pd.read_csv(data_dir+"DIM_CONTRAT.csv")
+df_dim_teletravails = pd.read_csv(data_dir+"DIM_TELETRAVAIL.csv")
+df_dim_lieux = pd.read_csv(data_dir+"DIM_LIEU.csv")
+df_raw_metiers = pd.read_csv(data_dir+"RAW_ROME_METIER.csv")
+df_dim_metiers = pd.read_csv(data_dir+"DIM_METIER.csv")
+df_dim_type_entreprises = pd.read_csv(data_dir+'DIM_TYPE_ENTREPRISE.csv')
+df_dim_solf_skill = pd.read_csv(data_dir+'DIM_SOFTSKILL.csv')
 
 class CustomListProvider(BaseProvider):
     """
@@ -30,177 +39,58 @@ class CustomListProvider(BaseProvider):
 
         Args:
             generator: L'instance Faker principale
-        """
+        """ 
         super().__init__(generator)
 
-        # Initialisation des listes de données à partir des fichiers chargés
-        self.formations = df_formation["libelle"].tolist()
-
         # Liste de compétences techniques courantes en informatique
-        self.skills = [
-            "python",
-            "java",
-            "javascript",
-            "js",
-            "typescript",
-            "ts",
-            "c#",
-            "c++",
-            "go",
-            "golang",
-            "rust",
-            "php",
-            "ruby",
-            "swift",
-            "sql",
-            "mysql",
-            "postgresql",
-            "mongodb",
-            "nosql",
-            "oracle",
-            "sqlite",
-            "aws",
-            "azure",
-            "gcp",
-            "cloud",
-            "docker",
-            "kubernetes",
-            "k8s",
-            "git",
-            "ci/cd",
-            "jenkins",
-            "gitlab",
-            "github",
-            "bitbucket",
-            "react",
-            "angular",
-            "vue",
-            "node",
-            "express",
-            "django",
-            "flask",
-            "spring",
-            "tensorflow",
-            "pytorch",
-            "scikit-learn",
-            "pandas",
-            "numpy",
-            "spark",
-            "hadoop",
-            "linux",
-            "unix",
-            "bash",
-            "shell",
-            "powershell",
-            "windows",
-            "agile",
-            "scrum",
-            "kanban",
-            "jira",
-            "confluence",
-            "rest",
-            "graphql",
-            "api",
-            "microservices",
-            "soa",
-            "soap",
-            "html",
-            "css",
-            "sass",
-            "less",
-            "bootstrap",
-            "tailwind",
-            "etl",
-            "data warehouse",
-            "data lake",
-            "big data",
-            "machine learning",
-            "ml",
-            "ai",
-            "deep learning",
-            "nlp",
-            "devops",
-            "sre",
-            "security",
-            "blockchain",
-            "iot",
-            "embedded",
-        ]
+        self.skills = df_dim_competences['id_competence'].tolist()
+        self.softSkills = df_dim_solf_skill['id_softskill'].tolist()
 
         # Liste des métiers de l'informatique et du numérique
-        self.metiers = [
-            "Développeur / Développeuse web",
-            "Développeur / Développeuse multimédia",
-            "Analyste Concepteur / Conceptrice informatique",
-            "Analyste d'étude",
-            "Ingénieur / Ingénieure d'étude informatique",
-            "Ingénieur / Ingénieure systèmes et réseaux informatiques",
-            "Ingénieur / Ingénieure concepteur / conceptrice informatique",
-            "Architecte systèmes et réseaux des territoires connectés",
-            "Architecte cloud",
-            "Architecte IoT - Internet des Objets",
-            "Administrateur / Administratrice réseau informatique",
-            "Administrateur / Administratrice sécurité informatique",
-            "Ingénieur / Ingénieure sécurité informatique",
-            "Ingénieur / Ingénieure sécurité web",
-            "Expert / Experte en cybersécurité",
-            "Ingénieur / Ingénieure Cybersécurité Datacenter",
-            "Technicien / Technicienne Datacenter",
-            "Urbaniste Datacenter",
-            "Ingénieur / Ingénieure supervision IT Datacenter",
-            "Délégué / Déléguée à la protection des données - Data Protection Officer",
-            "Chef / Cheffe de projet étude et développement informatique",
-            "Chef / Cheffe de projet maîtrise d'œuvre informatique",
-            "Qualiticien / Qualiticienne logiciel en informatique",
-            "Responsable Green IT",
-            "Technicien / Technicienne réseaux informatiques et télécoms",
-            "Responsable de maintenance réseaux des territoires connectés",
-            "Ingénieur / Ingénieure systèmes et réseaux des territoires connectés",
-            "Technicien / Technicienne de maintenance en informatique",
-        ]
+        self.code_rome_it = os.getenv('CODE_ROME').split(',')
+        self.metiers = []
+        for code in self.code_rome_it:
+            metiers_it = df_raw_metiers[df_raw_metiers['code_rome']==code]['code_appellation']
+            for m in metiers_it:
+                id_metier = df_dim_metiers[df_dim_metiers['ID_APPELLATION']==m]['id_metier']
+                for i in id_metier:
+                    self.metiers.append(i)
 
         # Récupération des données depuis les DataFrames chargés
-        self.code_permis = df_permis["code"].tolist()
-        self.communes = df_communes["libelle"].tolist()
-        self.departements = df_departements["libelle"].tolist()
-        self.regions = df_regions["libelle"].tolist()
-        self.contracts = df_contracts["code"].tolist()
-        self.domainEntreprises = df_domaines["libelle"].tolist()
+        self.contracts = df_dim_contrats["id_contrat"].tolist()
+        self.domainEntreprises = df_dim_domaines["id_domaine"].tolist()
 
         # Définition de listes personnalisées supplémentaires
-        self.typeEntreprises = ["TPE", "PME", "ETI", "GRANDE ENTREPRISE"]
-        self.seniorites = ["Junior", "Confirmé", "Senior", "Expert"]
-        self.teletravails = [
-            "Télétravail à 100%",
-            "Télétravail hybride",
-            "Télétravail occasionnel",
-            "Télétravail flexible",
-            "Télétravail fixe",
-        ]
+        self.typeEntreprises = df_dim_type_entreprises['id_type_entreprise'].tolist()
+        self.seniorites = df_dim_seniorites['id_seniorite'].tolist()
+        self.teletravails = df_dim_teletravails['id_teletravail'].tolist()
 
-    def commune(self):
-        """Génère une liste aléatoire de 0 à 5 communes"""
+        self.lieux = df_dim_lieux['ID_LIEU'].tolist()
+
+        self.salaire_min = np.arange(20000,80000,5000)
+
+    def lieu_unique(self):
+        """Génère une liste aléatoire de lieux"""
+        return self.random_element(self.lieux)
+
+    def lieu(self):
+        """Génère une liste aléatoire de lieux"""
         count = random.randint(0, 5)
-        return random.sample(self.communes, count)
+        return random.sample(self.lieux,count)
 
-    def departement(self):
-        """Génère une liste aléatoire de 0 à 2 départements"""
-        count = random.randint(0, 2)
-        return random.sample(self.departements, count)
-
-    def region(self):
-        """Génère une liste aléatoire de 0 à 2 régions"""
-        count = random.randint(0, 2)
-        return random.sample(self.regions, count)
-
-    def formation(self):
-        """Retourne un niveau de formation aléatoire"""
-        return self.random_element(self.formations)
-
+    def salaire(self):
+        """Retourne un salaire minimal aléatoire"""
+        return self.random_element(self.salaire_min)
+    
     def skill(self):
         """Génère une liste aléatoire de compétences techniques"""
-        count = random.randint(0, len(self.skills))
+        count = random.randint(0, 10)
         return random.sample(self.skills, count)
+
+    def softSkill(self):
+        """Génère une liste aléatoire de compétences techniques"""
+        count = random.randint(0, 10)
+        return random.sample(self.softSkills, count)
 
     def domain(self):
         """Génère une liste aléatoire de domaines d'activité"""
@@ -211,11 +101,6 @@ class CustomListProvider(BaseProvider):
         """Génère une liste aléatoire de 1 à 3 métiers"""
         count = random.randint(1, 3)
         return random.sample(self.metiers, count)
-
-    def permis(self):
-        """Génère une liste aléatoire de permis de conduire"""
-        count = random.randint(0, len(self.code_permis))
-        return random.sample(self.code_permis, count)
 
     def contract(self):
         """Génère une liste aléatoire de types de contrats"""
@@ -239,7 +124,7 @@ class CustomListProvider(BaseProvider):
 
     def domainEntreprise(self):
         """Génère une liste aléatoire de domaines d'entreprise"""
-        count = random.randint(0, len(self.domainEntreprises))
+        count = random.randint(0, 5)
         return random.sample(self.domainEntreprises, count)
 
 
@@ -276,38 +161,46 @@ fake.add_provider(CustomListProvider(fake))
 
 # Génération de données fictives pour 50 candidats
 data = []
-for _ in range(50):
+for i in range(50):
 
     person = {
-        "Nom": fake.last_name(),
-        "Prénom": fake.first_name(),
-        "Adresse": _sanitize_text(fake.address()),
-        "Adresse Mail": fake.email(),
-        "Numéro de Téléphone": fake.phone_number(),
-        "Compétences": fake.skill(),
-        "Formation": fake.formation(),
-        "Permis": fake.permis(),
-        "Ancien Emploi": fake.job(),
-        "Emploi Recherché": fake.metier(),
-        "Ville de Recherche d'Emploi": fake.commune(),
-        "Departement de Recherche d'Emploi": fake.departement(),
-        "Region de Recherche d'Emploi": fake.region(),
-        "Contrat de Travail Recherché": fake.contract(),
-        "Type d'entreprise": fake.typeEntreprise(),
-        "Seniorité": fake.seniorite(),
-        "Teletravail": fake.teletravail(),
-        "Domain de l'entreprise": fake.domainEntreprise(),
+        "id_candidat":i,
+        "nom": fake.last_name(),
+        "prenom": fake.first_name(),
+        "adresse": fake.lieu_unique(),
+        "email": fake.email(),
+        "tel": fake.phone_number(),
+        "id_competence": fake.skill(),
+        "id_softskill": fake.softSkill(),
+        "id_metier": fake.metier(),
+        "id_lieu": fake.lieu(),
+        #"Departement de Recherche d'Emploi": fake.departement(),
+        #"Region de Recherche d'Emploi": fake.region(),
+        "id_contrat": fake.contract(),
+        "id_type_entreprise": fake.typeEntreprise(),
+        "id_seniorite": fake.seniorite(),
+        "id_teletravail": fake.teletravail(),
+        "id_domaine": fake.domainEntreprise(),
+        "salaire_min": fake.salaire()
     }
     data.append(person)
 
-# Écriture des données dans un fichier CSV
+# Écriture des données dans un fichier CSV dans data
 with open(
-    "candidat/base_de_donnees_fictive.csv", mode="w", newline="", encoding="utf-8"
+    data_dir+"/RAW_CANDIDAT.csv", mode="w", newline="", encoding="utf-8"
+) as file:
+    writer = csv.DictWriter(file, fieldnames=data[0].keys())
+    writer.writeheader()
+    writer.writerows(data)
+
+# Écriture des données dans un fichier CSV dans DBT seeds
+with open(
+    seeds_dir+"/RAW_CANDIDAT.csv", mode="w", newline="", encoding="utf-8"
 ) as file:
     writer = csv.DictWriter(file, fieldnames=data[0].keys())
     writer.writeheader()
     writer.writerows(data)
 
 print(
-    "Base de données fictive créée et enregistrée dans 'base_de_donnees_fictive.csv'."
+    "Base de données fictive créée et enregistrée dans 'RAW_CANDIDAT.csv'."
 )

@@ -58,8 +58,6 @@ models:
       
       fait_offre_py:
         materialized: table
-      
-
 
     # Config indicated by + and applies to all files under models/example/
     example:
@@ -77,7 +75,9 @@ seeds:
     RAW_SOFTSKILL:
       +schema : RAW
 
-    
+    RAW_CANDIDAT:
+      +schema: RAW
+
     # Seeds dans le schéma SILVER
     DIM_LIEU:
       +schema: SILVER
@@ -125,5 +125,11 @@ seeds:
 
     DIM_DATE:
       +schema: SILVER
+
+    DIM_TYPE_ENTREPRISE:
+      +schema: SILVER
     
+    DIM_FORMATION:
+      +schema: SILVER
+
  

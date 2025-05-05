@@ -1,10 +1,10 @@
-{{ config(materialized='table',tags=['sql1']) }}
+{{ config(materialized='table',tags=['sql']) }}
 
 
 with 
-{{ tokenize_text(ref('DIM_DOMAINE'), 'id_domaine','nom_domaine', 'domaine') }},
-{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'sector','sector') }},
-{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'description','description') }},
+{{ tokenize_text(ref('DIM_DOMAINE'), 'id_domaine', 'nom_domaine', 'domaine') }},
+{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'sector', 'sector') }},
+{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'description', 'description') }},
 
 sector_matching as (
     SELECT
@@ -110,12 +110,56 @@ combined_scores AS (
     FROM sector_scored_matches s
     FULL OUTER JOIN desc_scored_matches d
     ON s.id_local = d.id_local
+),
+
+-- Résultat final avec union des trois cas - ne garde que RANK = 1 pour chaque source
+final_results AS (
+    -- Cas 1: combined_scores lorsque sector et description sont non null
+    SELECT
+        id_domaine,
+        nom_domaine,
+        id_local,
+        sector,
+        description,
+        COMBINED_MATCH_PERCENTAGE as MATCH_PERCENTAGE,
+        'combined' as source
+    FROM combined_scores
+    WHERE RANK = 1
+    
+    UNION ALL
+    
+    -- Cas 2: desc_scored_matches lorsque sector est null et description non null
+    SELECT
+        id_domaine,
+        nom_domaine,
+        id_local,
+        NULL as sector,
+        description,
+        MATCH_PERCENTAGE,
+        'description_only' as source
+    FROM desc_scored_matches
+    WHERE id_local NOT IN (SELECT id_local FROM combined_scores WHERE sector IS NOT NULL)
+      AND description IS NOT NULL
+      AND RANK = 1
+    
+    UNION ALL
+    
+    -- Cas 3: sector_scored_matches lorsque description est null et sector non null
+    SELECT
+        id_domaine,
+        nom_domaine,
+        id_local,
+        sector,
+        NULL as description,
+        MATCH_PERCENTAGE,
+        'sector_only' as source
+    FROM sector_scored_matches
+    WHERE id_local NOT IN (SELECT id_local FROM combined_scores WHERE description IS NOT NULL)
+      AND sector IS NOT NULL
+      AND RANK = 1
 )
 
-select id_domaine, nom_domaine, sector, id_local from combined_scores
-where rank = 1
-
-
-/* select distinct r.id_local, c.id_local rank
-from {{ref('RAW_OFFRE')}} as r full outer join combined_scores as c on r.id_local = c.id_local
-where rank = 1 */
+-- Résultat final - chaque id_local n'apparaît qu'une seule fois
+SELECT 
+    id_domaine, nom_domaine, sector, id_local
+FROM final_results
