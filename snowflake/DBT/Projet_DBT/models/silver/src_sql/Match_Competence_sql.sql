@@ -11,7 +11,7 @@ offre as (
 
 competence as (
     select 
-        id_competence,
+        id,
         skill
     from {{ref("DIM_COMPETENCE")}}
 ),
@@ -21,7 +21,7 @@ matching as (
         o.id_local,
         o.skills,
         c.skill,
-        c.id_competence
+        c.id
     from offre o
     inner join competence c
         on (
