@@ -24,6 +24,9 @@ sources:
       - name: DIM_ROMECODE
         identifier: DIM_ROMECODE
         description: "Table des dimensions des romecodes"
+      - name: DIM_APPELLATION
+        identifier: DIM_APPELLATION
+        description: "Table des dimensions des appellations"
       - name: DIM_METIER
         identifier: DIM_METIER
         description: "Table des dimensions des metiers"

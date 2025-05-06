@@ -7,12 +7,38 @@ import glob
 import re
 import logging
 from pathlib import Path
+from colorlog import ColoredFormatter
 
-# Configuration du logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+# Création du logger principal
+logger = logging.getLogger('mon_logger')
+logger.setLevel(logging.DEBUG)
+
+# === Handler console avec couleurs ===
+console_handler = logging.StreamHandler()
+console_formatter = ColoredFormatter(
+    "%(log_color)s%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    log_colors={
+        'DEBUG': 'cyan',
+        'INFO': 'green',
+        'WARNING': 'yellow',
+        'ERROR': 'red',
+        'CRITICAL': 'bold_red',
+    }
 )
-logger = logging.getLogger(__name__)
+console_handler.setFormatter(console_formatter)
+
+# === Handler fichier sans couleur ===
+file_handler = logging.FileHandler("app.log", mode='a', encoding='utf-8')
+file_formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+file_handler.setFormatter(file_formatter)
+
+# Ajout des handlers au logger
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
 
 
 class SnowflakeCSVLoader:
@@ -178,7 +204,7 @@ class SnowflakeCSVLoader:
             INSERT INTO ENTREPRISE (nom)
             SELECT DISTINCT t."company_name" FROM {self.filename} t
             WHERE NOT EXISTS (
-                SELECT 1 FROM ENTREPRISE e 
+                SELECT 1 FROM ENTREPRISE e
                 WHERE e.nom = t."company_name"
             )
             """
@@ -188,13 +214,13 @@ class SnowflakeCSVLoader:
             self.cursor.execute(
                 f"""
             INSERT INTO OFFREEMPLOI (id, description, date_publication, date_mise_a_jour, source, source_url, salaire, id_entreprise)
-            SELECT 
+            SELECT
                 o."id",
-                o."description", 
-                o."date_created", 
-                o."date_updated", 
-                o."source", 
-                o."source_url", 
+                o."description",
+                o."date_created",
+                o."date_updated",
+                o."source",
+                o."source_url",
                 o."salary_min",
                 e.id_entreprise
             FROM {self.filename} o
@@ -240,8 +266,8 @@ class SnowflakeCSVLoader:
             (
                 self.load_file(directory_path)
                 .create_stage()
-                # .load_to_table(chunk_size)
-                # .insert_all_job()
+                .load_to_table(chunk_size)
+                .insert_all_job()
             )
             return True
         except Exception as e:
