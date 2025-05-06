@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 Créez un fichier `.env` à la racine du projet avec les informations d'authentification suivantes :
 
-```
+```env
 ADZUNA_APP_ID=votre_app_id_adzuna
 ADZUNA_APP_KEY=votre_app_key_adzuna
 FRANCE_TRAVAIL_ID=votre_id_france_travail
@@ -142,11 +142,13 @@ Pour les collectes historiques qui peuvent prendre beaucoup de temps, le systèm
 ## Stratégies de collecte historique
 
 ### Adzuna
+
 - Collecte organisée par catégories d'emploi
 - Découpage en périodes temporelles d'un mois
 - Pagination avec limite de 100 pages maximum par période
 
 ### France Travail
+
 - Collecte organisée par départements et domaines d'activité
 - Découpage en périodes temporelles d'un mois
 - Pagination avec limite de 1000 résultats maximum par requête
@@ -161,6 +163,7 @@ Pour les collectes historiques qui peuvent prendre beaucoup de temps, le systèm
 ## Résolution des problèmes courants
 
 ### Erreurs d'API
+
 - **Problème** : "Error 429 Too Many Requests"
   - **Solution** : Augmentez la valeur de `rate_limit_delay` dans le code ou attendez quelques heures avant de relancer
 
@@ -168,17 +171,11 @@ Pour les collectes historiques qui peuvent prendre beaucoup de temps, le systèm
   - **Solution** : Vérifiez vos clés d'API dans le fichier `.env`
 
 ### Interruptions de collecte
+
 - **Problème** : Collecte interrompue par un plantage ou Ctrl+C
   - **Solution** : Relancez simplement la même commande, la collecte reprendra au point de contrôle
 
 ### Fichiers volumineux
+
 - **Problème** : Fichiers CSV trop volumineux pour être ouverts
   - **Solution** : Utilisez des outils comme `pandas` pour charger et filtrer les données par portions
-
-## Contribuer
-
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
-
-## Licence
-
-Ce projet est sous licence MIT.
