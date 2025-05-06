@@ -2,9 +2,9 @@
 
 
 with 
-{{ tokenize_text(ref('DIM_DOMAINE'), 'id_domaine', 'nom_domaine', 'domaine') }},
-{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'sector', 'sector') }},
-{{ tokenize_text(ref('RAW_OFFRE'), 'id_local', 'description', 'description') }},
+{{ tokenize_text(source('dim_tables','DIM_DOMAINE'), 'id_domaine', 'nom_domaine', 'domaine') }},
+{{ tokenize_text(source('RAW','RAW_OFFRE'), 'id_local', 'sector', 'sector') }},
+{{ tokenize_text(source('RAW','RAW_OFFRE'), 'id_local', 'description', 'description') }},
 
 sector_matching as (
     SELECT

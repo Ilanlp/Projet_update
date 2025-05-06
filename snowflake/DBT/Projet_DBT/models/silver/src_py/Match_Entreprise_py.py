@@ -34,7 +34,7 @@ def model(dbt, session):
                raw["company_name"],
                raw_first,
                dim_first,
-               dim["ID_ENTREPRISE"],
+               dim["id_entreprise"],
                dim["nom_entreprise"].alias("nom_entreprise"),
                when(exact_match, lit(1)).otherwise(lit(0)).alias("is_exact"),
                when(first_word_match, lit(1)).otherwise(lit(0)).alias("is_first_word"),

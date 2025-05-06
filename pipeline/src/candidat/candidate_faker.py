@@ -12,9 +12,6 @@ load_dotenv()
 
 # Chargement des données de référence depuis les fichiers CSV
 data_dir = '../data/'
-seeds_dir = '../../../snowflake/DBT/Projet_DBT/seeds'
-
-shutil.copytree(seeds_dir,data_dir,dirs_exist_ok=True)
 
 df_dim_competences = pd.read_csv(data_dir+"DIM_COMPETENCE.csv")
 df_dim_domaines = pd.read_csv(data_dir+"DIM_DOMAINE.csv")
@@ -161,7 +158,7 @@ fake.add_provider(CustomListProvider(fake))
 
 # Génération de données fictives pour 50 candidats
 data = []
-for i in range(50):
+for i in range(100):
 
     person = {
         "id_candidat":i,
@@ -188,14 +185,6 @@ for i in range(50):
 # Écriture des données dans un fichier CSV dans data
 with open(
     data_dir+"/RAW_CANDIDAT.csv", mode="w", newline="", encoding="utf-8"
-) as file:
-    writer = csv.DictWriter(file, fieldnames=data[0].keys())
-    writer.writeheader()
-    writer.writerows(data)
-
-# Écriture des données dans un fichier CSV dans DBT seeds
-with open(
-    seeds_dir+"/RAW_CANDIDAT.csv", mode="w", newline="", encoding="utf-8"
 ) as file:
     writer = csv.DictWriter(file, fieldnames=data[0].keys())
     writer.writeheader()

@@ -33,6 +33,9 @@ sources:
       - name: DIM_DATE
         identifier: DIM_DATE
         description: "Table des dimensions des dates"
+      - name: DIM_STOPWORDS
+        identifier: DIM_STOPWORDS
+        description: "Table des dimensions des stopwords"
 
 
   - name: gold_tables
@@ -54,3 +57,7 @@ sources:
       - name: RAW_METIER
         identifier: RAW_METIER
         description: "Table brutes des metiers"
+
+      - name: RAW_CANDIDAT
+        identifier: RAW_CANDIDAT
+        description: "Table brutes des candidats"

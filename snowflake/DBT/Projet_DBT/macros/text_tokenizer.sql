@@ -22,6 +22,6 @@
             {{ text_column }},
             token
         from {{ alias_prefix }}_exploded
-        where len(token)>2 and token not in (select word from {{ref('STOPWORDS_FR')}})
+        where len(token)>2 and token not in (select word from {{source('dim_tables','DIM_STOPWORDS')}})
     )
 {% endmacro %}

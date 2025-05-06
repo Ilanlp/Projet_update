@@ -115,7 +115,7 @@ seeds:
         id_rome: number
         code_rome: varchar
 
-    STOPWORDS_FR:
+    DIM_STOPWORDS:
       +schema: SILVER
 
     DIM_SOFTSKILL:
