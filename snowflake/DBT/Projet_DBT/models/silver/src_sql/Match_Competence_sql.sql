@@ -6,14 +6,14 @@ offre as (
         id_local,
         skills,
         description,
-    from {{ref('RAW_OFFRE')}}
+    from {{source('RAW','RAW_OFFRE')}}
 ),
 
 competence as (
     select 
-        id,
+        id_competence,
         skill
-    from {{ref("DIM_COMPETENCE")}}
+    from {{source("dim_tables","DIM_COMPETENCE")}}
 ),
 
 matching as (
@@ -21,7 +21,7 @@ matching as (
         o.id_local,
         o.skills,
         c.skill,
-        c.id
+        c.id_competence
     from offre o
     inner join competence c
         on (

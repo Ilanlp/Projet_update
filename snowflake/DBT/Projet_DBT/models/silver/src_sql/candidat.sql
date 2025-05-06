@@ -20,7 +20,7 @@ with flatten_candidat as (
         split(regexp_replace(id_domaine, '[^0-9 ]', ' '), ' ') as id_domaine,
         salaire_min
 
-    from {{ ref('RAW_CANDIDAT') }}
+    from {{ source('RAW','RAW_CANDIDAT') }}
 ),
 
 candidat_exploded as ( 

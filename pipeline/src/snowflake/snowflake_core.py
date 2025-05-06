@@ -1058,6 +1058,21 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
+        "SILVER",
+        "DIM_STOPWORDS",
+        f"{output_dir}/DIM_STOPWORDS.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
         "RAW",
         "RAW_CANDIDAT",
         f"{output_dir}/RAW_CANDIDAT.csv",
@@ -1260,3 +1275,4 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
+
