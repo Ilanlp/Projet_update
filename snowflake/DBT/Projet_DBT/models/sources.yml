@@ -12,6 +12,9 @@ sources:
       - name: DIM_CONTRAT
         identifier: DIM_CONTRAT
         description: "Table des dimensions des contrats"
+      - name: DIM_CANDIDAT
+        identifier: DIM_CANDIDAT
+        description: "Table des dimensions des candidats"      
       - name: DIM_ENTREPRISE
         identifier: DIM_ENTREPRISE
         description: "Table des dimensions des entreprises"

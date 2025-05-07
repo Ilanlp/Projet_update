@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS RAW_OFFRE (
   source VARCHAR(20),
   title VARCHAR(1000),
   description VARCHAR(16777216),
-  company_name VARCHAR(100),
+  company_name VARCHAR(1000),
   location_name  VARCHAR(100),
   latitude NUMBER(9,6),
   longitude NUMBER(9,6),
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS RAW_OFFRE (
   source_url VARCHAR(16777216),
   skills VARCHAR(16777216),
   remote_work VARCHAR(10),
-  is_handicap_accessible NUMBER(2,1),
+  is_handicap_accessible BOOLEAN,
   code_rome VARCHAR(5),
   langues VARCHAR(100),
   date_extraction TIMESTAMP_LTZ
