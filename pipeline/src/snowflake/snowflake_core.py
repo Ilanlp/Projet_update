@@ -1085,13 +1085,15 @@ if __name__ == "__main__":
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
 
+
+
     success = loader.process_file_with_copy(
         "JOB_MARKET",
         "RAW",
         "RAW_OFFRE",
         f"{output_dir}/RAW_OFFRE.csv",
         "CSV_ERROR",
-        "PUBLIC",
+        "PUBLIC"
     )
 
     if success:
@@ -1101,6 +1103,16 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET", "SILVER", "DIM_ENTREPRISE", f"{output_dir}/DIM_ENTREPRISE.parquet"
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    
+    success = loader.process_file_with_copy(
+        "JOB_MARKET", "GOLD", "DIM_ENTREPRISE", f"{output_dir}/DIM_ENTREPRISE.parquet"
     )
 
     if success:
@@ -1138,6 +1150,20 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
+        "GOLD",
+        "DIM_COMPETENCE",
+        f"{output_dir}/DIM_COMPETENCE.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
         "SILVER",
         "DIM_CONTRAT",
         f"{output_dir}/DIM_CONTRAT.csv",
@@ -1149,6 +1175,21 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
+    
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "GOLD",
+        "DIM_CONTRAT",
+        f"{output_dir}/DIM_CONTRAT.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+        
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
@@ -1163,6 +1204,21 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
+    
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "GOLD",
+        "DIM_DATE",
+        f"{output_dir}/DIM_DATE.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
@@ -1180,6 +1236,21 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
+        "GOLD",
+        "DIM_DOMAINE",
+        f"{output_dir}/DIM_DOMAINE.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
         "SILVER",
         "DIM_LIEU",
         f"{output_dir}/DIM_LIEU.csv",
@@ -1194,7 +1265,36 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
+        "GOLD",
+        "DIM_LIEU",
+        f"{output_dir}/DIM_LIEU.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
         "SILVER",
+        "DIM_METIER",
+        f"{output_dir}/DIM_METIER.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "GOLD",
         "DIM_METIER",
         f"{output_dir}/DIM_METIER.csv",
         "CLASSIC_CSV",
@@ -1222,7 +1322,35 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
+        "GOLD",
+        "DIM_ROMECODE",
+        f"{output_dir}/DIM_ROMECODE.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
         "SILVER",
+        "DIM_SENIORITE",
+        f"{output_dir}/DIM_SENIORITE.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "GOLD",
         "DIM_SENIORITE",
         f"{output_dir}/DIM_SENIORITE.csv",
         "CLASSIC_CSV",
@@ -1250,7 +1378,21 @@ if __name__ == "__main__":
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
-        "SILVER",
+        "GOLD",
+        "DIM_SOFTSKILL",
+        f"{output_dir}/DIM_SOFTSKILL.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "GOLD",
         "DIM_TELETRAVAIL",
         f"{output_dir}/DIM_TELETRAVAIL.csv",
         "CLASSIC_CSV",
@@ -1276,3 +1418,16 @@ if __name__ == "__main__":
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
 
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "GOLD",
+        "DIM_TYPE_ENTREPRISE",
+        f"{output_dir}/DIM_TYPE_ENTREPRISE.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
