@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS DIM_CANDIDAT (
   prenom VARCHAR(50),
   adresse VARCHAR(100),
   email VARCHAR(30),
-  tel VARCHAR(10),
+  tel VARCHAR(20),
   id_competence INT,
   id_softskill INT,
   id_metier INT,

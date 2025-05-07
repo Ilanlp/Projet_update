@@ -66,13 +66,14 @@ class CustomListProvider(BaseProvider):
 
         self.salaire_min = np.arange(20000,80000,5000)
 
+
     def lieu_unique(self):
         """Génère une liste aléatoire de lieux"""
         return self.random_element(self.lieux)
 
     def lieu(self):
         """Génère une liste aléatoire de lieux"""
-        count = random.randint(0, 5)
+        count = random.randint(0, 3)
         return random.sample(self.lieux,count)
 
     def salaire(self):
@@ -121,7 +122,7 @@ class CustomListProvider(BaseProvider):
 
     def domainEntreprise(self):
         """Génère une liste aléatoire de domaines d'entreprise"""
-        count = random.randint(0, 5)
+        count = random.randint(0, 3)
         return random.sample(self.domainEntreprises, count)
 
 
@@ -158,7 +159,7 @@ fake.add_provider(CustomListProvider(fake))
 
 # Génération de données fictives pour 50 candidats
 data = []
-for i in range(100):
+for i in range(int(os.getenv('CANDIDATS'))):
 
     person = {
         "id_candidat":i,

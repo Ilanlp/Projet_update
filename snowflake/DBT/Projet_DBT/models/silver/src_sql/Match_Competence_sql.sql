@@ -19,6 +19,7 @@ competence as (
 matching as (
     select
         o.id_local,
+        o.description,
         o.skills,
         c.skill,
         c.id_competence
