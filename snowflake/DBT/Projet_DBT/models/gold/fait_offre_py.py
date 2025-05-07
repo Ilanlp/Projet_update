@@ -19,6 +19,7 @@ def model(dbt, session):
     seniorite_df = dbt.ref('Match_Seniorite_py')
     teletravail_df = dbt.ref('Match_Teletravail_py')
     domaine_df = dbt.ref('Match_Domaine_sql')
+    date_df=dbt.ref('Match_Date_py')
 
     # 4️⃣ Jointures et projection
     fact_df = (
@@ -30,6 +31,7 @@ def model(dbt, session):
         .join(seniorite_df, on='id_local', how='left')
         .join(teletravail_df, on='id_local', how='left')
         .join(domaine_df, on='id_local', how='left')
+        
         .select(
             col('title'),
             col("description"),
@@ -42,8 +44,8 @@ def model(dbt, session):
             col('id_seniorite'),
             col('id_teletravail'),
             col('id_domaine'),
+            
         )
-        .dropDuplicates(['id_local'])
     )
 
     return fact_df
