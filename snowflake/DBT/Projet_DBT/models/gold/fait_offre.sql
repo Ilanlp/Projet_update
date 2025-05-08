@@ -10,6 +10,8 @@ with source as (
 
   select 
     raw.id_local,
+    raw.title,
+    raw.description,
     lieu.id_lieu,
     contrat.id_contrat,
     date_created.id_date_created    as id_date_creation,
