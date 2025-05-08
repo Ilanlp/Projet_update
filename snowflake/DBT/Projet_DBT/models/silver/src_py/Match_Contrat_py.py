@@ -112,6 +112,7 @@ def model(dbt, session):
                raw["id"].alias("id"),
                raw["ID_LOCAL"].alias("id_local"),
                dim_contrat["id_contrat"].alias("id_contrat"),
+               dim_contrat["type_contrat"].alias("type_contrat"),
                raw["CONTRACT_TYPE"].alias("contract_type"),
                raw["CONTRACT_DURATION"].alias("contract_duration"),
                when(exact_match_raw,   lit(1)).otherwise(lit(0)).alias("is_exact"),
