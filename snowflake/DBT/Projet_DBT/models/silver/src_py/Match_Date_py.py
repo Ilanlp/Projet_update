@@ -1,6 +1,6 @@
-from snowflake.snowpark.functions import to_date
+from snowflake.snowpark.functions import to_date, coalesce
 from snowflake.snowpark.window import Window
-from snowflake.snowpark.functions import row_number, col
+from snowflake.snowpark.functions import row_number, col,lit
 from snowflake.snowpark import Session
 
 def model(dbt, session: Session):
@@ -39,12 +39,17 @@ def model(dbt, session: Session):
         .drop("rn")
     )
 
+    default_date = lit("1900-01-01").cast("DATE")
+
     # 4) Sélection finale
     result = best.select(
         raw["id"].alias("id"),
         raw["ID_LOCAL"].alias("id_local"),
-        dc["id_date"].alias("id_date_created"),
-        du["id_date"].alias("id_date_updated"),
+        # si dc.id_date est NULL, on prend 1900-01-01
+        coalesce(dc["id_date"], default_date).alias("id_date_created"),
+        # même chose pour date_updated
+        coalesce(du["id_date"], default_date).alias("id_date_updated"),
+        # ... ajoutez ici les autres colonnes si besoin ...
     
     )
 
