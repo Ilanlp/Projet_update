@@ -89,9 +89,10 @@ CREATE TABLE IF NOT EXISTS DIM_TYPE_ENTREPRISE (
 
 
 CREATE TABLE IF NOT EXISTS LIAISON_OFFRE_COMPETENCE (
+  id_offre INT,
   id_local  VARCHAR(10),
   id_competence INT,
-  PRIMARY KEY (id_local, id_competence)
+  PRIMARY KEY (id_offre,id_competence)
 );
 
 
@@ -110,16 +111,15 @@ CREATE TABLE IF NOT EXISTS LIAISON_ROME_SOFTSKILL (
 
 
 CREATE TABLE IF NOT EXISTS FAIT_OFFRE (
-    id INT PRIMARY KEY,
+    id_offre         NUMBER AUTOINCREMENT,
     id_local VARCHAR(10),
-    id_date VARCHAR(10),
     id_contrat INT,
     id_domaine INT,
     id_lieu INT,
     id_date_creation TIMESTAMP_LTZ,
     id_date_modification TIMESTAMP_LTZ,
     id_entreprise INT,
-    id_teletravaill INT,
+    id_teletravail INT,
     id_seniorite INT,
     id_rome INT
     

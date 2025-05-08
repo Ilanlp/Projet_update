@@ -23,27 +23,35 @@ CREATE TABLE IF NOT EXISTS RAW_CANDIDAT (
 
 
 CREATE TABLE IF NOT EXISTS RAW_SOFTSKILL (
-  id_softskill INT IDENTITY(1,1) PRIMARY KEY,
   code_rome VARCHAR(50),
   uuid VARCHAR(36),
   created_at VARCHAR(100),
-  skill_id VARCHAR(12),
+  skill_id VARCHAR(40),
   score NUMBER(18,17),
-  summary VARCHAR(50),
-  details VARCHAR(150)
+  summary VARCHAR(500),
+  details VARCHAR(1000)
 );
 
 
+CREATE TABLE IF NOT EXISTS RAW_ROME_METIER (
+  code_rome VARCHAR(50),
+  libelle VARCHAR(200),
+  code_appellation VARCHAR(100),
+  code_domaine VARCHAR(40),
+  libelle_search VARCHAR(400)
+  
+);
+
 CREATE TABLE IF NOT EXISTS RAW_OFFRE (
-  id NUMBER AUTOINCREMENT PRIMARY KEY,
-  id_local VARCHAR(10),
-  source VARCHAR(20),
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  id_local VARCHAR(14),
+  source VARCHAR(10000),
   title VARCHAR(1000),
   description VARCHAR(16777216),
-  company_name VARCHAR(1000),
-  location_name  VARCHAR(100),
-  latitude NUMBER(9,6),
-  longitude NUMBER(9,6),
+  company_name VARCHAR(10000),
+  location_name  VARCHAR(10000),
+  latitude VARCHAR(200),
+  longitude VARCHAR(200),
   date_created TIMESTAMP_LTZ,
   date_updated TIMESTAMP_LTZ,
   contract_type VARCHAR(20),
