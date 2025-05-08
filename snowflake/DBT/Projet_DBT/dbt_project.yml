@@ -48,6 +48,7 @@ models:
         Match_Lieu_sql:
         Match_Domaine_sql:
         Match_Competence_sql:
+        Match_Rome_sql:
         Insert_Candidat:
 
     # Modèles Gold
