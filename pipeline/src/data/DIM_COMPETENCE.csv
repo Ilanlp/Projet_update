@@ -1,0 +1,1561 @@
+id_competence,skill,type
+1,2D drafting,Design Software
+2,3D modeling,Design Software
+3,3D printing,Manufacturing Technology
+4,5G IoT,Networking
+5,5G Technology,Networking
+6,6G Technology,Networking
+7,7z,Data Compression
+8,A-Frame,Web Development
+9,AB Tasty,Marketing Technology
+10,Ableton Live,Audio Software
+11,Ace,Text Editor
+12,Acme,Text Editor
+13,ActiveCampaign,Marketing Technology
+14,ActiveMQ,Messaging System
+15,Ad Hoc Testing,Software Testing
+16,Adlfs,File System
+17,Adobe Illustrator,Design Software
+18,Adobe Photoshop,Design Software
+19,Adobe XD,Design Software
+20,AdonisJS,Web Framework
+21,Adyen,Payment Processing
+22,After Effects,Video Editing Software
+23,Agile methodologies,Project Management
+24,AI ethics,Artificial Intelligence
+25,AI for Games,Artificial Intelligence
+26,AI Safety,Artificial Intelligence
+27,AI-Powered Automation,Artificial Intelligence
+28,Airflow,Data Orchestration
+29,AirSim,Simulation Software
+30,Allegro,Game Development
+31,Alembic,Data Interchange
+32,Alpha Testing,Software Testing
+33,Amethyst,Game Development
+34,Amplitude,Analytics
+35,Animation Systems,Game Development
+36,Ansible,Configuration Management
+37,ANSYS Fluent,Simulation Software
+38,Ant Colony Optimization,Optimization Algorithm
+39,Ant Design,UI Framework
+40,Apache Beam,Data Processing
+41,Apache HTTP Server,Web Server
+42,Apache Iceberg,Data Lake
+43,Apache JMeter,Performance Testing
+44,Apache Kafka,Messaging System
+45,Apache Knox,Security
+46,Apache Nifi,Data Integration
+47,Apache Ranger,Security
+48,Apache Sentry,Security
+49,Apache Spark,Data Processing
+50,Apache Storm,Data Processing
+51,ApexCharts,Data Visualization
+52,Applicant tracking systems,HR Technology
+53,Application Architecture,Software Architecture
+54,Application Security,Security
+55,Apfs,File System
+56,Ar,Augmented Reality
+57,Arc,Web Browser
+58,Arj,Data Compression
+59,AR/VR,Augmented Reality
+60,Aria,Accessibility
+61,ARkit,Augmented Reality
+62,ARCore,Augmented Reality
+63,Ardour,Audio Software
+64,Arrow,Data Processing
+65,Artbreeder,Artificial Intelligence
+66,ASIC Design,Hardware Design
+67,Aspect-Oriented Programming,Programming Paradigm
+68,ASP.NET Core,Web Framework
+69,Assembly,Programming Language
+70,Asset Management,Financial Technology
+71,Asynchronous Programming,Programming Paradigm
+72,Athena,Data Analytics
+73,Attention Mechanisms,Artificial Intelligence
+74,Attribute-Based Access Control,Security
+75,Attrs,Python Library
+76,Aubio,Audio Processing
+77,Audacity,Audio Software
+78,Auditing,Financial Technology
+79,Augmented Reality Development,Augmented Reality
+80,AugMix,Data Augmentation
+81,Aurora,Database
+82,AutoAugment,Data Augmentation
+83,AutoCAD,Design Software
+84,AutoGen,Artificial Intelligence
+85,AutoGluon,Artificial Intelligence
+86,AutoInt,Artificial Intelligence
+87,AutoKeras,Artificial Intelligence
+88,AutoML,Artificial Intelligence
+89,Auto-PyTorch,Artificial Intelligence
+90,Avalanche,Artificial Intelligence
+91,Avro,Data Serialization
+92,AWeber,Marketing Technology
+93,AWS,Cloud Computing
+94,AWS Outposts,Cloud Computing
+95,AWS Quote,Cloud Computing
+96,Axios,Web Development
+97,Azure,Cloud Computing
+98,Azure Arc,Cloud Computing
+99,Babylon.js,Web Development
+100,Back-End Development,Software Development
+101,Backup Management,IT Operations
+102,Badger,Database
+103,BART,Artificial Intelligence
+104,Bash,Scripting Language
+105,Batch Normalization,Artificial Intelligence
+106,Batch Processing,Data Processing
+107,Battery Management Systems,Hardware Design
+108,Bayesian Inference,Statistics
+109,Bazel,Build Automation
+110,BCN3D Quote,Manufacturing Technology
+111,BDD,Software Testing
+112,BEiT,Artificial Intelligence
+113,Bevy,Game Development
+114,BigBird,Artificial Intelligence
+115,BigCommerce,E-commerce
+116,BigGAN,Artificial Intelligence
+117,BigQuery,Data Analytics
+118,Bin,Data Compression
+119,Bioinformatics,Data Science
+120,Bit,Version Control
+121,BitLocker,Security
+122,Bitbucket,Version Control
+123,Btrfs,File System
+124,Blaze,Data Processing
+125,Blender,Design Software
+126,Blitz.js,Web Framework
+127,Bloatware Removal,IT Operations
+128,Blockchain architecture,Blockchain
+129,Blockchain Development,Blockchain
+130,Bloomberg Terminal,Financial Technology
+131,Bloomreach,Marketing Technology
+132,Blue Team Operations,Security
+133,BlueprintJS,UI Framework
+134,Bokeh,Data Visualization
+135,Bolt,Web Framework
+136,Bookkeeping,Financial Technology
+137,Bootstrap,UI Framework
+138,Bot Management,Security
+139,Boto3,Cloud Computing
+140,Braze,Marketing Technology
+141,Bring Your Own Device Policies,IT Operations
+142,Brotli,Data Compression
+143,Budget Management,Financial Technology
+144,Budgeting,Financial Technology
+145,Build Automation,DevOps
+146,Bull,Queue Management
+147,Business Analysis,Business Intelligence
+148,Business Continuity Planning,IT Operations
+149,Business Intelligence,Data Analytics
+150,Business Process Management,Business Intelligence
+151,BWA,Bioinformatics
+152,Bzip2,Data Compression
+153,C#,Programming Language
+154,C++,Programming Language
+155,C3.js,Data Visualization
+156,Cab,Data Compression
+157,CakePHP,Web Framework
+158,Calculus,Mathematics
+159,Canary Testing,Software Testing
+160,CanvasJS,Data Visualization
+161,Cap’n Proto,Data Serialization
+162,Capacity Planning,IT Operations
+163,Capital Budgeting,Financial Technology
+164,CapIQ,Financial Technology
+165,Carbon Footprint Analysis,Sustainability
+166,Cartopy,Geospatial Analysis
+167,Cassandra,Database
+168,CATIA,Design Software
+169,Cayley,Graph Database
+170,Cbor,Data Serialization
+171,CCD,Hardware Design
+172,Cdfs,File System
+173,Celery,Task Queue
+174,CentOS,Operating System
+175,Cerberus,Data Validation
+176,Cerner,Health Technology
+177,Certificate Management,Security
+178,Cesium,Geospatial Analysis
+179,Cfd,Simulation Software
+180,Chai,Testing Framework
+181,Chakra UI,UI Framework
+182,Change control,IT Operations
+183,Change Management,IT Operations
+184,Chaos Engineering,DevOps
+185,Chaos Testing,Software Testing
+186,Chargebee,Payment Processing
+187,Chart.js,Data Visualization
+188,Cheminformatics,Data Science
+189,Chef,Configuration Management
+190,Chitubox,Manufacturing Technology
+191,Cinema 4D,Design Software
+192,CircleCI,CI/CD
+193,Circuit Simulation,Hardware Design
+194,Citus,Database
+195,Clean Architecture,Software Architecture
+196,CleverTap,Marketing Technology
+197,ClickHouse,Database
+198,CLIP,Artificial Intelligence
+199,Clinical Trials Data Analysis,Health Technology
+200,Clojure,Programming Language
+201,Cloud Architecture,Cloud Computing
+202,Cloud Backup,Cloud Computing
+203,Cloud Cost Optimization,Cloud Computing
+204,Cloud Data Management,Cloud Computing
+205,Cloud Deployment,Cloud Computing
+206,Cloud security,Security
+207,Cloud Security Posture Management,Security
+208,CloudFormation,Cloud Computing
+209,Cloudflare,Web Performance
+210,Cloudpickle,Data Serialization
+211,CMake,Build Automation
+212,CNC Programming,Manufacturing Technology
+213,CockroachDB,Database
+214,Cocos2d,Game Development
+215,CodePen,Web Development
+216,Coding Theory,Computer Science
+217,Cognito,Identity Management
+218,Colander,Data Validation
+219,Collibra,Data Governance
+220,Combinatorics,Mathematics
+221,Comet,Machine Learning
+222,Commodities Trading,Financial Technology
+223,Compatibility Testing,Software Testing
+224,Computational Fluid Dynamics,Simulation Software
+225,Computer Vision,Artificial Intelligence
+226,Concurrent Programming,Programming Paradigm
+227,Confidential Computing,Security
+228,Configuration Management,DevOps
+229,Confluence,Collaboration Tool
+230,Constraint Programming,Programming Paradigm
+231,Consul,Service Discovery
+232,Constant Contact,Marketing Technology
+233,Content Delivery Networks,Web Performance
+234,Content Management Systems,Web Development
+235,Contentful,Web Development
+236,Contract Management,Business Intelligence
+237,Control Theory,Engineering
+238,Convert,Data Processing
+239,Cordova,Mobile Development
+240,CoreNLP,Natural Language Processing
+241,Cortex,Machine Learning
+242,Cost Accounting,Financial Technology
+243,Cost Estimation,Financial Technology
+244,CouchDB,Database
+245,CQRS,Software Architecture
+246,Cramfs,File System
+247,Crashlytics,Analytics
+248,Crazy Egg,Analytics
+249,Credit Analysis,Financial Technology
+250,CRF,Artificial Intelligence
+251,CRISPR Analysis,Bioinformatics
+252,Cross-Platform Development,Software Development
+253,Crossplane,Cloud Computing
+254,Cryptocurrency Trading,Financial Technology
+255,Cryptography,Security
+256,Cryptology,Security
+257,Cryptovoxels,Metaverse
+258,Crystal,Programming Language
+259,Crystal Space,Game Development
+260,CSS,Web Development
+261,CSV,Data Format
+262,CTO,Leadership Role
+263,CUDA,Parallel Computing
+264,Cucumber,Testing Framework
+265,CuDF,Data Processing
+266,Customer.io,Marketing Technology
+267,CutMix,Data Augmentation
+268,CycleGAN,Artificial Intelligence
+269,Cypress,Testing Framework
+270,D,Programming Language
+271,D3.js,Data Visualization
+272,Daa,Data Analytics
+273,DALL-E,Artificial Intelligence
+274,Dask,Data Processing
+275,Data Aggregation,Data Management
+276,Data Analysis,Data Science
+277,Data Anonymization,Data Management
+278,Data Architecture,Data Management
+279,Data Archiving,Data Management
+280,Data Auditing,Data Management
+281,Data Cataloging,Data Management
+282,Data Cleansing,Data Management
+283,Data Compliance,Data Management
+284,Data Compression,Data Management
+285,Data Disposal,Data Management
+286,Data Encryption,Security
+287,Data Enrichment,Data Management
+288,Data Extraction,Data Management
+289,Data Federation,Data Management
+290,Data Governance,Data Management
+291,Data Ingestion,Data Management
+292,Data Integration,Data Management
+293,Data Lakes,Data Management
+294,Data Lineage,Data Management
+295,Data Loss Prevention,Security
+296,Data Management,Data Management
+297,Data Mapping,Data Management
+298,Data Marketplace,Data Management
+299,Data Marts,Data Management
+300,Data Masking,Data Management
+301,Data Mesh,Data Management
+302,Data Migration,Data Management
+303,Data Mining,Data Science
+304,Data Modeling,Data Management
+305,Data Monetization,Data Management
+306,Data Observability,Data Management
+307,Data Pipeline Design,Data Management
+308,Data preprocessing,Data Science
+309,Data Provenance,Data Management
+310,Data Quality Management,Data Management
+311,Data Recovery,Data Management
+312,Data Replication,Data Management
+313,Data Retention,Data Management
+314,Data Science,Data Science
+315,Data Security,Security
+316,Data Sharing,Data Management
+317,Data Stewardship,Data Management
+318,Data Synchronization,Data Management
+319,Data Tokenization,Security
+320,Data Transformation,Data Management
+321,Data Trust,Data Management
+322,Data Validation,Data Management
+323,Data Virtualization,Data Management
+324,Data Visualization,Data Science
+325,Data Warehouses,Data Management
+326,Data wrangling,Data Science
+327,Dat,Version Control
+328,Databricks,Data Analytics
+329,Dataclasses,Python Library
+330,Dataform,Data Analytics
+331,Dataproc,Cloud Computing
+332,Datastream,Cloud Computing
+333,DBeaver,Database Tool
+334,DBT,Data Analytics
+335,DCGAN,Artificial Intelligence
+336,DDoS Mitigation,Security
+337,DeBERTa,Artificial Intelligence
+338,Decentraland,Metaverse
+339,Decentralized Application Development,Blockchain
+340,Decentralized Finance,Blockchain
+341,Decentralized Identity,Security
+342,Decision Theory,Mathematics
+343,Decision Trees,Machine Learning
+344,Deck.gl,Data Visualization
+345,Deep Learning,Machine Learning
+346,Deep Speech,Artificial Intelligence
+347,DeepArt,Artificial Intelligence
+348,DeepFM,Artificial Intelligence
+349,DeepL,Artificial Intelligence
+350,DeepLab,Artificial Intelligence
+351,DeepLabV3,Artificial Intelligence
+352,DeepMotion,Artificial Intelligence
+353,DeepSpeech,Artificial Intelligence
+354,Defold,Game Development
+355,Delta,Data Lake
+356,Delta Lake,Data Lake
+357,Demand Forecasting,Data Science
+358,Deno,Web Development
+359,DenseNet,Artificial Intelligence
+360,Dependency Injection,Software Design
+361,Dependency Management,DevOps
+362,Deployment Automation,DevOps
+363,Deposition,Manufacturing Technology
+364,Derivatives Trading,Financial Technology
+365,Descriptive Analytics,Data Analytics
+366,Design of Experiments,Statistics
+367,Desktop Development,Software Development
+368,Detectron2,Artificial Intelligence
+369,Device Driver Development,Systems Programming
+370,DevExtreme,UI Framework
+371,DevOps,DevOps
+372,DHCP,Networking
+373,Diagnostic Analytics,Data Analytics
+374,DICOM,Health Technology
+375,Differential Equations,Mathematics
+376,Differential Privacy,Security
+377,Digital Forensics,Security
+378,Digital Identity,Security
+379,Digital Ocean,Cloud Computing
+380,Digital Twin Development,Simulation Software
+381,Digital Twin Technology,Simulation Software
+382,Dill,Data Serialization
+383,Directus,Web Development
+384,Disaster Recovery,IT Operations
+385,Disaster Recovery Planning,IT Operations
+386,Discrete Mathematics,Mathematics
+387,Disco,Data Processing
+388,Distributed Programming,Programming Paradigm
+389,Distributed systems,Systems Programming
+390,Django,Web Framework
+391,Dm-crypt,Security
+392,Dmg,File System
+393,DNS,Networking
+394,Docker,Containerization
+395,Document Analysis,Data Science
+396,Domain Name System Management,Networking
+397,Domain-Driven Design,Software Architecture
+398,Domo,Data Analytics
+399,Donut,Data Visualization
+400,Doris,Database
+401,DotNet,Software Framework
+402,Drift,Machine Learning
+403,Dropout,Machine Learning
+404,Drupal,Content Management System
+405,DuckDB,Database
+406,Due Diligence,Financial Technology
+407,DVC,Version Control
+408,Dygraphs,Data Visualization
+409,Dynamic Yield,Marketing Technology
+410,DynamoDB,Database
+411,Dynatrace,Monitoring
+412,EarSketch,Audio Software
+413,EasyAR,Augmented Reality
+414,EasyOCR,Optical Character Recognition
+415,Ecryptfs,Security
+416,Edge AI,Artificial Intelligence
+417,Edge Computing,Cloud Computing
+418,EfficientDet,Artificial Intelligence
+419,EfficientNet,Artificial Intelligence
+420,Elasticsearch,Search Engine
+421,Electra,Artificial Intelligence
+422,Electron,Desktop Development
+423,Eleventy,Web Development
+424,Elixir,Programming Language
+425,ELK Stack,Data Analytics
+426,Elm,Programming Language
+427,Email Security,Security
+428,Embedded Systems Development,Systems Programming
+429,Emarsys,Marketing Technology
+430,Encfs,Security
+431,Endpoint Detection and Response,Security
+432,Energy Modeling,Simulation Software
+433,Enscript,Scripting Language
+434,Enterprise Architecture,IT Operations
+435,Entity Extraction,Natural Language Processing
+436,Epic Systems,Health Technology
+437,Equity Research,Financial Technology
+438,Erlang,Programming Language
+439,ERP systems,Business Intelligence
+440,Etching,Manufacturing Technology
+441,Ethereum,Blockchain
+442,ETL processes,Data Management
+443,Event Sourcing,Software Architecture
+444,Event-Driven Architecture,Software Architecture
+445,Event-Driven Programming,Programming Paradigm
+446,Exadata,Database
+447,Exasol,Database
+448,Excel,Data Analytics
+449,Explainable AI,Artificial Intelligence
+450,Exploratory Testing,Software Testing
+451,Express.js,Web Framework
+452,Ext2,File System
+453,Ext3,File System
+454,Ext4,File System
+455,Ext JS,UI Framework
+456,F#,Programming Language
+457,F5,Networking
+458,Facebook Ads,Marketing Technology
+459,Facial Recognition,Artificial Intelligence
+460,Failure Analysis,Engineering
+461,Fairseq,Artificial Intelligence
+462,Falco,Security
+463,FastAPI,Web Framework
+464,Fastly,Web Performance
+465,FastNLP,Natural Language Processing
+466,Fastparquet,Data Processing
+467,FastText,Artificial Intelligence
+468,Fat,File System
+469,Fat12,File System
+470,Fat16,File System
+471,Fat32,File System
+472,Fathom,Analytics
+473,Fault Injection,Software Testing
+474,Fault Tolerance,Systems Programming
+475,FaunaDB,Database
+476,Fcd,File System
+477,Fcs,File System
+478,Feature engineering,Machine Learning
+479,Feature Toggles,DevOps
+480,Federated Identity Management,Security
+481,Federated Learning,Machine Learning
+482,Feather,Data Processing
+483,Figma,Design Software
+484,FileVault,Security
+485,Financial Analysis,Financial Technology
+486,Financial modeling,Financial Technology
+487,Financial Planning,Financial Technology
+488,Financial Reporting,Financial Technology
+489,Financial statements preparation,Financial Technology
+490,Finite Element Analysis,Simulation Software
+491,Firebolt,Database
+492,Firebase,Cloud Computing
+493,Firewalls,Security
+494,Firmware Development,Systems Programming
+495,Fixed Income Analysis,Financial Technology
+496,Flair,Natural Language Processing
+497,Flask,Web Framework
+498,Flatbuffers,Data Serialization
+499,Flightmare,Simulation Software
+500,Fluentd,Data Processing
+501,Fluid Dynamics,Simulation Software
+502,Flutter,Mobile Development
+503,Fly.io,Cloud Computing
+504,Flyway,Database Migration
+505,FMOD,Audio Software
+506,Folium,Geospatial Analysis
+507,Forensic analysis,Security
+508,Foreign Exchange Trading,Financial Technology
+509,Foundation,UI Framework
+510,FoxDot,Audio Software
+511,FPGA Programming,Hardware Design
+512,Fraud Detection,Data Science
+513,FreeCAD,Design Software
+514,Freshdesk,Customer Support
+515,Front-End Development,Software Development
+516,Fsspec,File System
+517,FT-Transformer,Artificial Intelligence
+518,Full-Stack Development,Software Development
+519,Functional Programming,Programming Paradigm
+520,FusionAuth,Identity Management
+521,Fuzzy Logic,Artificial Intelligence
+522,Fyrox,Game Development
+523,Game Design,Game Development
+524,Game Development,Game Development
+525,Game Theory,Mathematics
+526,Gatling,Performance Testing
+527,Gauge,Testing Framework
+528,GauGAN,Artificial Intelligence
+529,Gawk,Scripting Language
+530,Gazebo,Simulation Software
+531,Gbi,File System
+532,GCM,Cloud Computing
+533,Gcsfs,File System
+534,GDAL,Geospatial Analysis
+535,Gdi,Graphics Programming
+536,GDI+,Graphics Programming
+537,Gearman,Task Queue
+538,General Ledger,Financial Technology
+539,Generative Adversarial Networks,Artificial Intelligence
+540,Generative AI,Artificial Intelligence
+541,Generative Design,Design Software
+542,Genetic Algorithms,Optimization Algorithm
+543,Genomics Analysis,Bioinformatics
+544,Gensim,Natural Language Processing
+545,GeoPandas,Geospatial Analysis
+546,Geopy,Geospatial Analysis
+547,Geospatial Analysis,Geospatial Analysis
+548,Geoviews,Geospatial Analysis
+549,Gerrit,Version Control
+550,GetResponse,Marketing Technology
+551,Ggez,Game Development
+552,Ghost,Content Management System
+553,Gibber,Audio Software
+554,Git,Version Control
+555,GitHub,Version Control
+556,GitHub Actions,CI/CD
+557,GitLab,Version Control
+558,GLM,Statistical Modeling
+559,Glitch,Web Development
+560,Godot,Game Development
+561,GoodData,Data Analytics
+562,Google Ads,Marketing Technology
+563,Google Analytics,Analytics
+564,Google Anthos,Cloud Computing
+565,Google Cloud,Cloud Computing
+566,Google Slides,Collaboration Tool
+567,Google Suite,Collaboration Tool
+568,Gopher,Programming Language
+569,GORM,ORM
+570,Gosec,Security
+571,Gradient Boosting,Machine Learning
+572,Gradient Clipping,Machine Learning
+573,Grafana,Monitoring
+574,Graph Theory,Mathematics
+575,GraphQL,Web Development
+576,Graphite,Monitoring
+577,Great Expectations,Data Validation
+578,Green Threads,Programming Paradigm
+579,Greenplum,Database
+580,Grok,Artificial Intelligence
+581,Group Replication,Database
+582,GRU,Artificial Intelligence
+583,Gzip,Data Compression
+584,H3,Geospatial Analysis
+585,H5,Data Format
+586,Hadoop,Data Processing
+587,HAProxy,Networking
+588,Hardhat,Blockchain
+589,Haskell,Programming Language
+590,Hasura,Web Development
+591,Haxe,Programming Language
+592,Hdfs,File System
+593,Heap,Database
+594,HeidiSQL,Database Tool
+595,Helsinki-NLP,Natural Language Processing
+596,Heroku,Cloud Computing
+597,Hexagonal Architecture,Software Architecture
+598,Hidden Markov Models,Machine Learning
+599,High Availability,Systems Programming
+600,Highcharts,Data Visualization
+601,Hill Climbing,Optimization Algorithm
+602,HIP,Parallel Computing
+603,Hive,Data Analytics
+604,HL7,Health Technology
+605,HoloLens,Augmented Reality
+606,Holographic Displays,Augmented Reality
+607,Holoviews,Data Visualization
+608,Homomorphic Encryption,Security
+609,Honeycomb,Monitoring
+610,Horde3D,Game Development
+611,Horizon Worlds,Metaverse
+612,Horovod,Machine Learning
+613,Hotjar,Analytics
+614,Houdini,Design Software
+615,HRNet,Artificial Intelligence
+616,Hudi,Data Lake
+617,Hugging Face,Artificial Intelligence
+618,Hugo,Web Development
+619,Hulu,Streaming Platform
+620,Hyperledger,Blockchain
+621,Hyperopt,Machine Learning
+622,Hyperparameter tuning,Machine Learning
+623,Hyper-V,Virtualization
+624,Ibis,Data Analytics
+625,ICD-10 coding,Health Technology
+626,Iceberg,Data Lake
+627,Identity and Access Management,Security
+628,IDS/IPS,Security
+629,Ima,File System
+630,Image Processing,Artificial Intelligence
+631,Img,File System
+632,Impala,Data Analytics
+633,Incident Management,IT Operations
+634,Incident response,Security
+635,Inception,Artificial Intelligence
+636,InfluxDB,Database
+637,InfoGAN,Artificial Intelligence
+638,Informatica,Data Integration
+639,Informatica MDM,Data Management
+640,Information architecture,Web Development
+641,Information Theory,Computer Science
+642,Infrastructure Architecture,IT Operations
+643,Infrastructure as Code,DevOps
+644,Injection Molding,Manufacturing Technology
+645,InMemory,Database
+646,Instance Segmentation,Artificial Intelligence
+647,Integrated Gradients,Artificial Intelligence
+648,Integration testing,Software Testing
+649,Interaction design,UI/UX
+650,Intercom,Customer Support
+651,Inventory Optimization,Supply Chain
+652,Investment Analysis,Financial Technology
+653,Ionic,Mobile Development
+654,IPFS,Distributed Systems
+655,Irrlicht,Game Development
+656,ISO 27001,Security
+657,Iso,File System
+658,Istio,Service Mesh
+659,IT Auditing,IT Operations
+660,IT Compliance,IT Operations
+661,IT Governance,IT Operations
+662,IT Operations Management,IT Operations
+663,IT Risk Management,IT Operations
+664,IT Service Management,IT Operations
+665,IT Strategy,IT Operations
+666,Iterable,Marketing Technology
+667,J2EE,Software Framework
+668,JAR,Data Compression
+669,Java,Programming Language
+670,JavaScript,Programming Language
+671,Jaydebeapi,Database Connectivity
+672,JDBC,Database Connectivity
+673,Jekyll,Web Development
+674,Jenkins,CI/CD
+675,Jest,Testing Framework
+676,Jetpack Compose,Mobile Development
+677,Jfs,File System
+678,Jinja,Web Development
+679,Jira,Project Management
+680,JMS,Messaging System
+681,Joomla,Content Management System
+682,Jpype,Programming Language
+683,JQuery,Web Development
+684,JSFiddle,Web Development
+685,JSON,Data Format
+686,JSP,Web Development
+687,JSTS,Geospatial Analysis
+688,JTA,Software Framework
+689,JTS,Geospatial Analysis
+690,Julia,Programming Language
+691,Juniper networking,Networking
+692,Junit,Testing Framework
+693,Jupyter Notebook,Data Science
+694,JWT,Security
+695,K6,Performance Testing
+696,Kafka,Messaging System
+697,Kaldi,Speech Recognition
+698,Kalman Filtering,Signal Processing
+699,Katib,Machine Learning
+700,Kdb+,Database
+701,Kendo UI,UI Framework
+702,Kepler.gl,Geospatial Analysis
+703,Keras,Machine Learning
+704,Keras-RL,Machine Learning
+705,KeystoneJS,Web Framework
+706,Kibana,Data Visualization
+707,Kinect,Augmented Reality
+708,Kinesis,Data Processing
+709,Kingspray,Augmented Reality
+710,Klampt,Robotics
+711,Klaviyo,Marketing Technology
+712,Knex.js,ORM
+713,Knowledge Distillation,Machine Learning
+714,Knowledge Management,Business Intelligence
+715,Knowledge Representation,Artificial Intelligence
+716,Know Your Customer (KYC),Financial Technology
+717,Kotlin,Programming Language
+718,KServe,Machine Learning
+719,KubeFlow,Machine Learning
+720,Kubernetes,Containerization
+721,Kylin,Data Analytics
+722,Label Smoothing,Machine Learning
+723,Lakehouse Architecture,Data Management
+724,LAMB,Machine Learning
+725,LangChain,Artificial Intelligence
+726,Laravel,Web Framework
+727,Lasers,Manufacturing Technology
+728,Layer Normalization,Machine Learning
+729,Layered Architecture,Software Architecture
+730,Lean Manufacturing,Manufacturing Technology
+731,Leanplum,Marketing Technology
+732,Learning Rate Scheduling,Machine Learning
+733,Level Design,Game Development
+734,LevelDB,Database
+735,Librosa,Audio Processing
+736,License Management,IT Operations
+737,LIDAR,Robotics
+738,LightGBM,Machine Learning
+739,Lightstep,Monitoring
+740,LIME,Machine Learning
+741,Linear Algebra,Mathematics
+742,Linkerd,Service Mesh
+743,Linode,Cloud Computing
+744,Linux,Operating System
+745,Liquibase,Database Migration
+746,LiveChat,Customer Support
+747,Lizard,Code Analysis
+748,LMDB,Database
+749,LMMS,Audio Software
+750,Load Balancing,Networking
+751,Load Testing,Software Testing
+752,Local Search,Optimization Algorithm
+753,Localization Testing,Software Testing
+754,Lock-Free Programming,Programming Paradigm
+755,Logic Programming,Programming Paradigm
+756,Logic Pro,Audio Software
+757,Logistics Optimization,Supply Chain
+758,LogRocket,Analytics
+759,Loki,Monitoring
+760,Longformer,Artificial Intelligence
+761,Looker,Data Analytics
+762,LoopBack,Web Framework
+763,Low-Code Development,Software Development
+764,LSTM,Machine Learning
+765,Lua,Programming Language
+766,Luigi,Data Orchestration
+767,Luks,Security
+768,Luxe,Game Development
+769,LVM,File System
+770,LZH,Data Compression
+771,LZO,Data Compression
+772,LzrwOUND,Data Compression
+773,Lzs,Data Compression
+774,Lzx,Data Compression
+775,M&A processes,Financial Technology
+776,Machine Learning,Machine Learning
+777,Macroquad,Game Development
+778,Madlib,Data Analytics
+779,Magento,E-commerce
+780,Mailchimp,Marketing Technology
+781,Maintenance,IT Operations
+782,Malware Analysis,Security
+783,Managerial Accounting,Financial Technology
+784,MapReduce,Data Processing
+785,MariaDB,Database
+786,Markov Models,Machine Learning
+787,Marshmallow,Data Serialization
+788,Master Data Management,Data Management
+789,Material Science,Engineering
+790,Material-UI,UI Framework
+791,MATLAB,Programming Language
+792,Matplotlib,Data Visualization
+793,MatrixOne,Database
+794,Maven,Build Automation
+795,Max/MSP,Audio Software
+796,Maya,Design Software
+797,Mechanical Design,Engineering
+798,Memcached,Database
+799,Memory Management,Systems Programming
+800,Mergers and Acquisitions,Financial Technology
+801,Mesos,Containerization
+802,Metabase,Data Analytics
+803,Metadata Management,Data Management
+804,Metallurgy,Engineering
+805,Metaprogramming,Programming Paradigm
+806,Metasploit,Security
+807,Meteor,Web Framework
+808,Metaverse Development,Metaverse
+809,Metaverse SDK,Metaverse
+810,MetricsGraphics,Data Visualization
+811,Microfabrication,Manufacturing Technology
+812,Microservices,Software Architecture
+813,Microservices architecture,Software Architecture
+814,MicroStrategy,Data Analytics
+815,Midjourney,Artificial Intelligence
+816,Minikube,Containerization
+817,MinIO,Cloud Storage
+818,Miniquad,Game Development
+819,Minix,Operating System
+820,Mixpanel,Analytics
+821,Mixup,Data Augmentation
+822,MLflow,Machine Learning
+823,MLRun,Machine Learning
+824,Mobile Development,Software Development
+825,Mobile Device Management,IT Operations
+826,MobileNet,Artificial Intelligence
+827,MobX,Web Development
+828,Mocha,Testing Framework
+829,Modin,Data Processing
+830,MongoDB,Database
+831,Monolithic architecture,Software Architecture
+832,Mouseflow,Analytics
+833,Move AI,Artificial Intelligence
+834,MoveIt,Robotics
+835,MQTT,Messaging System
+836,Multi-Cloud Architecture,Cloud Computing
+837,Multi-Factor Authentication,Security
+838,Multi-Head Attention,Artificial Intelligence
+839,Multibrush,Design Software
+840,Multiplayer Networking,Game Development
+841,Multiphysics Simulation,Simulation Software
+842,Multithreading,Programming Paradigm
+843,Multivariate Testing,Software Testing
+844,Music21,Audio Processing
+845,MyRocks,Database
+846,MySQL,Database
+847,MySQL Router,Database
+848,MySQL Shell,Database Tool
+849,MySQL Workbench,Database Tool
+850,Nagios,Monitoring
+851,Nanotechnology,Engineering
+852,NATS,Messaging System
+853,Natural Language Processing,Artificial Intelligence
+854,Navicat,Database Tool
+855,Ncd,File System
+856,Neo4j,Graph Database
+857,Neptune,Graph Database
+858,NeRF,Artificial Intelligence
+859,Nessie,Data Lake
+860,Nessus,Security
+861,NestJS,Web Framework
+862,NetCDF,Data Format
+863,Netlify,Web Development
+864,Network infrastructure,Networking
+865,Network Segmentation,Security
+866,Network Theory,Computer Science
+867,Neural Networks,Machine Learning
+868,Neural Style,Artificial Intelligence
+869,NeurST,Artificial Intelligence
+870,New Relic,Monitoring
+871,Next.js,Web Framework
+872,Nexus,Repository Management
+873,NFS,File System
+874,NFT Development,Blockchain
+875,Nginx,Web Server
+876,Niantic Platform,Augmented Reality
+877,Nifi,Data Integration
+878,NIST,Security
+879,Nivo,Data Visualization
+880,NLTK,Natural Language Processing
+881,No-Code Development,Software Development
+882,Node,Web Development
+883,Node.js,Web Framework
+884,Non-Fungible Tokens,Blockchain
+885,Nougat,Optical Character Recognition
+886,NPM,Package Manager
+887,Nreal,Augmented Reality
+888,Nrg,File System
+889,Ntlm,Security
+890,NTFS,File System
+891,NuGet,Package Manager
+892,NumPy,Python Library
+893,Nuxt.js,Web Framework
+894,NVD3,Data Visualization
+895,Nx,Build Automation
+896,Oauth,Security
+897,Object Detection,Artificial Intelligence
+898,Object Tracking,Artificial Intelligence
+899,Object-Oriented Programming,Programming Paradigm
+900,Observable,Data Visualization
+901,OCR,Optical Character Recognition
+902,ODBC,Database Connectivity
+903,Okta,Identity Management
+904,Olark,Customer Support
+905,Omniverse,Simulation Software
+906,Omnisend,Marketing Technology
+907,OnCyber,Metaverse
+908,OneSignal,Marketing Technology
+909,ONNX,Machine Learning
+910,Onsible,Configuration Management
+911,Onsen UI,UI Framework
+912,Open Brush,Augmented Reality
+913,Open Cart,E-commerce
+914,OpenAPI,Web Development
+915,OpenCart,E-commerce
+916,OpenCL,Parallel Computing
+917,OpenCV, artificial Intelligence
+918,OpenDR,Robotics
+919,OpenFOAM,Simulation Software
+920,OpenGL,Graphics Programming
+921,OpenID Connect,Security
+922,OpenLayers,Geospatial Analysis
+923,OpenMP,Parallel Computing
+924,OpenNI,Augmented Reality
+925,OpenNMT,Artificial Intelligence
+926,OpenPose,Artificial Intelligence
+927,OpenRAVE,Robotics
+928,OpenSearch,Search Engine
+929,OpenTSDB,Database
+930,OpenTelemetry,Monitoring
+931,OpenVR,Virtual Reality
+932,OpenWeb Analytics,Analytics
+933,OpenXR,Virtual Reality
+934,Operating Systems,Systems Programming
+935,OptiTrack,Augmented Reality
+936,Optical Character Recognition,Artificial Intelligence
+937,Optics,Engineering
+938,Optimization Theory,Mathematics
+939,Optimizely,Marketing Technology
+940,Oracle,Database
+941,Oracle BI,Data Analytics
+942,Oracle Database,Database
+943,Oracle PL/SQL,Database
+944,Orca,Data Orchestration
+945,Orjson,Data Serialization
+946,ORM,Database
+947,Ova,File System
+948,Ovf,File System
+949,P01,File System
+950,P5.js,Data Visualization
+951,Packer,DevOps
+952,Paddle,Machine Learning
+953,PaddleOCR,Optical Character Recognition
+954,Paddlenlp,Natural Language Processing
+955,Pandas,Python Library
+956,Panda3D,Game Development
+957,Pandera,Data Validation
+958,Panel,Data Visualization
+959,Papertrail,Monitoring
+960,Parallel Programming,Programming Paradigm
+961,Parcel,Build Automation
+962,Parquet,Data Format
+963,Particle Filtering,Signal Processing
+964,Particle Swarm Optimization,Optimization Algorithm
+965,Particle Systems,Game Development
+966,Patch Management,IT Operations
+967,Patroni,Database
+968,Pausable,Web Development
+969,PayPal,Payment Processing
+970,Payroll Management,Financial Technology
+971,Payroll systems,Financial Technology
+972,PCB Design,Hardware Design
+973,PCL,Point Cloud Processing
+974,Pdi,File System
+975,Pebble,Web Framework
+976,Peewee,ORM
+977,Pendo,Analytics
+978,Penetration Testing,Security
+979,Perceiver,Artificial Intelligence
+980,Percona,Database
+981,Perl,Programming Language
+982,Perlin Noise,Graphics Programming
+983,Petri Nets,Computer Science
+984,PgAdmin,Database Tool
+985,PgBouncer,Database
+986,Pgpool,Database
+987,PHP,Programming Language
+988,Photolithography,Manufacturing Technology
+989,Photonics,Engineering
+990,Physics Simulation,Simulation Software
+991,Pickle,Data Serialization
+992,Piccolo,ORM
+993,Pico,Text Editor
+994,Pipedrive,Customer Relationship Management
+995,Pipeline Architecture,Software Architecture
+996,Pipeline Parallelism,Machine Learning
+997,Pitchbook,Financial Technology
+998,Pix2Pix,Artificial Intelligence
+999,PL/pgSQL,Database
+1000,PL/Python,Database
+1001,PL/R,Database
+1002,PL/Perl,Database
+1003,PL/Tcl,Database
+1004,PL/V8,Database
+1005,Planck.js,Game Development
+1006,PlanetScale,Database
+1007,Plask,Animation Software
+1008,PlatformIO,Embedded Systems
+1009,Plausible,Analytics
+1010,PlayCanvas,Game Development
+1011,Plotly,Data Visualization
+1012,Plotly Dash,Data Visualization
+1013,PLSQL,Database
+1014,PLV8,Database
+1015,Ply,File System
+1016,Pnpm,Package Manager
+1017,Podman,Containerization
+1018,Policy-Based Access Control,Security
+1019,Polkadot,Blockchain
+1020,Polygon,Blockchain
+1021,Polymorphism,Programming Paradigm
+1022,PonyORM,ORM
+1023,Portainer,Containerization
+1024,Pose Estimation,Artificial Intelligence
+1025,Positional Encoding,Artificial Intelligence
+1026,PostGIS,Geospatial Analysis
+1027,PostgreSQL,Database
+1028,Postman,API Testing
+1029,Postmark,Marketing Technology
+1030,Power BI,Data Analytics
+1031,Power Designer,Data Modeling
+1032,Power Integrity Analysis,Hardware Design
+1033,PowerShell,Scripting Language
+1034,Praat,Audio Processing
+1035,Presto,Data Analytics
+1036,PrestaShop,E-commerce
+1037,Prisma,ORM
+1038,Prismic,Content Management System
+1039,Privileged Access Management,Security
+1040,Probability Theory,Mathematics
+1041,Problem Management,IT Operations
+1042,Procedural Content Generation,Game Development
+1043,Process Modeling,Business Intelligence
+1044,ProGAN,Artificial Intelligence
+1045,Prolog,Programming Language
+1046,Prometheus,Monitoring
+1047,Prompt Engineering,Artificial Intelligence
+1048,Protobuf,Data Serialization
+1049,Protocol Analysis,Networking
+1050,ProTools,Audio Software
+1051,ProxySQL,Database
+1052,Puppet,Configuration Management
+1053,Pure Data,Audio Software
+1054,Purple Team Operations,Security
+1055,Py4j,Programming Language
+1056,Pyarrow,Data Processing
+1057,PyBullet,Simulation Software
+1058,Pydantic,Data Validation
+1059,Pygame,Game Development
+1060,Pyodbc,Database Connectivity
+1061,Pyproj,Geospatial Analysis
+1062,PyRobotics,Robotics
+1063,PySpark,Data Processing
+1064,Pyschema,Data Validation
+1065,Pytest,Testing Framework
+1066,Python,Programming Language
+1067,PyTorch,Machine Learning
+1068,Qcow,File System
+1069,Qcow2,File System
+1070,QlikView,Data Analytics
+1071,QR Code Generation,Web Development
+1072,Qt,Software Framework
+1073,Quarkus,Software Framework
+1074,Quasar,Web Framework
+1075,QuestDB,Database
+1076,Queueing Theory,Computer Science
+1077,Quicklz,Data Compression
+1078,R,Programming Language
+1079,RabbitMQ,Messaging System
+1080,RACI,Project Management
+1081,RADiCAL,Artificial Intelligence
+1082,Raft,Distributed Systems
+1083,RAII,Programming Paradigm
+1084,Raja,Parallel Computing
+1085,RandAugment,Data Augmentation
+1086,Random Forests,Machine Learning
+1087,Rar,Data Compression
+1088,Rasterio,Geospatial Analysis
+1089,Raw,File System
+1090,Ray,Machine Learning
+1091,Ray Tune,Machine Learning
+1092,RDBMS,Database
+1093,RDP,Networking
+1094,React,Web Framework
+1095,React 360,Web Development
+1096,React Native,Mobile Development
+1097,React Testing Library,Testing Framework
+1098,Reactive batch Programming,Programming Paradigm
+1099,Real-Time Processing,Data Processing
+1100,Reasoning Systems,Artificial Intelligence
+1101,Reaver,Security
+1102,Rec Room,Metaverse
+1103,Records,Data Management
+1104,Recurly,Payment Processing
+1105,Red Team Operations,Security
+1106,Redis,Database
+1107,Redshift,Data Analytics
+1108,RedwoodJS,Web Framework
+1109,Reels,Data Compression
+1110,Reform,Web Framework
+1111,Reformer,Artificial Intelligence
+1112,Refract,Web Development
+1113,Refs,Web Development
+1114,Regression Testing,Software Testing
+1115,Regulatory Compliance,IT Operations
+1116,Reinforcement Learning,Machine Learning
+1117,Reiserfs,File System
+1118,Reiser4,File System
+1119,Relational Database,Database
+1120,Release Management,DevOps
+1121,Reliability Engineering,DevOps
+1122,Remix,Web Framework
+1123,Remote Desktop Protocol,Networking
+1124,Render,Cloud Computing
+1125,Report Generation,Data Analytics
+1126,Request Fulfillment,IT Operations
+1127,Requirements Gathering,Business Intelligence
+1128,ResNet,Artificial Intelligence
+1129,Residual Connections,Artificial Intelligence
+1130,Resque,Queue Management
+1131,REST API,Web Development
+1132,RetinaNet,Artificial Intelligence
+1133,Revit,Design Software
+1134,Reverse Engineering,Security
+1135,Rex,Scripting Language
+1136,RHEL,Operating System
+1137,Risk analysis,Financial Technology
+1138,Risk assessment,Financial Technology
+1139,Risk Management,Financial Technology
+1140,Riskalyze,Financial Technology
+1141,RLlib,Machine Learning
+1142,Robopy,Robotics
+1143,Robotics Engineering,Robotics
+1144,Robotics Toolbox,Robotics
+1145,RocksDB,Database
+1146,Role-Based Access Control,Security
+1147,Rollbar,Monitoring
+1148,Rollout,DevOps
+1149,Rollup,Build Automation
+1150,Root Cause Analysis,IT Operations
+1151,ROS,Robotics
+1152,ROS 2,Robotics
+1153,Roslyn,Code Analysis
+1154,RPA,Automation
+1155,RQ,Queue Management
+1156,Rsync,Data Synchronization
+1157,RTMP,Streaming Protocol
+1158,RTOS Programming,Systems Programming
+1159,Ruby,Programming Language
+1160,Ruby on Rails,Web Framework
+1161,RudderStack,Analytics
+1162,RunwayML,Artificial Intelligence
+1163,Rush,Web Framework
+1164,Rust,Programming Language
+1165,Rust (Web3),Blockchain
+1166,RxJS,Web Development
+1167,S3fs,File System
+1168,SAINT,Artificial Intelligence
+1169,Sails.js,Web Framework
+1170,Saliency Maps,Artificial Intelligence
+1171,SaltStack,Configuration Management
+1172,SAML,Security
+1173,Sanity,Content Management System
+1174,SAP BusinessObjects,Data Analytics
+1175,SAP SuccessFactors,HR Technology
+1176,Sapper,Web Framework
+1177,SASS,Web Development
+1178,Scala,Programming Language
+1179,Scalability,Systems Programming
+1180,Scikit-learn,Machine Learning
+1181,SciPy,Python Library
+1182,Scrapy,Web Scraping
+1183,Screaming Frog,SEO
+1184,SDL,Game Development
+1185,Seaborn,Data Visualization
+1186,Secure Access Service Edge,Security
+1187,Secure Code Review,Security
+1188,Secure File Transfer,Security
+1189,Secure Multi-Party Computation,Security
+1190,Secure Shell,Networking
+1191,Security Architecture,Security
+1192,Security Information and Event Management,Security
+1193,Security Orchestration,Security
+1194,Security Testing,Security
+1195,Segment,Analytics
+1196,Selenium,Testing Framework
+1197,Self-Attention,Artificial Intelligence
+1198,Self-Sovereign Identity,Security
+1199,Semantic Segmentation,Artificial Intelligence
+1200,Sencha Touch,UI Framework
+1201,SendGrid,Marketing Technology
+1202,Sentry,Monitoring
+1203,Sequelize,ORM
+1204,Server hardware,IT Operations
+1205,Serverless architecture,Cloud Computing
+1206,Service Catalog Management,IT Operations
+1207,Service Desk Operations,IT Operations
+1208,Service-Oriented Architecture,Software Architecture
+1209,Servlet,Web Development
+1210,Session Management,Web Development
+1211,SFML,Game Development
+1212,SGD,Machine Learning
+1213,SHAP,Machine Learning
+1214,Shapely,Geospatial Analysis
+1215,Sheet Metal Fabrication,Manufacturing Technology
+1216,Shiny,Data Visualization
+1217,Shopify,E-commerce
+1218,Sidekiq,Queue Management
+1219,Signal Integrity Analysis,Hardware Design
+1220,Signal Processing,Signal Processing
+1221,Simulated Annealing,Optimization Algorithm
+1222,Simulation software,Simulation Software
+1223,Simulink,Simulation Software
+1224,Single Sign-On,Security
+1225,Sisense,Data Analytics
+1226,Site Reliability Engineering,DevOps
+1227,SiteSpect,Marketing Technology
+1228,Six Sigma,Business Intelligence
+1229,Sketch,Design Software
+1230,SketchUp,Design Software
+1231,Skype,Collaboration Tool
+1232,SLAM,Robotics
+1233,Slack,Collaboration Tool
+1234,Smart contracts,Blockchain
+1235,Smart Pointers,Programming Paradigm
+1236,Smartlook,Analytics
+1237,Smartsheets,Collaboration Tool
+1238,Smile,Artificial Intelligence
+1239,Smoke Testing,Software Testing
+1240,Snappy,Data Compression
+1241,Snowflake,Data Analytics
+1242,Snowpack,Build Automation
+1243,Snowplow,Analytics
+1244,SOA,Software Architecture
+1245,SOAP,Web Development
+1246,SoC Design,Hardware Design
+1247,Social media marketing,Marketing Technology
+1248,Socket.io,Web Development
+1249,Sockeye,Artificial Intelligence
+1250,Soda,Data Validation
+1251,Soda Core,Data Validation
+1252,Soft Skills,Professional Skills
+1253,Software design patterns,Software Design
+1254,Solidity,Programming Language
+1255,SolidWorks,Design Software
+1256,Solution Architecture,Software Architecture
+1257,Somnium Space,Metaverse
+1258,Sonic,Data Processing
+1259,Sonic Pi,Audio Software
+1260,Sonic Visualiser,Audio Processing
+1261,SPADE,Data Mining
+1262,Spanner,Database
+1263,Spark,Data Processing
+1264,Sparrow,Web Framework
+1265,Spatial,Geospatial Analysis
+1266,Spatial Computing,Augmented Reality
+1267,SpecAugment,Data Augmentation
+1268,Spectroscopy,Engineering
+1269,Speech Recognition,Artificial Intelligence
+1270,Speech Synthesis,Artificial Intelligence
+1271,Sphinx,Documentation
+1272,Spike Testing,Software Testing
+1273,Spin,Web Framework
+1274,Spinnaker,CI/CD
+1275,Splunk,Monitoring
+1276,Spring Boot,Web Framework
+1277,SpriteKit,Game Development
+1278,SQL,Programming Language
+1279,SQL Developer,Database Tool
+1280,SQL Fiddle,Database Tool
+1281,SQL Server,Database
+1282,SQLAlchemy,ORM
+1283,SQLModel,ORM
+1284,Squashfs,File System
+1285,Square,Payment Processing
+1286,SSD,Hardware Design
+1287,SSO,Security
+1288,Stable Baselines,Machine Learning
+1289,Stable Diffusion,Artificial Intelligence
+1290,StackBlitz,Web Development
+1291,Standard ML,Programming Language
+1292,StarGAN,Artificial Intelligence
+1293,StarRocks,Database
+1294,Statistical modeling,Statistics
+1295,Statistical Process Control,Business Intelligence
+1296,Statistics,Mathematics
+1297,STM,Hardware Design
+1298,Storybook,UI Framework
+1299,Strapi,Content Management System
+1300,Stream Processing,Data Processing
+1301,Streamlit,Data Visualization
+1302,Stress Testing,Software Testing
+1303,Stripe,Payment Processing
+1304,Structural Analysis,Engineering
+1305,Structured Data,Data Management
+1306,StyleGAN,Artificial Intelligence
+1307,Styled Components,UI Framework
+1308,Substance Painter,Design Software
+1309,Subtractive Manufacturing,Manufacturing Technology
+1310,Sumo Logic,Monitoring
+1311,SuperCollider,Audio Software
+1312,Supervised learning,Machine Learning
+1313,Supply Chain Management,Supply Chain
+1314,Superset,Data Analytics
+1315,Swap,File System
+1316,Swarm Intelligence,Optimization Algorithm
+1317,Swin Transformer,Artificial Intelligence
+1318,Swift,Programming Language
+1319,SwiftUI,UI Framework
+1320,Swing,UI Framework
+1321,SYCL,Parallel Computing
+1322,Synapse,Database
+1323,Syncfusion,UI Framework
+1324,Synthetic Data,Data Management
+1325,Synthetic Data Generation,Data Management
+1326,Sysdig,Monitoring
+1327,Sysv,File System
+1328,System Testing,Software Testing
+1329,Systems Theory,Computer Science
+1330,T-SQL,Programming Language
+1331,TabNet,Artificial Intelligence
+1332,Tableau,Data Analytics
+1333,TablePlus,Database Tool
+1334,Tabu Search,Optimization Algorithm
+1335,Tailwind CSS,UI Framework
+1336,Talend,Data Integration
+1337,Tantivy,Search Engine
+1338,Tar,Data Compression
+1339,Task Parallelism,Programming Paradigm
+1340,Tawk.to,Customer Support
+1341,Tax optimization,Financial Technology
+1342,Tax Preparation,Financial Technology
+1343,TCP/IP,Networking
+1344,Technical Architecture,Software Architecture
+1345,Tekton,CI/CD
+1346,Telerik,UI Framework
+1347,Template Programming,Programming Paradigm
+1348,Tempo,Monitoring
+1349,Tensor2Tensor,Machine Learning
+1350,TensorBoard,Machine Learning
+1351,TensorFlow,Machine Learning
+1352,TensorFlow Serving,Machine Learning
+1353,Teradata,Data Analytics
+1354,Teraform,DevOps
+1355,Terraform,DevOps
+1356,Test Engineering,Software Testing
+1357,Test-driven development,Software Development
+1358,Testing frameworks,Software Testing
+1359,TestNG,Testing Framework
+1360,Text Analytics,Data Science
+1361,Text Classification,Artificial Intelligence
+1362,Text Summarization,Artificial Intelligence
+1363,TextBlob,Natural Language Processing
+1364,TF-Agents,Machine Learning
+1365,Thermal Analysis,Engineering
+1366,ThoughtSpot,Data Analytics
+1367,Threading,Programming Paradigm
+1368,Threat Hunting,Security
+1369,Threat Intelligence,Security
+1370,Three.js,Web Development
+1371,Thrift,Data Serialization
+1372,TIBCO Spotfire,Data Analytics
+1373,TidalCycles,Audio Software
+1374,TiDB,Database
+1375,TileDB,Database
+1376,TimescaleDB,Database
+1377,Tokenomics,Blockchain
+1378,Toad,Database Tool
+1379,Toad Data Modeler,Data Modeling
+1380,Tone.js,Audio Processing
+1381,Topic Modeling,Natural Language Processing
+1382,Topology Optimization,Engineering
+1383,TorchServe,Machine Learning
+1384,Tortoise ORM,ORM
+1385,Total Quality Management,Business Intelligence
+1386,TPOT,Machine Learning
+1387,TRAK,Robotics
+1388,Trafaret,Data Validation
+1389,Traefik,Networking
+1390,Transformer,Artificial Intelligence
+1391,Transformers,Artificial Intelligence
+1392,Travis CI,CI/CD
+1393,Treasury Management,Financial Technology
+1394,Tremor,Data Visualization
+1395,Trino,Data Analytics
+1396,TrOCR,Optical Character Recognition
+1397,Troubleshooting,IT Operations
+1398,TrueCrypt,Security
+1399,TTA,Data Augmentation
+1400,Turbodbc,Database Connectivity
+1401,Turborepo,Build Automation
+1402,Twilio,Communication Platform
+1403,TypeORM,ORM
+1404,Typesense,Search Engine
+1405,TypeScript,Programming Language
+1406,U-Net,Artificial Intelligence
+1407,U2,File System
+1408,UDF,Database
+1409,Udfs,File System
+1410,Ufs,File System
+1411,UI/UX Design,UI/UX
+1412,Uif,File System
+1413,Umami,Analytics
+1414,Unison,Programming Language
+1415,Unity,Game Development
+1416,Unity ML-Agents,Machine Learning
+1417,Unleash,Feature Management
+1418,Unreal Engine,Game Development
+1419,Unsupervised learning,Machine Learning
+1420,Urho3D,Game Development
+1421,Usability testing,Software Testing
+1422,User Acceptance Testing,Software Testing
+1423,User research,UI/UX
+1424,V-REP,Simulation Software
+1425,V5,File System
+1426,VAE,Artificial Intelligence
+1427,Valgrind,Code Analysis
+1428,Valuation methods,Financial Technology
+1429,Valuation Modeling,Financial Technology
+1430,Vamp,Audio Processing
+1431,Vanilla JS,Web Development
+1432,Vapor,Web Framework
+1433,Vaex,Data Processing
+1434,Vagrant,DevOps
+1435,Varnish,Web Performance
+1436,Vault,Security
+1437,Vcd,File System
+1438,VCS,Version Control
+1439,Vector,Data Processing
+1440,VeraCrypt,Security
+1441,Vercel,Web Development
+1442,Verge3D,Web Development
+1443,Verifiable Credentials,Security
+1444,Verilog,Hardware Design
+1445,Version Control,DevOps
+1446,Vertex AI,Machine Learning
+1447,VHDL,Hardware Design
+1448,Vhd,File System
+1449,Vhdx,File System
+1450,VictoriaMetrics,Monitoring
+1451,Victory,Data Visualization
+1452,Video Processing,Artificial Intelligence
+1453,Vim,Text Editor
+1454,ViroReact,Augmented Reality
+1455,Virtual Desktop Infrastructure,IT Operations
+1456,Virtual Reality Development,Virtual Reality
+1457,Vite,Build Automation
+1458,Vitest,Testing Framework
+1459,Viva,Collaboration Tool
+1460,Vivado,Hardware Design
+1461,Vivint,Home Automation
+1462,Vivo,File System
+1463,Vlang,Programming Language
+1464,VMware,Virtualization
+1465,VNC,Networking
+1466,Voila,Data Visualization
+1467,Volume Testing,Software Testing
+1468,Voluptuous,Data Validation
+1469,Voronoi,Mathematics
+1470,Vosk,Speech Recognition
+1471,Vowpal Wabbit,Machine Learning
+1472,VPC,Cloud Computing
+1473,VPN Configuration,Networking
+1474,VPNs,Networking
+1475,VR Interaction Design,Virtual Reality
+1476,VRoid Studio,Design Software
+1477,VSeeFace,Virtual Reality
+1478,VSphere,Virtualization
+1479,VTube Studio,Virtual Reality
+1480,Vue.js,Web Framework
+1481,Vulkan,Graphics Programming
+1482,Vulnerability Assessment,Security
+1483,VUP,Virtual Reality
+1484,VWO,Marketing Technology
+1485,W3C,Web Standards
+1486,Wafer Fabrication,Manufacturing Technology
+1487,WASM,Web Development
+1488,Waterfall methodology,Project Management
+1489,Wav2Vec,Artificial Intelligence
+1490,WCF,Software Framework
+1491,Web Analytics,Analytics
+1492,Web Application Firewalls,Security
+1493,Web Audio API,Web Development
+1494,Web development,Software Development
+1495,Web3 Development,Blockchain
+1496,Web3 Integration,Blockchain
+1497,WebAssembly,Web Development
+1498,Webengage,Marketing Technology
+1499,WebGL,Web Development
+1500,Webhdfs,File System
+1501,WebKit,Web Development
+1502,Weblogic,Software Framework
+1503,WebM,Data Format
+1504,WebNFS,File System
+1505,Webots,Simulation Software
+1506,Webpack,Build Automation
+1507,WebRTC,Web Development
+1508,WebSocket,Web Development
+1509,WebSphere,Software Framework
+1510,WebXR,Virtual Reality
+1511,Welding Technologies,Manufacturing Technology
+1512,Wget,Networking
+1513,Whisper,Artificial Intelligence
+1514,White-box Testing,Software Testing
+1515,Wicket,Web Framework
+1516,Wijmo,UI Framework
+1517,WildFly,Software Framework
+1518,Windows Server,Operating System
+1519,Wireshark,Networking
+1520,WooCommerce,E-commerce
+1521,WordPress,Content Management System
+1522,Workday,HR Technology
+1523,Workflow Automation,Automation
+1524,Worm,File System
+1525,WSDL,Web Development
+1526,WSS,Web Development
+1527,XAI,Artificial Intelligence
+1528,Xarray,Data Processing
+1529,Xcode,Software Development
+1530,XCP,Virtualization
+1531,XDR,Security
+1532,Xfs,File System
+1533,XGBoost,Machine Learning
+1534,XLNet,Artificial Intelligence
+1535,XML,Data Format
+1536,XSS,Security
+1537,XtraDB,Database
+1538,Xtrabackup,Database
+1539,Xva,File System
+1540,Xz,Data Compression
+1541,Yarn,Package Manager
+1542,Yellowfin,Data Analytics
+1543,YOLO,Artificial Intelligence
+1544,YugabyteDB,Database
+1545,Zapier,Automation
+1546,Zarr,Data Format
+1547,ZBrush,Design Software
+1548,ZED,Augmented Reality
+1549,Zeppelin,Data Analytics
+1550,Zero Trust Architecture,Security
+1551,Zero-Knowledge Proofs,Security
+1552,Zigbee,Networking
+1553,ZincSearch,Search Engine
+1554,Zoho CRM,Customer Relationship Management
+1555,Zoo,Data Processing
+1556,Zoom,Collaboration Tool
+1557,ZPA,Security
+1558,Zstandard,Data Compression
+1559,Zstd,Data Compression
+1560,Zuora,Payment Processing
