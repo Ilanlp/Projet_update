@@ -116,9 +116,9 @@ CREATE TABLE IF NOT EXISTS FAIT_OFFRE (
     id_contrat INT,
     id_domaine INT,
     id_lieu INT,
-    id_date_creation TIMESTAMP_LTZ,
-    id_date_modification TIMESTAMP_LTZ,
-    id_entreprise INT,
+    id_date_creation DATE,
+    id_date_modification DATE,
+    id_entreprise VARCHAR(100),
     id_teletravail INT,
     id_seniorite INT,
     id_rome INT
