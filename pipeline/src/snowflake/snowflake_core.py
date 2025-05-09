@@ -1447,3 +1447,17 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
+
+    success = loader.process_file_with_copy(
+        "JOB_MARKET",
+        "RAW",
+        "RAW_ROME_METIER",
+        f"{output_dir}/RAW_ROME_METIER.csv",
+        "CLASSIC_CSV",
+        "PUBLIC",
+    )
+
+    if success:
+        logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
+    else:
+        logging.error(f"Échec du traitement du fichier {loader.filename}")
