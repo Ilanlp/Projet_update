@@ -39,7 +39,18 @@ sources:
       - name: DIM_STOPWORDS
         identifier: DIM_STOPWORDS
         description: "Table des dimensions des stopwords"
-
+      - name: DIM_SOFTSKILL
+        identifier: DIM_SOFTSKILL
+        description: "Table des dimensions des stopwords"
+      - name: DIM_TYPE_ENTREPRISE
+        identifier: DIM_TYPE_ENTREPRISE
+        description: "Table des dimensions des stopwords"
+      - name: DIM_SENIORITE
+        identifier: DIM_SENIORITE
+        description: "Table des dimensions des stopwords"
+      - name: DIM_TELETRAVAIL
+        identifier: DIM_TELETRAVAIL
+        description: "Table des dimensions des stopwords"
 
   - name: gold_tables
     database: JOB_MARKET
