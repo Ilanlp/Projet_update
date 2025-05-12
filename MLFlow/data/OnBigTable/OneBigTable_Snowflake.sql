@@ -1,3 +1,4 @@
+
 CREATE OR REPLACE TABLE ONE_BIG_TABLE AS
 SELECT
     -- Faits
@@ -45,8 +46,7 @@ SELECT
     -- Rome
     dr.code_rome,
 
-    -- Métier
-    dm.nom AS nom_metier,
+  
 
     --Entreprise 
     de.nom_entreprise,
@@ -61,7 +61,10 @@ SELECT
 
     -- Softskills concaténés
     LISTAGG(DISTINCT ss.summary, ', ') WITHIN GROUP (ORDER BY ss.summary) AS softskills_summary,
-    LISTAGG(DISTINCT ss.details, ' | ') WITHIN GROUP (ORDER BY ss.details) AS softskills_details
+    LISTAGG(DISTINCT ss.details, ' | ') WITHIN GROUP (ORDER BY ss.details) AS softskills_details,
+
+    -- Métiers concaténés
+    LISTAGG(DISTINCT dm.nom, ', ') WITHIN GROUP (ORDER BY dm.nom) AS nom_metier
 
 FROM FAIT_OFFRE fo
 LEFT JOIN DIM_CONTRAT         dc   ON fo.id_contrat = dc.id_contrat
@@ -92,6 +95,6 @@ GROUP BY
     d2.mois, d2.jour, d2.mois_nom, d2.jour_semaine, d2.week_end,
     dt.type_teletravail,
     ds.type_seniorite,
-    dr.code_rome,
-    dm.nom
+    dr.code_rome
+  
 ;
