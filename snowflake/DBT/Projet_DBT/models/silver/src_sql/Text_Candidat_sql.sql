@@ -3,8 +3,8 @@
     tags=['sql'],
     post_hook=[
         "USE SCHEMA SILVER",
-        "CREATE STAGE IF NOT EXISTS text_candidat",
-        "COPY INTO @text_candidat/candidat_data.csv.gz FROM text_candidat_sql FILE_FORMAT = (TYPE = 'CSV' FIELD_DELIMITER = ';') HEADER=TRUE OVERWRITE = TRUE SINGLE=TRUE"
+        "CREATE STAGE IF NOT EXISTS candidat",
+        "COPY INTO @candidat/text_candidat_data.csv.gz FROM text_candidat_sql FILE_FORMAT = (TYPE = 'CSV' FIELD_DELIMITER = ';') HEADER=TRUE OVERWRITE = TRUE SINGLE=TRUE"
     ]
 ) }}
 

@@ -1,4 +1,8 @@
-{{ config(materialized='ephemeral',tags=['sql']) }}
+{{ config(materialized='ephemeral',tags=['sql1']) }}
+
+{% set delete_query %}
+  DELETE FROM {{ source('dim_tables', 'DIM_CANDIDAT') }}
+{% endset %}
 
 {% set transformation_query %}
 
@@ -49,7 +53,22 @@
     TABLE(FLATTEN(INPUT => id_domaine, OUTER => TRUE)) D
 {% endset %}
 
+{% set copy_to_stage %}
+    USE SCHEMA SILVER;
+    CREATE STAGE IF NOT EXISTS candidat;
+    COPY INTO @candidat/candidat_data.csv.gz FROM {{ source('dim_tables', 'DIM_CANDIDAT') }}
+    FILE_FORMAT = (TYPE = 'CSV' FIELD_DELIMITER = ',' COMPRESSION = GZIP) 
+    HEADER = TRUE 
+    OVERWRITE = TRUE 
+    SINGLE = TRUE
+    MAX_FILE_SIZE = 5000000000;
+{% endset %}
+
+-- Exécute la suppression des données existantes
+{% do run_query(delete_query) %}
 
 -- Exécute l'insertion
 {% do run_query(transformation_query) %}
 
+-- Copy de la table dans le stage
+{% do run_query(copy_to_stage) %}
