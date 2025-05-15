@@ -1,7 +1,7 @@
 {{ 
   config(
     materialized = 'incremental',
-    unique_key   = ['id_local','id_competence'],
+    unique_key   = ['id_offre','id_competence'],
     on_schema_change = 'sync_all_columns'
   ) 
 }}
@@ -15,7 +15,7 @@ f as (
 )
 
 select
-  c.id_local,
+  f.id_offre,
   c.id_competence
 from c
 left join f
