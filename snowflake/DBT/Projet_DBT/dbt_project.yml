@@ -56,6 +56,7 @@ models:
         Match_Competence_sql:
         Match_Rome_sql:
         Insert_Candidat:
+        Text_Candidat:
 
     # Modèles Gold
     gold:
