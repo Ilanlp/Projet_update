@@ -1,0 +1,26 @@
+UPDATE ONE_BIG_TABLE
+SET TITLE = %(title) s,
+  DESCRIPTION = %(description) s,
+  TYPE_CONTRAT = %(type_contrat) s,
+  CODE_DOMAINE = %(code_domaine) s,
+  NOM_DOMAINE = %(nom_domaine) s,
+  CODE_POSTAL = %(code_postal) s,
+  VILLE = %(ville) s,
+  DEPARTEMENT = %(departement) s,
+  REGION = %(region) s,
+  PAYS = %(pays) s,
+  LATITUDE = %(latitude) s,
+  LONGITUDE = %(longitude) s,
+  POPULATION = %(population) s,
+  TYPE_TELETRAVAIL = %(type_teletravail) s,
+  TYPE_SENIORITE = %(type_seniorite) s,
+  CODE_ROME = %(code_rome) s,
+  NOM_ENTREPRISE = %(nom_entreprise) s,
+  CATEGORIE_ENTREPRISE = %(categorie_entreprise) s,
+  COMPETENCES = %(competences) s,
+  TYPES_COMPETENCES = %(types_competences) s,
+  SOFTSKILLS_SUMMARY = %(softskills_summary) s,
+  SOFTSKILLS_DETAILS = %(softskills_details) s,
+  NOM_METIER = %(nom_metier) s
+WHERE ID_LOCAL = %(id) s
+RETURNING *

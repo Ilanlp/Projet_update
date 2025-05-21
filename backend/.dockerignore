@@ -1,0 +1,51 @@
+# Fichiers de développement
+.git
+.github
+.gitignore
+.vscode
+.idea
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.env.*
+
+# Fichiers sensibles
+*.pem
+*.key
+*.cert
+secrets/
+credentials/
+config.ini
+.aws/
+.ssh/
+*.log
+
+# Fichiers temporaires
+.DS_Store
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# Fichiers de test
+tests/
+test_*.py
+*_test.py
+
+# Documentation
+docs/
+*.md
+LICENSE
+
+# Build artifacts
+*.tar
+*.gz
+*.zip
+build/
+dist/
