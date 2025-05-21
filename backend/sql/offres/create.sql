@@ -50,5 +50,3 @@ VALUES (
     :softskills_details,
     :nom_metier
   )
-RETURNING ID,
-  ID_LOCAL

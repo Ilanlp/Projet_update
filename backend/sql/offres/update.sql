@@ -24,4 +24,3 @@ SET ID_LOCAL = :id_local,
   SOFTSKILLS_DETAILS = :softskills_details,
   NOM_METIER = :nom_metier
 WHERE ID = :id
-RETURNING *
