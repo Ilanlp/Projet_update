@@ -52,22 +52,25 @@ def render_query(query_path: str, template_params: Dict[str, Any] = None) -> str
     return rendered_query
 
 
-def execute_sql_file(
+async def execute_sql_file(
     query_path: str,
-    template_params: Dict[str, Any] = None,
     query_params: Dict[str, Any] = None,
+    template_params: Dict[str, Any] = None,
 ) -> List[Dict[str, Any]]:
     """
     Exécute une requête SQL à partir d'un fichier
 
     Args:
         query_path: Chemin vers le fichier SQL relatif au dossier sql/
-        template_params: Paramètres pour le rendu du template Jinja (conditionnels, etc.)
         query_params: Paramètres bindés pour la requête SQL (comme :customer_id)
+        template_params: Paramètres pour le rendu du template Jinja (conditionnels, etc.)
     """
     logger.info(f"=== Début de l'exécution de {query_path} ===")
     logger.info(f"Template params: {template_params}")
     logger.info(f"Query params: {query_params}")
+
+    # S'assurer que query_params est un dictionnaire
+    params = query_params if query_params is not None else {}
 
     # Rendu du template avec Jinja (remplace {% if ... %}, etc.)
     query = render_query(query_path, template_params)
@@ -75,35 +78,38 @@ def execute_sql_file(
     # Log de la requête générée pour débogage
     logger.info("=== Requête finale à exécuter ===")
     logger.info(query)
-    logger.info(f"Avec les paramètres bindés: {query_params}")
+    logger.info(f"Avec les paramètres bindés: {params}")
 
     # Exécution de la requête avec paramètres bindés
     try:
-        results = execute_query(query, query_params)
+        results = await execute_query(query, params)
         logger.info(f"Requête exécutée avec succès, {len(results)} résultats obtenus")
         return results
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la requête: {str(e)}")
         logger.error("État des paramètres au moment de l'erreur:")
         logger.error(f"Template params: {template_params}")
-        logger.error(f"Query params: {query_params}")
+        logger.error(f"Query params: {params}")
         raise
 
 
-def execute_and_map_to_model(
+async def execute_and_map_to_model(
     query_path: str,
     model_class: Type[T],
-    template_params: Dict[str, Any] = None,
     query_params: Dict[str, Any] = None,
+    template_params: Dict[str, Any] = None,
 ) -> List[T]:
     """
     Exécute une requête SQL et mappe les résultats à une classe de modèle Pydantic
     """
-    results = execute_sql_file(query_path, template_params, query_params)
+    # S'assurer que query_params est un dictionnaire
+    params = query_params if query_params is not None else {}
+
+    results = await execute_sql_file(query_path, params, template_params)
     return [model_class.model_validate(row) for row in results]
 
 
-def paginate_query(
+async def paginate_query(
     query_path: str,
     model_class: Type[T],
     pagination: PaginationParams,
@@ -123,6 +129,9 @@ def paginate_query(
         logger.info(f"Model class: {model_class}")
         logger.info(f"Pagination: {pagination}")
 
+        # S'assurer que query_params est un dictionnaire
+        params = query_params if query_params is not None else {}
+
         # Calculer l'offset pour la pagination SQL
         offset = (pagination.page - 1) * pagination.page_size
         logger.info(f"Offset calculé: {offset}")
@@ -135,9 +144,9 @@ def paginate_query(
 
         # Ajouter les paramètres de pagination aux paramètres de requête
         query_params_with_pagination = {
-            **(query_params or {}),
-            "page_size": int(pagination.page_size),
-            "offset": int(offset),
+            **params,
+            "page_size": pagination.page_size,
+            "offset": offset,
         }
 
         logger.info(f"Template params: {template_params_with_pagination}")
@@ -145,18 +154,18 @@ def paginate_query(
 
         # Exécuter la requête paginée
         logger.info("Exécution de la requête principale...")
-        items = execute_and_map_to_model(
+        items = await execute_and_map_to_model(
             query_path,
             model_class,
-            template_params=template_params_with_pagination,
             query_params=query_params_with_pagination,
+            template_params=template_params_with_pagination,
         )
         logger.info(f"Nombre d'items récupérés: {len(items)}")
 
         # Exécuter une requête de comptage pour obtenir le nombre total d'éléments
         count_query_path = query_path.rsplit(".", 1)[0] + "_count.sql"
         logger.info(f"Exécution de la requête de comptage: {count_query_path}")
-        count_result = execute_sql_file(count_query_path, template_params, query_params)
+        count_result = await execute_sql_file(count_query_path, params, template_params)
         logger.info(f"Résultat du comptage: {count_result}")
         total = count_result[0].get("total", 0) if count_result else 0
         logger.info(f"Total calculé: {total}")

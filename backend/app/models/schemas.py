@@ -47,45 +47,6 @@ class QueryParams(BaseModel):
     params: Dict[str, Any] = Field(default_factory=dict)
 
 
-class Customer(BaseModel):
-    """Exemple de modèle pour les clients"""
-
-    id: int
-    name: str
-    email: str
-    created_at: datetime
-
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "id": 1,
-                    "name": "John Doe",
-                    "email": "john.doe@example.com",
-                    "created_at": "2023-01-01T00:00:00",
-                }
-            ]
-        }
-    }
-
-
-class Product(BaseModel):
-    """Exemple de modèle pour les produits"""
-
-    id: int
-    name: str
-    price: float
-    category: str
-
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {"id": 1, "name": "Laptop", "price": 999.99, "category": "Electronics"}
-            ]
-        }
-    }
-
-
 class Order(BaseModel):
     """Exemple de modèle pour les commandes"""
 
@@ -198,7 +159,10 @@ class CANDIDAT(BaseModel):
 
 
 class Offre(BaseModel):
-    id_local: int = Field(alias="ID_LOCAL")
+    """Modèle pour les offres d'emploi"""
+
+    id: int = Field(alias="ID")
+    id_local: str = Field(alias="ID_LOCAL")
     title: str = Field(alias="TITLE")
     description: str = Field(alias="DESCRIPTION")
     type_contrat: Optional[str] = Field(alias="TYPE_CONTRAT", default=None)
@@ -212,29 +176,31 @@ class Offre(BaseModel):
     latitude: Optional[float] = Field(alias="LATITUDE", default=None)
     longitude: Optional[float] = Field(alias="LONGITUDE", default=None)
     population: Optional[int] = Field(alias="POPULATION", default=None)
-    mois_creation: Optional[str] = Field(alias="MOIS_CREATION", default=None)
-    jour_creation: Optional[str] = Field(alias="JOUR_CREATION", default=None)
+    mois_creation: Optional[int] = Field(alias="MOIS_CREATION", default=None)
+    jour_creation: Optional[int] = Field(alias="JOUR_CREATION", default=None)
     mois_nom_creation: Optional[str] = Field(alias="MOIS_NOM_CREATION", default=None)
     jour_semaine_creation: Optional[str] = Field(
         alias="JOUR_SEMAINE_CREATION", default=None
     )
-    week_end_creation: Optional[str] = Field(alias="WEEK_END_CREATION", default=None)
-    mois_modification: Optional[str] = Field(alias="MOIS_MODIFICATION", default=None)
-    jour_modification: Optional[str] = Field(alias="JOUR_MODIFICATION", default=None)
+    week_end_creation: Optional[bool] = Field(alias="WEEK_END_CREATION", default=None)
+    mois_modification: Optional[int] = Field(alias="MOIS_MODIFICATION", default=None)
+    jour_modification: Optional[int] = Field(alias="JOUR_MODIFICATION", default=None)
     mois_nom_modification: Optional[str] = Field(
         alias="MOIS_NOM_MODIFICATION", default=None
     )
     jour_semaine_modification: Optional[str] = Field(
         alias="JOUR_SEMAINE_MODIFICATION", default=None
     )
-    week_end_modification: Optional[str] = Field(
+    week_end_modification: Optional[bool] = Field(
         alias="WEEK_END_MODIFICATION", default=None
     )
     type_teletravail: Optional[str] = Field(alias="TYPE_TELETRAVAIL", default=None)
     type_seniorite: Optional[str] = Field(alias="TYPE_SENIORITE", default=None)
     code_rome: str = Field(alias="CODE_ROME")
-    nom_entreprise: str = Field(alias="NOM_ENTREPRISE")
-    categorie_entreprise: str = Field(alias="CATEGORIE_ENTREPRISE")
+    nom_entreprise: Optional[str] = Field(alias="NOM_ENTREPRISE", default=None)
+    categorie_entreprise: Optional[str] = Field(
+        alias="CATEGORIE_ENTREPRISE", default=None
+    )
     date_creation_entreprise: Optional[str] = Field(
         alias="DATE_CREATION_ENTREPRISE", default=None
     )
@@ -250,10 +216,22 @@ class Offre(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "id_local": 1,
+                    "id": 1,
+                    "id_local": "12345",
                     "title": "Data Engineer",
                     "description": "Description du poste",
-                    # ... autres champs ...
+                    "ville": "Paris",
+                    "departement": "Paris",
+                    "region": "Île-de-France",
+                    "pays": "France",
+                    "code_rome": "M1805",
+                    "nom_metier": "Data Engineer",
+                    "mois_creation": 4,
+                    "jour_creation": 28,
+                    "week_end_creation": False,
+                    "mois_modification": 4,
+                    "jour_modification": 28,
+                    "week_end_modification": False,
                 }
             ]
         },

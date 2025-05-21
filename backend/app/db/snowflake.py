@@ -1,26 +1,33 @@
 import snowflake.connector
 from snowflake.connector.connection import SnowflakeConnection
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 from app.config import settings
 import logging
 from typing import Union
+import asyncio
+from functools import partial
 
 logger = logging.getLogger(__name__)
 
 
-@contextmanager
-def get_snowflake_connection() -> SnowflakeConnection:
-    """Crée et gère une connexion à Snowflake"""
+@asynccontextmanager
+async def get_snowflake_connection() -> SnowflakeConnection:
+    """Crée et gère une connexion à Snowflake de manière asynchrone"""
     conn = None
     try:
-        conn = snowflake.connector.connect(
-            account=settings.SNOWFLAKE_ACCOUNT,
-            user=settings.SNOWFLAKE_USER,
-            password=settings.SNOWFLAKE_PASSWORD,
-            database=settings.SNOWFLAKE_DATABASE,
-            schema=settings.SNOWFLAKE_SCHEMA,
-            warehouse=settings.SNOWFLAKE_WAREHOUSE,
-            role=settings.SNOWFLAKE_ROLE,
+        # Exécuter la connexion dans un thread séparé pour ne pas bloquer
+        loop = asyncio.get_event_loop()
+        conn = await loop.run_in_executor(
+            None,
+            lambda: snowflake.connector.connect(
+                account=settings.SNOWFLAKE_ACCOUNT,
+                user=settings.SNOWFLAKE_USER,
+                password=settings.SNOWFLAKE_PASSWORD,
+                database=settings.SNOWFLAKE_DATABASE,
+                schema=settings.SNOWFLAKE_SCHEMA,
+                warehouse=settings.SNOWFLAKE_WAREHOUSE,
+                role=settings.SNOWFLAKE_ROLE,
+            ),
         )
         logger.info("Connexion à Snowflake établie")
         yield conn
@@ -29,13 +36,13 @@ def get_snowflake_connection() -> SnowflakeConnection:
         raise
     finally:
         if conn:
-            conn.close()
+            await loop.run_in_executor(None, conn.close)
             logger.info("Connexion à Snowflake fermée")
 
 
-def execute_query(query: str, params: Union[dict, list, None] = None) -> list:
-    """Exécute une requête SQL et retourne les résultats"""
-    with get_snowflake_connection() as conn:
+async def execute_query(query: str, params: Union[dict, list, None] = None) -> list:
+    """Exécute une requête SQL de manière asynchrone et retourne les résultats"""
+    async with get_snowflake_connection() as conn:
         cursor = conn.cursor(snowflake.connector.DictCursor)
         try:
             # Log pour le débogage
@@ -57,6 +64,15 @@ def execute_query(query: str, params: Union[dict, list, None] = None) -> list:
                                 processed_params[key] = float(value)
                             except (ValueError, TypeError):
                                 processed_params[key] = value
+
+                # Remplacer les paramètres nommés dans la requête
+                for key, value in processed_params.items():
+                    placeholder = f":{key}"
+                    if isinstance(value, str):
+                        query = query.replace(placeholder, f"'{value}'")
+                    else:
+                        query = query.replace(placeholder, str(value))
+                processed_params = None
             elif isinstance(params, list):
                 processed_params = []
                 for value in params:
@@ -71,15 +87,17 @@ def execute_query(query: str, params: Union[dict, list, None] = None) -> list:
                             except (ValueError, TypeError):
                                 processed_params.append(value)
             else:
-                processed_params = params
+                processed_params = None
 
+            logger.info(f"Requête modifiée: {query}")
             logger.info(f"Paramètres traités: {processed_params}")
 
-            # Exécution de la requête avec paramètres bindés
-            cursor.execute(query, processed_params)
+            # Exécuter la requête dans un thread séparé
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, cursor.execute, query, processed_params)
 
-            # Récupération des résultats
-            results = cursor.fetchall()
+            # Récupérer les résultats dans un thread séparé
+            results = await loop.run_in_executor(None, cursor.fetchall)
             logger.info(f"Nombre de résultats obtenus: {len(results)}")
             return results
         except Exception as e:
@@ -92,4 +110,4 @@ def execute_query(query: str, params: Union[dict, list, None] = None) -> list:
             )
             raise
         finally:
-            cursor.close()
+            await loop.run_in_executor(None, cursor.close)

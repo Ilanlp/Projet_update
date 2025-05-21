@@ -17,7 +17,9 @@ from app.services.query_service import (
 router = APIRouter()
 
 
-@router.get("/offres", response_model=PaginatedResponseBase[Offre], tags=["Relationnels"])
+@router.get(
+    "/offres", response_model=PaginatedResponseBase[Offre], tags=["Relationnels"]
+)
 async def get_offres(pagination: PaginationParams = Depends()):
     """
     Récupère les offres avec pagination
@@ -36,7 +38,7 @@ async def get_offres(pagination: PaginationParams = Depends()):
         query_params = {"page_size": pagination.page_size, "offset": offset}
 
         # Exécuter la requête paginée
-        items, total = paginate_query(
+        items, total = await paginate_query(
             "offres/get_all.sql",
             Offre,
             pagination,
@@ -56,16 +58,16 @@ async def get_offres(pagination: PaginationParams = Depends()):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/offres/{offre_id}", response_model=ResponseBase[Offre], tags=["Relationnels"])
-async def get_offre(offre_id: int):
+@router.get("/offres/{id}", response_model=ResponseBase[Offre], tags=["Relationnels"])
+async def get_offre(id: int):
     """
     Récupère une offre par son ID
 
-    - **offre_id**: ID de l'offre à récupérer
+    - **id**: ID de l'offre à récupérer
     """
     try:
         result = await execute_and_map_to_model(
-            "offres/get_by_id.sql", Offre, {"id": offre_id}
+            "offres/get_by_id.sql", Offre, query_params={"id": id}
         )
 
         if not result:
@@ -90,9 +92,11 @@ async def create_offre(offre: Offre):
         offre_dict = offre.model_dump(by_alias=True)
 
         # Supprimer l'ID car il sera généré par la base de données
-        offre_dict.pop("ID_LOCAL", None)
+        offre_dict.pop("ID", None)
 
-        result = await execute_and_map_to_model("offres/create.sql", Offre, offre_dict)
+        result = await execute_and_map_to_model(
+            "offres/create.sql", Offre, query_params=offre_dict
+        )
 
         if not result:
             raise HTTPException(
@@ -104,18 +108,18 @@ async def create_offre(offre: Offre):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/offres/{offre_id}", response_model=ResponseBase[Offre], tags=["Relationnels"])
-async def update_offre(offre_id: int, offre: Offre):
+@router.put("/offres/{id}", response_model=ResponseBase[Offre], tags=["Relationnels"])
+async def update_offre(id: int, offre: Offre):
     """
     Met à jour une offre existante
 
-    - **offre_id**: ID de l'offre à mettre à jour
+    - **id**: ID de l'offre à mettre à jour
     - **offre**: Les nouvelles données de l'offre
     """
     try:
         # Vérifier si l'offre existe
         existing_offre = await execute_and_map_to_model(
-            "offres/get_by_id.sql", Offre, {"id": offre_id}
+            "offres/get_by_id.sql", Offre, query_params={"id": id}
         )
 
         if not existing_offre:
@@ -123,9 +127,11 @@ async def update_offre(offre_id: int, offre: Offre):
 
         # Convertir le modèle Pydantic en dictionnaire avec les alias
         offre_dict = offre.model_dump(by_alias=True)
-        offre_dict["id"] = offre_id
+        offre_dict["ID"] = id
 
-        result = await execute_and_map_to_model("offres/update.sql", Offre, offre_dict)
+        result = await execute_and_map_to_model(
+            "offres/update.sql", Offre, query_params=offre_dict
+        )
 
         return ResponseBase(data=result[0], message="Offre mise à jour avec succès")
     except HTTPException as e:
@@ -134,32 +140,28 @@ async def update_offre(offre_id: int, offre: Offre):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/offres/{offre_id}", response_model=ResponseBase[Dict[str, Any]], tags=["Relationnels"])
-async def delete_offre(offre_id: int):
+@router.delete(
+    "/offres/{id}", response_model=ResponseBase[Dict[str, Any]], tags=["Relationnels"]
+)
+async def delete_offre(id: int):
     """
     Supprime une offre
 
-    - **offre_id**: ID de l'offre à supprimer
+    - **id**: ID de l'offre à supprimer
     """
     try:
         # Vérifier si l'offre existe
         existing_offre = await execute_and_map_to_model(
-            "offres/get_by_id.sql", Offre, {"id": offre_id}
+            "offres/get_by_id.sql", Offre, query_params={"id": id}
         )
 
         if not existing_offre:
             raise HTTPException(status_code=404, detail="Offre non trouvée")
 
-        result = await execute_sql_file("offres/delete.sql", {"id": offre_id})
+        # Exécuter la suppression
+        await execute_sql_file("offres/delete.sql", query_params={"id": id})
 
-        if not result:
-            raise HTTPException(
-                status_code=500, detail="Erreur lors de la suppression de l'offre"
-            )
-
-        return ResponseBase(
-            data={"id": offre_id}, message="Offre supprimée avec succès"
-        )
+        return ResponseBase(data={"id": id}, message="Offre supprimée avec succès")
     except HTTPException as e:
         raise e
     except Exception as e:
