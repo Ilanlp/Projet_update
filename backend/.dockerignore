@@ -49,3 +49,4 @@ LICENSE
 *.zip
 build/
 dist/
+.cursor/

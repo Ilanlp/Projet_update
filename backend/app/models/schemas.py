@@ -150,6 +150,10 @@ class SOFTSKILL(BaseModel):
     summary: str
     details: str
 
+class LIAISON_ROME_SOFTSKILL(BaseModel):
+    id_rome: int
+    id_softskill: int
+
 
 class TELETRAVAIL(BaseModel):
     id_teletravail: int
@@ -347,3 +351,10 @@ class Offre(BaseModel):
             ]
         },
     }
+
+
+class SoftSkill(BaseModel):
+    summary: str
+
+    class Config:
+        from_attributes = True

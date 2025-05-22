@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.api.routes import router
+from app.api.routes2 import router2
 import time
 import uvicorn
 
@@ -75,6 +76,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Inclusion des routes
 app.include_router(router, prefix="/api")
+app.include_router(router2, prefix="/api2")
 
 
 # Route de santé
