@@ -346,6 +346,101 @@ async def update_offre(id: int, offre: Offre):
         )
 
 
+@router.patch(
+    "/offres/{id}",
+    response_model=ResponseBase[Offre],
+    tags=["Offres d'emploi"],
+    summary="Mettre à jour partiellement une offre d'emploi",
+    description="""
+    Met à jour partiellement une offre d'emploi existante.
+    
+    Paramètres:
+    - **id**: Identifiant unique de l'offre à mettre à jour
+    
+    Corps de la requête:
+    ```json
+    {
+        "TITLE": "Nouveau titre",
+        "DESCRIPTION": "Nouvelle description"
+    }
+    ```
+    
+    Notes:
+    - Seuls les champs fournis seront mis à jour
+    - Les autres champs conserveront leurs valeurs actuelles
+    - Les dates de modification sont automatiquement mises à jour
+    
+    Codes de retour:
+    - 200: Mise à jour réussie
+    - 404: Offre non trouvée
+    - 400: Données invalides
+    - 500: Erreur serveur
+    """,
+)
+async def patch_offre(id: int, offre_update: Dict[str, Any]):
+    try:
+        # Vérifier si l'offre existe
+        existing_offre = await execute_and_map_to_model(
+            "offres/get_by_id.sql",
+            Offre,
+            query_params={"ID": id},
+            template_params={"ID": True},
+        )
+
+        if not existing_offre:
+            raise NotFoundException(
+                message=f"Offre avec l'ID {id} non trouvée", field="id"
+            )
+
+        # Convertir l'offre existante en dictionnaire
+        existing_dict = existing_offre[0].model_dump(by_alias=True)
+
+        # Filtrer les champs None de offre_update
+        filtered_update = {k: v for k, v in offre_update.items() if v is not None}
+
+        # Mettre à jour uniquement les champs fournis
+        update_dict = {**existing_dict, **filtered_update, "ID": id}
+
+        # Valider les données avec le modèle Offre
+        validated_offre = Offre.model_validate(update_dict)
+        update_params = validated_offre.model_dump(by_alias=True)
+
+        # Construire la requête de mise à jour dynamiquement
+        update_fields = [f"{k.lower()} = :{k}" for k in filtered_update.keys()]
+        update_query = f"""
+            UPDATE ONE_BIG_TABLE
+            SET {', '.join(update_fields)}
+            WHERE id = :ID
+        """
+
+        # Exécuter la mise à jour avec seulement les champs modifiés
+        await execute_query(
+            update_query,
+            {**{k: update_params[k] for k in filtered_update.keys()}, "ID": id},
+        )
+
+        # Récupérer l'offre mise à jour
+        updated_offre = await execute_and_map_to_model(
+            "offres/get_by_id.sql",
+            Offre,
+            query_params={"ID": id},
+            template_params={"ID": True},
+        )
+
+        return ResponseBase(
+            data=updated_offre[0], message="Offre mise à jour partiellement avec succès"
+        )
+    except NotFoundException as e:
+        raise e
+    except ValidationException as e:
+        raise e
+    except Exception as e:
+        raise DatabaseException(
+            message=f"Erreur lors de la mise à jour partielle de l'offre: {str(e)}",
+            details={"id": id, "update_data": offre_update},
+        )
+
+
 @router.delete(
     "/offres/{id}",
     response_model=ResponseBase[Dict[str, Any]],
