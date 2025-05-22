@@ -7,6 +7,7 @@ from app.db.snowflake import execute_query
 import logging
 from app.models.schemas import PaginatedResponse, PaginationParams
 from math import ceil
+from app.utils.exceptions import DatabaseException, ValidationException
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +31,9 @@ def load_query(query_path: str) -> jinja2.Template:
         return template_env.get_template(query_path)
     except jinja2.exceptions.TemplateNotFound:
         logger.error(f"Le fichier de requête '{query_path}' n'a pas été trouvé")
-        raise FileNotFoundError(
-            f"Le fichier de requête '{query_path}' n'a pas été trouvé"
+        raise DatabaseException(
+            message=f"Le fichier de requête '{query_path}' n'a pas été trouvé",
+            details={"query_path": query_path},
         )
 
 
@@ -69,19 +71,14 @@ async def execute_sql_file(
     logger.info(f"Template params: {template_params}")
     logger.info(f"Query params: {query_params}")
 
-    # S'assurer que query_params est un dictionnaire
     params = query_params if query_params is not None else {}
 
-    # Rendu du template avec Jinja (remplace {% if ... %}, etc.)
-    query = render_query(query_path, template_params)
-
-    # Log de la requête générée pour débogage
-    logger.info("=== Requête finale à exécuter ===")
-    logger.info(query)
-    logger.info(f"Avec les paramètres bindés: {params}")
-
-    # Exécution de la requête avec paramètres bindés
     try:
+        query = render_query(query_path, template_params)
+        logger.info("=== Requête finale à exécuter ===")
+        logger.info(query)
+        logger.info(f"Avec les paramètres bindés: {params}")
+
         results = await execute_query(query, params)
         logger.info(f"Requête exécutée avec succès, {len(results)} résultats obtenus")
         return results
@@ -90,7 +87,14 @@ async def execute_sql_file(
         logger.error("État des paramètres au moment de l'erreur:")
         logger.error(f"Template params: {template_params}")
         logger.error(f"Query params: {params}")
-        raise
+        raise DatabaseException(
+            message=f"Erreur lors de l'exécution de la requête: {str(e)}",
+            details={
+                "query_path": query_path,
+                "template_params": template_params,
+                "query_params": params,
+            },
+        )
 
 
 async def execute_and_map_to_model(
@@ -102,11 +106,29 @@ async def execute_and_map_to_model(
     """
     Exécute une requête SQL et mappe les résultats à une classe de modèle Pydantic
     """
-    # S'assurer que query_params est un dictionnaire
-    params = query_params if query_params is not None else {}
+    try:
+        params = query_params if query_params is not None else {}
+        results = await execute_sql_file(query_path, params, template_params)
 
-    results = await execute_sql_file(query_path, params, template_params)
-    return [model_class.model_validate(row) for row in results]
+        try:
+            return [model_class.model_validate(row) for row in results]
+        except Exception as e:
+            raise ValidationException(
+                message=f"Erreur lors de la validation des données: {str(e)}",
+                details={"model_class": model_class.__name__, "results": results},
+            )
+    except DatabaseException:
+        raise
+    except Exception as e:
+        raise DatabaseException(
+            message=f"Erreur lors de l'exécution et du mapping de la requête: {str(e)}",
+            details={
+                "query_path": query_path,
+                "model_class": model_class.__name__,
+                "query_params": query_params,
+                "template_params": template_params,
+            },
+        )
 
 
 async def paginate_query(
@@ -129,53 +151,51 @@ async def paginate_query(
         logger.info(f"Model class: {model_class}")
         logger.info(f"Pagination: {pagination}")
 
-        # S'assurer que query_params est un dictionnaire
         params = query_params if query_params is not None else {}
-
-        # Calculer l'offset pour la pagination SQL
         offset = (pagination.page - 1) * pagination.page_size
-        logger.info(f"Offset calculé: {offset}")
 
-        # Ajouter les paramètres de pagination au template
         template_params_with_pagination = {
             **(template_params or {}),
             "with_pagination": True,
         }
 
-        # Ajouter les paramètres de pagination aux paramètres de requête
         query_params_with_pagination = {
             **params,
             "page_size": pagination.page_size,
             "offset": offset,
         }
 
-        logger.info(f"Template params: {template_params_with_pagination}")
-        logger.info(f"Query params: {query_params_with_pagination}")
-
-        # Exécuter la requête paginée
-        logger.info("Exécution de la requête principale...")
         items = await execute_and_map_to_model(
             query_path,
             model_class,
             query_params=query_params_with_pagination,
             template_params=template_params_with_pagination,
         )
-        logger.info(f"Nombre d'items récupérés: {len(items)}")
 
-        # Exécuter une requête de comptage pour obtenir le nombre total d'éléments
         count_query_path = query_path.rsplit(".", 1)[0] + "_count.sql"
-        logger.info(f"Exécution de la requête de comptage: {count_query_path}")
-        count_result = await execute_sql_file(count_query_path, params, template_params)
-        logger.info(f"Résultat du comptage: {count_result}")
-        total = count_result[0].get("total", 0) if count_result else 0
-        logger.info(f"Total calculé: {total}")
+        try:
+            count_result = await execute_sql_file(
+                count_query_path, params, template_params
+            )
+            total = count_result[0].get("total", 0) if count_result else 0
+        except Exception as e:
+            raise DatabaseException(
+                message=f"Erreur lors du comptage des résultats: {str(e)}",
+                details={"count_query_path": count_query_path, "params": params},
+            )
 
         return items, total
-    except Exception as e:
-        logger.error("=== Erreur dans paginate_query ===")
-        logger.error(f"Type d'erreur: {type(e)}")
-        logger.error(f"Message d'erreur: {str(e)}")
+    except (DatabaseException, ValidationException):
         raise
+    except Exception as e:
+        raise DatabaseException(
+            message=f"Erreur lors de la pagination: {str(e)}",
+            details={
+                "query_path": query_path,
+                "model_class": model_class.__name__,
+                "pagination": pagination.model_dump(),
+            },
+        )
 
 
 def create_paginated_response(

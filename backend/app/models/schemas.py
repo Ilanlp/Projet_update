@@ -1,6 +1,35 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Generic, TypeVar
 from datetime import datetime
+from enum import Enum
+
+
+class ErrorCode(str, Enum):
+    """Codes d'erreur de l'application"""
+
+    NOT_FOUND = "NOT_FOUND"  # Ressource non trouvée
+    VALIDATION_ERROR = "VALIDATION_ERROR"  # Erreur de validation des données
+    DATABASE_ERROR = "DATABASE_ERROR"  # Erreur de base de données
+    INTERNAL_ERROR = "INTERNAL_ERROR"  # Erreur interne du serveur
+    UNAUTHORIZED = "UNAUTHORIZED"  # Non autorisé
+    FORBIDDEN = "FORBIDDEN"  # Accès interdit
+    BAD_REQUEST = "BAD_REQUEST"  # Requête invalide
+
+
+class ErrorDetail(BaseModel):
+    """Détails d'une erreur"""
+
+    code: ErrorCode
+    message: str
+    field: Optional[str] = None
+    details: Optional[Dict[str, Any]] = None
+
+
+class ErrorResponse(BaseModel):
+    """Réponse en cas d'erreur"""
+
+    error: ErrorDetail
+
 
 T = TypeVar("T")
 

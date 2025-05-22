@@ -5,6 +5,7 @@ from app.config import settings
 import logging
 from typing import Union, Dict, List, Any
 import asyncio
+from app.utils.exceptions import DatabaseException
 
 logger = logging.getLogger(__name__)
 
@@ -29,13 +30,25 @@ async def get_snowflake_connection() -> SnowflakeConnection:
         )
         logger.info("Connexion à Snowflake établie")
         yield conn
+    except snowflake.connector.errors.DatabaseError as e:
+        logger.error(f"Erreur de base de données Snowflake: {str(e)}")
+        raise DatabaseException(
+            message="Erreur de connexion à la base de données",
+            details={"error": str(e)},
+        )
     except Exception as e:
-        logger.error(f"Erreur lors de la connexion à Snowflake: {str(e)}")
-        raise
+        logger.error(f"Erreur inattendue lors de la connexion à Snowflake: {str(e)}")
+        raise DatabaseException(
+            message="Erreur inattendue lors de la connexion à la base de données",
+            details={"error": str(e)},
+        )
     finally:
         if conn:
-            await loop.run_in_executor(None, conn.close)
-            logger.info("Connexion à Snowflake fermée")
+            try:
+                await loop.run_in_executor(None, conn.close)
+                logger.info("Connexion à Snowflake fermée")
+            except Exception as e:
+                logger.error(f"Erreur lors de la fermeture de la connexion: {str(e)}")
 
 
 def convert_to_numeric(value: Any) -> Any:
@@ -169,12 +182,35 @@ async def execute_query(query: str, params: Union[dict, list, None] = None) -> l
             logger.info(f"Requête modifiée: {query}")
             logger.info(f"Paramètres traités: {processed_params}")
 
-            await loop.run_in_executor(None, cursor.execute, query, processed_params)
-            results = await loop.run_in_executor(None, cursor.fetchall)
+            try:
+                await loop.run_in_executor(
+                    None, cursor.execute, query, processed_params
+                )
+                results = await loop.run_in_executor(None, cursor.fetchall)
+            except snowflake.connector.errors.ProgrammingError as e:
+                raise DatabaseException(
+                    message="Erreur de syntaxe SQL",
+                    details={
+                        "query": query,
+                        "params": processed_params,
+                        "error": str(e),
+                    },
+                )
+            except snowflake.connector.errors.DatabaseError as e:
+                raise DatabaseException(
+                    message="Erreur d'exécution de la requête",
+                    details={
+                        "query": query,
+                        "params": processed_params,
+                        "error": str(e),
+                    },
+                )
 
             logger.info(f"Nombre de résultats obtenus: {len(results)}")
             return results
 
+        except DatabaseException:
+            raise
         except Exception as e:
             logger.error("=== Erreur lors de l'exécution de la requête ===")
             logger.error(f"Message d'erreur: {str(e)}")
@@ -183,7 +219,10 @@ async def execute_query(query: str, params: Union[dict, list, None] = None) -> l
             logger.error(
                 f"Paramètres traités: {processed_params if 'processed_params' in locals() else None}"
             )
-            raise
+            raise DatabaseException(
+                message="Erreur inattendue lors de l'exécution de la requête",
+                details={"query": query, "params": params, "error": str(e)},
+            )
 
         finally:
             await loop.run_in_executor(None, cursor.close)

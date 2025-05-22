@@ -14,6 +14,11 @@ from app.services.query_service import (
     create_paginated_response,
     execute_query,
 )
+from app.utils.exceptions import (
+    NotFoundException,
+    ValidationException,
+    DatabaseException,
+)
 
 router = APIRouter()
 
@@ -167,13 +172,18 @@ async def get_offre(id: int):
         )
 
         if not result:
-            raise HTTPException(status_code=404, detail="Offre non trouvée")
+            raise NotFoundException(
+                message=f"Offre avec l'ID {id} non trouvée", field="id"
+            )
 
         return ResponseBase(data=result[0], message="Offre récupérée avec succès")
-    except HTTPException as e:
+    except NotFoundException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise DatabaseException(
+            message=f"Erreur lors de la récupération de l'offre: {str(e)}",
+            details={"id": id},
+        )
 
 
 @router.post(
@@ -230,33 +240,37 @@ async def create_offre(offre: Offre):
         offre_dict = offre.model_dump(by_alias=True)
         offre_dict.pop("ID", None)
 
-        # Insérer l'offre (sans mapping)
         insert_result = await execute_sql_file(
             "offres/create.sql", query_params=offre_dict
         )
 
         if not insert_result or insert_result[0].get("number of rows inserted", 0) != 1:
-            raise HTTPException(
-                status_code=500, detail="Erreur lors de la création de l'offre"
+            raise DatabaseException(
+                message="Erreur lors de la création de l'offre",
+                details={"offre": offre_dict},
             )
 
-        # Récupérer l'offre créée en utilisant ID_LOCAL (avec mapping)
         result = await execute_and_map_to_model(
             "offres/get_by_id.sql",
             Offre,
             query_params={"ID_LOCAL": offre_dict["ID_LOCAL"]},
-            template_params={"ID_LOCAL": True},  # ID n'est pas défini, donc utilisera ID_LOCAL
+            template_params={"ID_LOCAL": True},
         )
 
         if not result:
-            raise HTTPException(
-                status_code=500,
-                detail="Erreur lors de la récupération de l'offre créée",
+            raise DatabaseException(
+                message="Erreur lors de la récupération de l'offre créée",
+                details={"id_local": offre_dict["ID_LOCAL"]},
             )
 
         return ResponseBase(data=result[0], message="Offre créée avec succès")
+    except ValidationException as e:
+        raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise DatabaseException(
+            message=f"Erreur lors de la création de l'offre: {str(e)}",
+            details={"offre": offre_dict},
+        )
 
 
 @router.put(
@@ -309,7 +323,9 @@ async def update_offre(id: int, offre: Offre):
         )
 
         if not existing_offre:
-            raise HTTPException(status_code=404, detail="Offre non trouvée")
+            raise NotFoundException(
+                message=f"Offre avec l'ID {id} non trouvée", field="id"
+            )
 
         offre_dict = offre.model_dump(by_alias=True)
         offre_dict["ID"] = id
@@ -319,10 +335,15 @@ async def update_offre(id: int, offre: Offre):
         )
 
         return ResponseBase(data=result[0], message="Offre mise à jour avec succès")
-    except HTTPException as e:
+    except NotFoundException as e:
+        raise e
+    except ValidationException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise DatabaseException(
+            message=f"Erreur lors de la mise à jour de l'offre: {str(e)}",
+            details={"id": id, "offre": offre_dict},
+        )
 
 
 @router.delete(
@@ -363,12 +384,17 @@ async def delete_offre(id: int):
         )
 
         if not existing_offre:
-            raise HTTPException(status_code=404, detail="Offre non trouvée")
+            raise NotFoundException(
+                message=f"Offre avec l'ID {id} non trouvée", field="id"
+            )
 
         await execute_sql_file("offres/delete.sql", query_params={"ID": id})
 
         return ResponseBase(data={"ID": id}, message="Offre supprimée avec succès")
-    except HTTPException as e:
+    except NotFoundException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise DatabaseException(
+            message=f"Erreur lors de la suppression de l'offre: {str(e)}",
+            details={"id": id},
+        )
