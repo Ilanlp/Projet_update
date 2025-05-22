@@ -161,54 +161,136 @@ class CANDIDAT(BaseModel):
 class Offre(BaseModel):
     """Modèle pour les offres d'emploi"""
 
-    id: int = Field(alias="ID")
-    id_local: str = Field(alias="ID_LOCAL")
-    title: str = Field(alias="TITLE")
-    description: str = Field(alias="DESCRIPTION")
-    type_contrat: Optional[str] = Field(alias="TYPE_CONTRAT", default=None)
-    code_domaine: Optional[str] = Field(alias="CODE_DOMAINE", default=None)
-    nom_domaine: Optional[str] = Field(alias="NOM_DOMAINE", default=None)
-    code_postal: Optional[int] = Field(alias="CODE_POSTAL", default=None)
-    ville: str = Field(alias="VILLE")
-    departement: str = Field(alias="DEPARTEMENT")
-    region: str = Field(alias="REGION")
-    pays: str = Field(alias="PAYS")
-    latitude: Optional[float] = Field(alias="LATITUDE", default=None)
-    longitude: Optional[float] = Field(alias="LONGITUDE", default=None)
-    population: Optional[int] = Field(alias="POPULATION", default=None)
-    mois_creation: Optional[int] = Field(alias="MOIS_CREATION", default=None)
-    jour_creation: Optional[int] = Field(alias="JOUR_CREATION", default=None)
-    mois_nom_creation: Optional[str] = Field(alias="MOIS_NOM_CREATION", default=None)
-    jour_semaine_creation: Optional[str] = Field(
-        alias="JOUR_SEMAINE_CREATION", default=None
+    id: Optional[int] = Field(
+        alias="ID", default=None, description="Identifiant unique de l'offre"
     )
-    week_end_creation: Optional[bool] = Field(alias="WEEK_END_CREATION", default=None)
-    mois_modification: Optional[int] = Field(alias="MOIS_MODIFICATION", default=None)
-    jour_modification: Optional[int] = Field(alias="JOUR_MODIFICATION", default=None)
+    id_local: str = Field(alias="ID_LOCAL", description="Identifiant local de l'offre")
+    title: str = Field(alias="TITLE", description="Titre du poste")
+    description: str = Field(
+        alias="DESCRIPTION", description="Description détaillée du poste"
+    )
+    type_contrat: Optional[str] = Field(
+        alias="TYPE_CONTRAT",
+        default=None,
+        description="Type de contrat (CDI, CDD, etc.)",
+    )
+    code_domaine: Optional[str] = Field(
+        alias="CODE_DOMAINE", default=None, description="Code du domaine d'activité"
+    )
+    nom_domaine: Optional[str] = Field(
+        alias="NOM_DOMAINE", default=None, description="Nom du domaine d'activité"
+    )
+    code_postal: Optional[int] = Field(
+        alias="CODE_POSTAL", default=None, description="Code postal du lieu de travail"
+    )
+    ville: str = Field(alias="VILLE", description="Ville du poste")
+    departement: str = Field(alias="DEPARTEMENT", description="Département du poste")
+    region: str = Field(alias="REGION", description="Région du poste")
+    pays: str = Field(alias="PAYS", description="Pays du poste")
+    latitude: Optional[float] = Field(
+        alias="LATITUDE",
+        default=None,
+        description="Latitude géographique du lieu de travail",
+    )
+    longitude: Optional[float] = Field(
+        alias="LONGITUDE",
+        default=None,
+        description="Longitude géographique du lieu de travail",
+    )
+    population: Optional[int] = Field(
+        alias="POPULATION", default=None, description="Population de la ville"
+    )
+    mois_creation: Optional[int] = Field(
+        alias="MOIS_CREATION",
+        default=None,
+        description="Mois de création de l'offre (1-12)",
+    )
+    jour_creation: Optional[int] = Field(
+        alias="JOUR_CREATION",
+        default=None,
+        description="Jour de création de l'offre (1-31)",
+    )
+    mois_nom_creation: Optional[str] = Field(
+        alias="MOIS_NOM_CREATION", default=None, description="Nom du mois de création"
+    )
+    jour_semaine_creation: Optional[str] = Field(
+        alias="JOUR_SEMAINE_CREATION",
+        default=None,
+        description="Jour de la semaine de création",
+    )
+    week_end_creation: Optional[bool] = Field(
+        alias="WEEK_END_CREATION",
+        default=None,
+        description="Indique si l'offre a été créée pendant un weekend",
+    )
+    mois_modification: Optional[int] = Field(
+        alias="MOIS_MODIFICATION",
+        default=None,
+        description="Mois de dernière modification (1-12)",
+    )
+    jour_modification: Optional[int] = Field(
+        alias="JOUR_MODIFICATION",
+        default=None,
+        description="Jour de dernière modification (1-31)",
+    )
     mois_nom_modification: Optional[str] = Field(
-        alias="MOIS_NOM_MODIFICATION", default=None
+        alias="MOIS_NOM_MODIFICATION",
+        default=None,
+        description="Nom du mois de modification",
     )
     jour_semaine_modification: Optional[str] = Field(
-        alias="JOUR_SEMAINE_MODIFICATION", default=None
+        alias="JOUR_SEMAINE_MODIFICATION",
+        default=None,
+        description="Jour de la semaine de modification",
     )
     week_end_modification: Optional[bool] = Field(
-        alias="WEEK_END_MODIFICATION", default=None
+        alias="WEEK_END_MODIFICATION",
+        default=None,
+        description="Indique si l'offre a été modifiée pendant un weekend",
     )
-    type_teletravail: Optional[str] = Field(alias="TYPE_TELETRAVAIL", default=None)
-    type_seniorite: Optional[str] = Field(alias="TYPE_SENIORITE", default=None)
-    code_rome: str = Field(alias="CODE_ROME")
-    nom_entreprise: Optional[str] = Field(alias="NOM_ENTREPRISE", default=None)
+    type_teletravail: Optional[str] = Field(
+        alias="TYPE_TELETRAVAIL",
+        default=None,
+        description="Type de télétravail proposé",
+    )
+    type_seniorite: Optional[str] = Field(
+        alias="TYPE_SENIORITE", default=None, description="Niveau de séniorité requis"
+    )
+    code_rome: str = Field(alias="CODE_ROME", description="Code ROME du métier")
+    nom_entreprise: Optional[str] = Field(
+        alias="NOM_ENTREPRISE", default=None, description="Nom de l'entreprise"
+    )
     categorie_entreprise: Optional[str] = Field(
-        alias="CATEGORIE_ENTREPRISE", default=None
+        alias="CATEGORIE_ENTREPRISE",
+        default=None,
+        description="Catégorie de l'entreprise (PME, Grande entreprise, etc.)",
     )
     date_creation_entreprise: Optional[str] = Field(
-        alias="DATE_CREATION_ENTREPRISE", default=None
+        alias="DATE_CREATION_ENTREPRISE",
+        default=None,
+        description="Date de création de l'entreprise",
     )
-    competences: Optional[str] = Field(alias="COMPETENCES", default=None)
-    types_competences: Optional[str] = Field(alias="TYPES_COMPETENCES", default=None)
-    softskills_summary: Optional[str] = Field(alias="SOFTSKILLS_SUMMARY", default=None)
-    softskills_details: Optional[str] = Field(alias="SOFTSKILLS_DETAILS", default=None)
-    nom_metier: str = Field(alias="NOM_METIER")
+    competences: Optional[str] = Field(
+        alias="COMPETENCES",
+        default=None,
+        description="Liste des compétences techniques requises",
+    )
+    types_competences: Optional[str] = Field(
+        alias="TYPES_COMPETENCES",
+        default=None,
+        description="Types de compétences requises",
+    )
+    softskills_summary: Optional[str] = Field(
+        alias="SOFTSKILLS_SUMMARY",
+        default=None,
+        description="Résumé des compétences comportementales",
+    )
+    softskills_details: Optional[str] = Field(
+        alias="SOFTSKILLS_DETAILS",
+        default=None,
+        description="Détails des compétences comportementales",
+    )
+    nom_metier: str = Field(alias="NOM_METIER", description="Nom du métier")
 
     model_config = {
         "populate_by_name": True,
@@ -216,22 +298,22 @@ class Offre(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "id": 1,
-                    "id_local": "12345",
-                    "title": "Data Engineer",
-                    "description": "Description du poste",
-                    "ville": "Paris",
-                    "departement": "Paris",
-                    "region": "Île-de-France",
-                    "pays": "France",
-                    "code_rome": "M1805",
-                    "nom_metier": "Data Engineer",
-                    "mois_creation": 4,
-                    "jour_creation": 28,
-                    "week_end_creation": False,
-                    "mois_modification": 4,
-                    "jour_modification": 28,
-                    "week_end_modification": False,
+                    "ID": 1,
+                    "ID_LOCAL": "12345",
+                    "TITLE": "Data Engineer",
+                    "DESCRIPTION": "Description du poste",
+                    "VILLE": "Paris",
+                    "DEPARTEMENT": "Paris",
+                    "REGION": "Île-de-France",
+                    "PAYS": "France",
+                    "CODE_ROME": "M1805",
+                    "NOM_METIER": "Data Engineer",
+                    "MOIS_CREATION": 4,
+                    "JOUR_CREATION": 28,
+                    "WEEK_END_CREATION": False,
+                    "MOIS_MODIFICATION": 4,
+                    "JOUR_MODIFICATION": 28,
+                    "WEEK_END_MODIFICATION": False,
                 }
             ]
         },

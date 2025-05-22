@@ -39,7 +39,15 @@ async def get_snowflake_connection() -> SnowflakeConnection:
 
 
 def convert_to_numeric(value: Any) -> Any:
-    """Convertit une valeur en numérique si possible"""
+    """
+    Convertit une valeur en numérique si possible.
+
+    Args:
+        value: La valeur à convertir
+
+    Returns:
+        La valeur convertie en int ou float si possible, sinon la valeur originale
+    """
     if isinstance(value, (int, float)):
         return value
 
@@ -52,21 +60,89 @@ def convert_to_numeric(value: Any) -> Any:
             return value
 
 
+def process_value(value: Any) -> Any:
+    """
+    Traite une valeur pour la rendre compatible avec Snowflake.
+
+    Args:
+        value: La valeur à traiter
+
+    Returns:
+        - None pour les valeurs Python None (sera converti en NULL par Snowflake)
+        - Valeur numérique si possible
+        - Valeur originale sinon
+    """
+    if value is None:
+        return None
+    return convert_to_numeric(value)
+
+
 def process_dict_params(params: Dict[str, Any]) -> Dict[str, Any]:
-    """Traite les paramètres de type dictionnaire"""
-    return {key: convert_to_numeric(value) for key, value in params.items()}
+    """
+    Traite les paramètres de type dictionnaire pour les rendre compatibles avec Snowflake.
+
+    Cette fonction:
+    1. Gère les valeurs None (convertis en NULL dans Snowflake)
+    2. Convertit les valeurs numériques si possible
+    3. Préserve les autres types de données
+
+    Args:
+        params: Dictionnaire de paramètres à traiter
+
+    Returns:
+        Dictionnaire avec les valeurs traitées
+    """
+    if not params:
+        return {}
+    return {key: process_value(value) for key, value in params.items()}
 
 
 def process_list_params(params: List[Any]) -> List[Any]:
-    """Traite les paramètres de type liste"""
-    return [convert_to_numeric(value) for value in params]
+    """
+    Traite les paramètres de type liste pour les rendre compatibles avec Snowflake.
+
+    Cette fonction:
+    1. Gère les valeurs None (convertis en NULL dans Snowflake)
+    2. Convertit les valeurs numériques si possible
+    3. Préserve les autres types de données
+
+    Args:
+        params: Liste de paramètres à traiter
+
+    Returns:
+        Liste avec les valeurs traitées
+    """
+    if not params:
+        return []
+    return [process_value(value) for value in params]
 
 
 def format_query_with_params(query: str, params: Dict[str, Any]) -> str:
-    """Formate la requête avec les paramètres"""
+    """
+    Formate la requête avec les paramètres.
+
+    Cette fonction:
+    1. Gère les valeurs None en les convertissant en NULL SQL
+    2. Entoure les chaînes de caractères avec des guillemets
+    3. Convertit les autres valeurs en leur représentation SQL
+
+    Args:
+        query: La requête SQL avec des placeholders (:param)
+        params: Dictionnaire des paramètres à remplacer
+
+    Returns:
+        La requête SQL formatée avec les valeurs
+    """
     for key, value in params.items():
         placeholder = f":{key}"
-        formatted_value = f"'{value}'" if isinstance(value, str) else str(value)
+        if value is None:
+            formatted_value = "NULL"
+        elif isinstance(value, str):
+            formatted_value = f"'{value}'"
+        elif isinstance(value, bool):
+            formatted_value = str(value).upper()
+        else:
+            formatted_value = str(value)
         query = query.replace(placeholder, formatted_value)
     return query
 
