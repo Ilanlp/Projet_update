@@ -8,6 +8,8 @@ from app.models.schemas import (
     Offre,
     SOFTSKILL,
     ROMECODE,
+    DOMAINE,
+    TELETRAVAIL
 )
 from app.services.query_service import (
     execute_and_map_to_model,
@@ -201,6 +203,93 @@ async def get_softskills_by_rome(code_rome: str):
         return ResponseBase(
             data=results,
             message=f"Soft skills récupérés avec succès pour le code ROME {code_rome}"
+        )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router2.get("/softskills", response_model=PaginatedResponseBase[SOFTSKILL], tags=["Références"])
+async def get_all_softskills(pagination: PaginationParams = Depends()):
+    """
+    Récupère la liste des soft skills avec pagination
+
+    - **page**: Numéro de page (commençant à 1)
+    - **page_size**: Nombre d'éléments par page (entre 1 et 100)
+    """
+    try:
+        # Calcul de l'offset pour la pagination
+        offset = (pagination.page - 1) * pagination.page_size
+
+        # Paramètres pour la requête SQL incluant la pagination
+        query_params = {"page_size": pagination.page_size, "offset": offset}
+
+        # Exécuter la requête paginée
+        items, total = await paginate_query(
+            "softskills/get_all.sql",
+            SOFTSKILL,
+            pagination,
+            query_params=query_params
+        )
+
+        # Créer la réponse paginée
+        paginated_response = create_paginated_response(items, total, pagination)
+
+        return PaginatedResponseBase(
+            data=paginated_response,
+            message="Liste des soft skills récupérée avec succès"
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@router2.get("/domaines", response_model=ResponseBase[List[DOMAINE]], tags=["Références"])
+async def get_domaines():
+    """
+    Récupère la liste des domaines
+    """
+    try:
+        result = await execute_and_map_to_model(
+            "domaines/get_all.sql", DOMAINE, query_params={}
+        )
+
+        if not result:
+            return ResponseBase(
+                data=[],
+                message="Aucun domaine trouvé"
+            )
+
+        return ResponseBase(
+            data=result,
+            message="Liste des domaines récupérée avec succès"
+        )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router2.get("/teletravail", response_model=ResponseBase[List[TELETRAVAIL]], tags=["Références"])
+async def get_teletravail():
+    """
+    Récupère la liste des types de télétravail
+    """
+    try:
+        result = await execute_and_map_to_model(
+            "teletravail/get_all.sql", TELETRAVAIL, query_params={}
+        )
+
+        if not result:
+            return ResponseBase(
+                data=[],
+                message="Aucun domaine trouvé"
+            )
+
+        return ResponseBase(
+            data=result,
+            message="Liste des domaines récupérée avec succès"
         )
     except HTTPException as e:
         raise e
