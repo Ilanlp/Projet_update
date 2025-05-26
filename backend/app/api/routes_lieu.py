@@ -45,14 +45,14 @@ router_lieu = APIRouter()
             "items": [
                 {
                     "ID_LIEU": 1,
-                    "CODE_POSTAL": "OFF123",
-                    "VILLE": "Data Engineer Senior",
-                    "DEPARTEMENT": "",
-                    "REGION": "",
-                    "PAYS": "",
-                    "LATITUDE": "",
-                    "LONGITUDE": "",
-                    "POPULATION": ""
+                    "CODE_POSTAL": "1400",
+                    "VILLE": "L'Abergement-Clémenciat",
+                    "DEPARTEMENT": "Ain",
+                    "REGION": "Auvergne-Rhône-Alpes",
+                    "PAYS": "France",
+                    "LATITUDE": "46.151700",
+                    "LONGITUDE": "4.930600",
+                    "POPULATION": "859"
                 }
             ],
             "total": 150,
@@ -106,15 +106,15 @@ async def get_all_lieu(pagination: PaginationParams = Depends()):
         "success": true,
         "message": "Lieu récupérée avec succès",
         "data": {
-            "ID_LIEU": 1,
-            "CODE_POSTAL": "OFF123",
-            "VILLE": "Data Engineer Senior",
-            "DEPARTEMENT": "",
-            "REGION": "",
-            "PAYS": "",
-            "LATITUDE": "",
-            "LONGITUDE": "",
-            "POPULATION": ""
+                "ID_LIEU": 1,
+                "CODE_POSTAL": "1400",
+                "VILLE": "L'Abergement-Clémenciat",
+                "DEPARTEMENT": "Ain",
+                "REGION": "Auvergne-Rhône-Alpes",
+                "PAYS": "France",
+                "LATITUDE": "46.151700",
+                "LONGITUDE": "4.930600",
+                "POPULATION": "859"
         }
     }
     ```

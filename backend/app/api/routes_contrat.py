@@ -41,7 +41,7 @@ router_contrat = APIRouter()
             "items": [
                 {
                     "ID_CONTRAT": 1,
-                    "TYPE_CONTRAT": "OFF123",
+                    "TYPE_CONTRAT": "CDI",
                 }
             ],
         }
@@ -88,7 +88,7 @@ async def get_all_contrat():
         "message": "Contrat récupérée avec succès",
         "data": {
                 "ID_CONTRAT": 1,
-                "TYPE_CONTRAT": "OFF123",
+                "TYPE_CONTRAT": "CDI",
         }
     }
     ```
