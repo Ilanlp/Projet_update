@@ -1,0 +1,17 @@
+services:
+  dbt:
+    image: jm-dbt
+    container_name: jm-dbt
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - jm_network
+    env_file:
+      - .env
+    volumes:
+      - ./:/usr/src/DBT
+
+networks:
+  jm_network:
+    name: jm_network

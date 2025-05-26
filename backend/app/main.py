@@ -5,6 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.api.routes import router
 from app.api.routes2 import router2
+from app.api.routes_competence import router_competence
+from app.api.routes_contrat import router_contrat
+from app.api.routes_lieu import router_lieu
+from app.api.routes_metier import router_metier
+from app.api.routes_romecode import router_romecode
+from app.api.routes_seniorite import router_seniorite
 import time
 import uvicorn
 
@@ -77,8 +83,12 @@ async def global_exception_handler(request: Request, exc: Exception):
 # Inclusion des routes
 app.include_router(router, prefix="/api")
 app.include_router(router2, prefix="/api2")
-
-
+app.include_router(router_competence, prefix="/api")
+app.include_router(router_contrat,prefix="/api")
+app.include_router(router_lieu,prefix="/api")
+app.include_router(router_metier,prefix="/api")
+app.include_router(router_romecode,prefix="/api")
+app.include_router(router_seniorite,prefix="/api")
 # Route de santé
 @app.get("/", tags=["Système"])
 async def root():
