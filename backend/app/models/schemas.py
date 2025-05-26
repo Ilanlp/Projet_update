@@ -119,7 +119,7 @@ class DOMAINE(BaseModel):
 
 class LIEU(BaseModel):
     id_lieu: int
-    code_postale: str
+    code_postal: int
     ville: str
     departement: str
     region: str
@@ -131,7 +131,7 @@ class LIEU(BaseModel):
 
 class METIER(BaseModel):
     id_metier: int
-    id_appelation: int
+    id_appellation: int
     nom: str
 
 
