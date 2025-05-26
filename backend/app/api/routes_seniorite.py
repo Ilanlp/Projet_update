@@ -41,7 +41,7 @@ router_seniorite = APIRouter()
             "items": [
                 {
                     "ID_SENIORITE": 1,
-                    "TYPE_SENIORITE": "OFF123",
+                    "TYPE_SENIORITE": "Junior",
                 }
             ],
         }
@@ -87,7 +87,7 @@ async def get_all_seniorite():
         "message": "Séniorité récupérée avec succès",
         "data": {
                 "ID_SENIORITE": 1,
-                "TYPE_SENIORITE": "OFF123",
+                "TYPE_SENIORITE": "Junior",
         }
     }
     ```

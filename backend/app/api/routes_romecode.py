@@ -45,7 +45,7 @@ router_romecode = APIRouter()
             "items": [
                 {
                     "ID_ROME": 1,
-                    "CODE_ROME": "OFF123",
+                    "CODE_ROME": "A1101",
                 }
             ],
             "total": 150,
@@ -100,7 +100,7 @@ async def get_all_romecode(pagination: PaginationParams = Depends()):
         "message": "Rome code récupérée avec succès",
         "data": {
                 "ID_ROME": 1,
-                "CODE_ROME": "OFF123",
+                "CODE_ROME": "A1101",
         }
     }
     ```
