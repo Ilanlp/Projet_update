@@ -102,7 +102,6 @@ async def health_v1():
 async def health_v2():
     return {"status": "ok", "version": settings.API_VERSION}
 
-
 # Pour lancer l'application directement avec python
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
