@@ -1,0 +1,12 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+RUN cat requirements.txt
+COPY dash_app.py /app/
+
+EXPOSE 8050
+
+CMD ["python", "dash_app.py"]

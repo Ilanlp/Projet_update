@@ -352,9 +352,8 @@ class Offre(BaseModel):
         },
     }
 
-
-class SoftSkill(BaseModel):
-    summary: str
-
-    class Config:
-        from_attributes = True
+class TOP_VILLE(BaseModel):
+    ville: str
+    count: int
+    latitude: float
+    longitude: float

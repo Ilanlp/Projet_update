@@ -9,7 +9,8 @@ from app.models.schemas import (
     SOFTSKILL,
     ROMECODE,
     DOMAINE,
-    TELETRAVAIL
+    TELETRAVAIL,
+    TOP_VILLE
 )
 from app.services.query_service import (
     execute_and_map_to_model,
@@ -209,6 +210,36 @@ async def get_softskills_by_rome(code_rome: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router2.get("/top_ville", response_model=ResponseBase[List[TOP_VILLE]], tags=["OLAP"])
+async def get_top_ville():
+    """
+    Récupère les 5 villes les plus demandées
+    """
+    try:
+
+
+        # Exécution de la requête pour les soft skills
+        results = await execute_and_map_to_model(
+            "OLAP/top_ville.sql",
+            TOP_VILLE,
+            query_params={}
+        )
+
+        if not results:
+            return ResponseBase(
+                data=[],
+                message=f"Aucune ville trouvée"
+            )
+
+        return ResponseBase(
+            data=results,
+            message=f"Villes récupérées avec succès"
+        )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @router2.get("/softskills", response_model=PaginatedResponseBase[SOFTSKILL], tags=["Références"])
 async def get_all_softskills(pagination: PaginationParams = Depends()):
