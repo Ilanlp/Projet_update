@@ -45,8 +45,8 @@ router_competence = APIRouter()
             "items": [
                 {
                     "ID_COMPETENCE": 1,
-                    "SKILL": "OFF123",
-                    "TYPE": "Data Engineer Senior",
+                    "SKILL": "2D drafting",
+                    "TYPE": "Design Software",
                 }
             ],
             "total": 150,
@@ -100,8 +100,8 @@ async def get_all_competence(pagination: PaginationParams = Depends()):
         "message": "Compétence récupérée avec succès",
         "data": {
             "ID_COMPETENCE": 1,
-            "SKILL": "OFF123",
-            "TYPE": "Data Engineer Senior",
+            "SKILL": "2D drafting",
+            "TYPE": "Design Software",
         }
     }
     ```
