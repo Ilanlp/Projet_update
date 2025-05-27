@@ -1,0 +1,33 @@
+services:
+  jm-elt-snowflake:
+    image: jm-elt-snowflake
+    container_name: jm-elt-snowflake
+    build:
+      context: ./pipeline/src/
+      dockerfile: Dockerfile
+    networks:
+      - jm_network
+    env_file:
+      - ./pipeline/src/.env
+    volumes:
+      - ./pipeline/src/snowflake:/usr/src/snowflake
+      - ./pipeline/src/data:/usr/src/data
+
+  jm-elt-dbt:
+    image: jm-elt-dbt
+    container_name: jm-elt-dbt
+    build:
+      context: ./snowflake/DBT/
+      dockerfile: Dockerfile
+    networks:
+      - jm_network
+    env_file:
+      - ./snowflake/DBT/.env
+    volumes:
+      - ./snowflake/DBT:/usr/src/DBT
+    depends_on:
+      - jm-elt-snowflake
+
+networks:
+  jm_network:
+    name: jm_network
