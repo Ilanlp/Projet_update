@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. Spécifier la commande de démarrage
 CMD ["python", "normalizer.py"]
-=======
+
 FROM python:3.10.17-slim
 
 # Créer un utilisateur non-root
