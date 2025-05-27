@@ -45,8 +45,8 @@ router_metier = APIRouter()
             "items": [
                 {
                     "ID_METIER": 1,
-                    "ID_APPELATION": "OFF123",
-                    "NOM": ""
+                    "ID_APPELATION": "10438",
+                    "NOM": "Agent/Agente de destruction d'insectes"
                 }
             ],
             "total": 150,
@@ -100,8 +100,8 @@ async def get_all_metier(pagination: PaginationParams = Depends()):
         "message": "Métier récupérée avec succès",
         "data": {
                 "ID_METIER": 1,
-                "ID_APPELATION": "OFF123",
-                "NOM": ""
+                "ID_APPELATION": "10438",
+                "NOM": "Agent/Agente de destruction d'insectes"
         }
     }
     ```
