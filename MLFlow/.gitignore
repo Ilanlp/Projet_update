@@ -1,3 +1,4 @@
+trash/
 mlruns/
 __pycache__/
 *.pyc
