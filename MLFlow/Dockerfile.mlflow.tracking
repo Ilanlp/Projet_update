@@ -1,0 +1,29 @@
+FROM python:3.9-slim
+
+# Installation des dépendances système minimales
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    curl \
+    libevent-dev \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    make \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Création du répertoire de travail
+WORKDIR /app
+
+# Copie et installation des requirements
+COPY requirements.mlflow.tracking.txt .
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir -r requirements.mlflow.tracking.txt
+
+# Exposition du port
+EXPOSE 5000
+
+# Commande par défaut
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]

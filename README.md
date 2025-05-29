@@ -1,60 +1,132 @@
-# ProjectTemplate
+# JOBMARKET
 
-## Explanations and Instructions
+## Execution ELT
 
-This repository contains the files needed to initialize a project for your [DataScientest](https://datascientest.com/) training.
+### Lancer d'abord le service jm-elt-snowflake
 
-It contains mainly the present README.md file and an application template [Streamlit](https://streamlit.io/).
-
-**README**
-
-The README.md file is a central element of any git repository. It allows you to present your project, its objectives, and to explain how to install and launch the project, or even how to contribute to it.
-
-You will have to modify different sections of this README.md to include the necessary informations.
-
-- Complete the sections (`## Presentation and Installation` `## Streamlit App`) following the instructions in these sections.
-- Delete this section (`## Explanations and Instructions`)
-
-**Streamlit Application**
-
-A [Streamlit] application template (https://streamlit.io/) is available in the [streamlit_app](streamlit_app) folder. You can use this template to start with your project.
-
-## Presentation and Installation
-
-Complete this section with a brief description of your project, the context (including a link to the DataScientest course), and the objectives.
-
-You can also add a brief presentation of the team members with links to your respective networks (GitHub and/or LinkedIn for example).
-
-**Example:**
-
-This repository contains the code for our project **PROJECT_NAME**, developed during our [Data Scientist training](https://datascientest.com/en/data-scientist-course) at [DataScientest](https://datascientest.com/).
-
-The goal of this project is to **...**
-
-This project was developed by the following team :
-
-- John Doe ([GitHub](https://github.com/) / [LinkedIn](http://linkedin.com/))
-- Martin Dupont ([GitHub](https://github.com/) / [LinkedIn](http://linkedin.com/))
-
-You can browse and run the [notebooks](./notebooks). 
-
-You will need to install the dependencies (in a dedicated environment) :
-
-```
-pip install -r requirements.txt
+```bash
+docker-compose -f docker-compose.etl.init.yaml up --build jm-elt-snowflake
 ```
 
-## Streamlit App
+### Lancer ensuite le service jm-elt-dbt
 
-**Add explanations on how to use the app.**
-
-To run the app (be careful with the paths of the files in the app):
-
-```shell
-conda create --name my-awesome-streamlit python=3.9
-conda activate my-awesome-streamlit
-pip install -r requirements.txt
-streamlit run app.py
+```bash
+docker-compose -f docker-compose.elt.init.yaml up --build jm-elt-dbt
 ```
 
-The app should then be available at [localhost:8501](http://localhost:8501).
+## MLFlow infrastructure
+
+<!--
+# ===========================================
+# CONFIGURATION DES PROFILS
+# ===========================================
+
+# Profils disponibles :
+# - training     : Service d'entraînement ML
+# - development  : Training
+# - monitoring   : Prometheus pour monitoring
+# - postgres     : Base PostgreSQL au lieu de SQLite
+# - cache        : Redis pour cache
+
+# Exemples d'utilisation :
+# docker-compose --profile development up                    # Training + Model
+# docker-compose --profile training up                       # Entraînement seulement
+# docker-compose --profile training --profile monitoring up  # Training + Monitoring
+# docker-compose --profile postgres up mlflow-server         # MLflow avec PostgreSQL
+-->
+
+### Development
+
+```bash
+docker compose -f docker-compose_workspace.yaml --profile development up -d --build
+docker compose -f docker-compose_workspace.yaml --profile development down -v
+```
+
+### Training model
+
+```bash
+# Démarage du conteneur en mode interactif
+docker compose -f docker-compose_workspace.yaml run --rm mlflow-training --build bash
+```
+
+### Register model
+
+```bash
+python3 src/register_model.py \
+            --tracking_uri "http://127.0.0.1:5010" \
+            --experiment_name "Apple_Models" \
+            --model_name "apple_demand_predictor"
+            # --tags
+            # --run_id
+```
+
+```bash
+python3 src/register_model.py \
+            --tracking_uri "http://127.0.0.1:5010" \
+            --experiment_name "Apple_Models" \
+            --model_name "apple_demand_predictor" \
+            --tags "version=1.0,environment=production,author=data_team"
+            # --run_id
+```
+
+### Serve model
+
+```bash
+python3 src/serve_registry_model.py \
+    --tracking_uri "http://127.0.0.1:5010" \
+    --model_name "apple_demand_predictor" \
+    --version 3 \
+    --port 5020
+```
+
+```bash
+docker run -p 5020:5001 \
+  -e TRACKING_URI="http://mlflow-tracking:5000" \
+  -e MODEL_NAME="apple_demand_predictor" \
+  -e MODEL_VERSION="3" \
+  -e MODEL_PORT="5001" \
+  jm-serve-model
+```
+
+```bash
+docker compose -f docker-compose_workspace.yaml run --rm mlflow-training python src/register_model.py 7b46206452614e5a93e98d556fe2bd37 apple_demand_predictor
+```
+
+## Request Model
+
+```bash
+python3 src/predict.py
+```
+
+```bash
+curl -X POST "http://localhost:8000/invocations" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dataframe_records": [
+      {
+        "year": 2022,
+        "month": 1,
+        "day_of_year": 1,
+        "day_of_week": 5,
+        "week_of_year": 52,
+        "quarter": 1,
+        "temperature": 17.65,
+        "humidity": 35.38,
+        "rainfall": 1.10,
+        "sunshine_hours": 7.35,
+        "apple_price": 2.23,
+        "economic_index": 100.17,
+        "is_weekend": 1,
+        "trend": 0.0,
+        "season_fall": false,
+        "season_spring": false,
+        "season_summer": false,
+        "season_winter": true,
+        "holiday_back_to_school": false,
+        "holiday_normal": false,
+        "holiday_summer_holidays": false,
+        "holiday_winter_holidays": true
+      }
+    ]
+  }'
+```
