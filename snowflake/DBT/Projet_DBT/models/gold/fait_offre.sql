@@ -6,7 +6,12 @@
   ) 
 }}
 
-with source as (
+with raw as (
+    select *
+    from {{ ref('RAW_OFFRE') }}
+    where date_extraction::date = current_date
+),
+source as (
 
   select 
     raw.id_local,
@@ -21,7 +26,7 @@ with source as (
     teletravail.id_teletravail,
     domaine.id_domaine,
     rome.id_rome
-  from {{ ref('RAW_OFFRE') }}         as raw
+  from raw         as raw
   left join {{ ref('Match_Lieu_py') }}       as lieu
     on raw.id_local = lieu.id_local
   left join {{ ref('Match_Contrat_py') }}    as contrat

@@ -5,8 +5,9 @@ offre as (
     select
         id_local,
         skills,
-        description,
-    from {{source('RAW','RAW_OFFRE')}}
+        description
+    from {{ source('RAW', 'RAW_OFFRE') }}
+    where date_extraction::date = current_date
 ),
 
 competence as (

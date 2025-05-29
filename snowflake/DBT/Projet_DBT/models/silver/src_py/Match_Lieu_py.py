@@ -6,6 +6,7 @@ from snowflake.snowpark.functions import (
     lit, when, row_number
 )
 from snowflake.snowpark.window import Window
+import datetime
 
 # Modèle amélioré :
 # - matching géographique (coordonnées)
@@ -13,7 +14,10 @@ from snowflake.snowpark.window import Window
 # - fallback code département → ville la plus peuplée du code postal
 
 def model(dbt, session):
-    raw      = session.table("RAW.RAW_OFFRE")
+    today = datetime.date.today()
+    raw = session.table("RAW.RAW_OFFRE").filter(
+        col("DATE_EXTRACTION").cast("date") == today
+    )
     dim_lieu = session.table("SILVER.DIM_LIEU")
 
     # 1. Matching textuel existant
@@ -61,7 +65,7 @@ def model(dbt, session):
     df = (
         raw.join(dim_lieu, join_cond, how="left")
            .select(
-               raw["id"].alias("id"),
+               raw["id_offre"].alias("id_offre"),
                raw["id_local"].alias("id_local"),
                raw["location_name"],
                raw["latitude"], raw["longitude"],
