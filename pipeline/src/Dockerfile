@@ -51,7 +51,7 @@ USER node
 WORKDIR /usr/src/snowflake
 
 CMD python3 snowflake_init.py && \
-    python3 snowflake_core.py
+    python3 snowflake_core_incremental.py
 
 
 
