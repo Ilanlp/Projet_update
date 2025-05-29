@@ -1,0 +1,56 @@
+# MLflow et dépendances core
+mlflow==2.22.0
+cloudpickle==3.1.1
+psutil==7.0.0
+scipy==1.13.1
+
+# Machine Learning
+numpy==2.0.2
+pandas==2.2.3
+scikit-learn==1.6.1
+joblib
+
+# Modèles avancés (optionnel)
+# xgboost>=1.7.0
+# lightgbm>=3.3.0
+
+# Visualisation et analyse
+matplotlib
+seaborn
+# plotly>=5.15.0
+
+# Jupyter et développement
+# jupyter>=1.0.0
+# jupyterlab>=3.6.0
+# ipython>=8.0.0
+# notebook>=6.5.0
+
+# Utilitaires
+click
+pyyaml
+python-dotenv
+tqdm
+
+# Base de données et stockage
+# sqlalchemy>=1.4.0
+# boto3>=1.26.0  # Pour S3 si nécessaire
+# azure-storage-blob>=12.14.0  # Pour Azure si nécessaire
+
+# API et web
+# flask>=2.2.0
+# gunicorn>=20.1.0
+# fastapi>=0.95.0
+# uvicorn>=0.20.0
+
+# Monitoring et logging
+# psutil>=5.9.0
+# loguru>=0.7.0
+
+# Tests et qualité
+# pytest>=7.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+
+# Traitement de données
+# openpyxl>=3.1.0  # Excel
+# pyarrow>=10.0.0  # Parquet

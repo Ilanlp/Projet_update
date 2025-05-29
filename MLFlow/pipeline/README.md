@@ -6,13 +6,15 @@ Ce projet déploie un modèle de matching offres‑candidats basé sur **SBERT +
 
 ## Table des matières
 
-1. [Prérequis & Installation](#1-prérequis--installation)
-2. [Entraînement & Log (pipeline\_BERT)](#2-entraînement--log-pipeline_bert)
-3. [Publication en production](#3-publication-en-production)
-4. [Servir le modèle REST](#4-servir-le-modèle-rest)
-5. [Tester l'API](#5-tester-lapi)
-6. [Personnalisation & Hyperparamètres](#6-personnalisation--hyperparamètres)
-7. [Explorer l'UI MLflow](#7-explorer-lui-mlflow)
+- [Matching Model Deployment \& Testing](#matching-model-deployment--testing)
+  - [Table des matières](#table-des-matières)
+  - [1. Prérequis \& Installation](#1-prérequis--installation)
+  - [2. Entraînement \& Log (pipeline\_BERT)](#2-entraînement--log-pipeline_bert)
+  - [3. Publication en production](#3-publication-en-production)
+  - [4. Servir le modèle REST](#4-servir-le-modèle-rest)
+  - [5. Tester l'API](#5-tester-lapi)
+  - [6. Personnalisation \& Hyperparamètres](#6-personnalisation--hyperparamètres)
+  - [7. Explorer l’UI MLflow](#7-explorer-lui-mlflow)
 
 ---
 
@@ -129,12 +131,9 @@ python3 resultat.py
    ```bash
    mlflow ui
    ```
+
 2. Se rendre sur `http://localhost:5000` pour voir :
 
    * Les **Expériences** et leurs runs.
    * Les **Modèles** enregistrés et leurs **versions**.
    * Les métriques et artefacts associés.
-
----
-
-
