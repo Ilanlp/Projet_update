@@ -1,8 +1,12 @@
 {{ config(materialized = 'table') }}
 
-with raw as (
-  select * 
-  from {{ source('RAW', 'RAW_OFFRE') }}
+with
+raw as (
+    select
+        id_local,
+        code_rome
+    from {{ source('RAW', 'RAW_OFFRE') }}
+    where date_extraction::date = current_date
 ),
 dim_rome as (
   select * 

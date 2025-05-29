@@ -1,10 +1,16 @@
-{{ config(materialized='table',tags=['sql']) }}
+{{ config(materialized='table', tags=['sql']) }}
 
+with
 
-with 
+offre_du_jour as (
+    select *
+    from {{ source('RAW', 'RAW_OFFRE') }}
+    where date_extraction::date = current_date
+),
+
+{{ tokenize_text("offre_du_jour", 'id_local', 'sector', 'sector') }},
+{{ tokenize_text("offre_du_jour", 'id_local', 'description', 'description') }},
 {{ tokenize_text(source('dim_tables','DIM_DOMAINE'), 'id_domaine', 'nom_domaine', 'domaine') }},
-{{ tokenize_text(source('RAW','RAW_OFFRE'), 'id_local', 'sector', 'sector') }},
-{{ tokenize_text(source('RAW','RAW_OFFRE'), 'id_local', 'description', 'description') }},
 
 sector_matching as (
     SELECT

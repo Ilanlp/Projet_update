@@ -2,9 +2,13 @@ from snowflake.snowpark.functions import (
     col, lower, lit, when, row_number
 )
 from snowflake.snowpark.window import Window
+import datetime
 
 def model(dbt, session):
-    raw = session.table("RAW.RAW_OFFRE")
+    today = datetime.date.today()
+    raw = session.table("RAW.RAW_OFFRE").filter(
+        col("DATE_EXTRACTION").cast("date") == today
+    )
     dim_teletravail = session.table("SILVER.DIM_TELETRAVAIL")
 
     # 1) Matchings exact & partiel
@@ -178,7 +182,7 @@ def model(dbt, session):
     df = (
         raw.join(dim_teletravail, join_cond, how="left")
            .select(
-               raw["id"].alias("id"),
+               raw["id_offre"].alias("id_offre"),
                raw["ID_LOCAL"].alias("id_local"),
                dim_teletravail["id_teletravail"].alias("id_teletravail"),
                when(exact_match_raw,   lit(1)).otherwise(lit(0)).alias("is_exact"),

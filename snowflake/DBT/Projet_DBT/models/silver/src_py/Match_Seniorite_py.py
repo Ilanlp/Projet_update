@@ -2,9 +2,13 @@ from snowflake.snowpark.functions import (
     col, lower, lit, when, row_number
 )
 from snowflake.snowpark.window import Window
+import datetime
 
 def model(dbt, session):
-    raw = session.table("RAW.RAW_OFFRE")
+    today = datetime.date.today()
+    raw = session.table("RAW.RAW_OFFRE").filter(
+        col("DATE_EXTRACTION").cast("date") == today
+    )
     dim_seniorite = session.table("SILVER.DIM_SENIORITE")
 
     # 1) Matchings exact & partiel
@@ -70,7 +74,7 @@ def model(dbt, session):
     df = (
         raw.join(dim_seniorite, join_cond, how="left")
            .select(
-               raw["id"].alias("id"),
+               raw["id_offre"].alias("id_offre"),
                raw["ID_LOCAL"].alias("id_local"),
                dim_seniorite["id_seniorite"].alias("id_seniorite"),
                raw["EXPERIENCE_REQUIRED"].alias("experience_required"),
