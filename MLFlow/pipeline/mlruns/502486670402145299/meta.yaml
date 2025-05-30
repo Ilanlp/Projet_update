@@ -1,6 +1,0 @@
-artifact_location: file:///home/ilanlp/mar25_bootcamp_de_job_market/MLFlow/pipeline/mlruns/502486670402145299
-creation_time: 1747137839471
-experiment_id: '502486670402145299'
-last_update_time: 1747137839471
-lifecycle_stage: active
-name: matching_offres_candidats_sbert_grid

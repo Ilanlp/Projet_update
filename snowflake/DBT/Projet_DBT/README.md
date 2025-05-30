@@ -2,23 +2,28 @@
 
 ## Using the starter project
 
-### ETAPES 
+### ETAPES
 
-1. **Run the “raw” layer**
--dbt run --select bronze
+#### 1. **Run the “raw” layer**
 
-2. **Run the “silver” layer**
--dbt run --select silver
+```bash
+dbt run --select bronze
+```
 
-3. **Run the “gold” layer**
+#### 2. **Run the “silver” layer**
+
+```bash
+dbt run --select silver
+```
+
+#### 3. **Run the “gold” layer**
+
+```bash
 #Faire tourner fait_offre les les 2 tables de liaisons qui ne dépendent pas de fait offre
--dbt run --select fait_offre  liaison_Rome_Metier_gold_sql liaison_Rome_Metier_gold_sql
+dbt run --select fait_offre  liaison_Rome_Metier_gold_sql liaison_Rome_Soft_Skill_gold_sql
+```
 
-#Faire tourner la table de liaison offre_Competence qui dépend de l'id de fait_offre
--dbt run --select liaison_Offre_Competence
-
-
-
-
-
-
+```bash
+# Faire tourner la table de liaison offre_Competence qui dépend de l'id de fait_offre
+dbt run --select liaison_Offre_Competence
+```

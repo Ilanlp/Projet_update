@@ -1,0 +1,40 @@
+services:
+  backend:
+    image: jm-backend
+    container_name: jm-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    networks:
+      - jm_network
+    ports:
+      - "8082:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/usr/src/backend
+  frontend:
+    image: jm-frontend
+    container_name: jm-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dash
+    networks:
+      - jm_network
+    ports:
+      - "8050:8050"
+    volumes:
+      - ./frontend:/app
+  # redis:
+  #   container_name: redis
+  #   image: redis:7.2.0
+  #   networks:
+  #     - jm_network
+  #   ports:
+  #     - '6379:6379'
+  #   volumes:
+  #     - ./data:/data
+
+networks:
+  jm_network:
+    name: jm_network

@@ -1,0 +1,219 @@
+# ===========================================
+# Docker Compose avec Dockerfiles séparés optimisés
+# ===========================================
+
+services:
+  # ===========================================
+  # SERVICE MLFLOW TRACKING SERVER
+  # ===========================================
+  mlflow-tracking:
+    container_name: mlflow_tracking
+    build:
+      context: ./MLFlow
+      dockerfile: Dockerfile.mlflow.tracking
+    ports:
+      - "${MLFLOW_EXTERNAL_PORT:-5010}:5000"
+    volumes:
+      - ./MLFlow/mlruns:/app/mlruns
+      - ./MLFlow/mlflow.db:/app/mlflow.db
+      - ./MLFlow/data:/app/data:ro
+    working_dir: /app
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=file:///app/mlruns
+    command: >
+      bash -c "
+      echo '🎯 Starting MLflow Tracking Server...' &&
+      mlflow server 
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root file:///app/mlruns
+      --host 0.0.0.0 
+      --port 5000
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ===========================================
+  # SERVICE D'ENTRAÎNEMENT ML
+  # ===========================================
+  mlflow-training:
+    container_name: mlflow_training
+    build:
+      context: ./MLFlow
+      dockerfile: Dockerfile.mlflow.training
+      args:
+        - PYTHON_VERSION=${PYTHON_VERSION:-3.9}
+        - MLFLOW_VERSION=${MLFLOW_VERSION:-2.8.0}
+        - INSTALL_GPU_SUPPORT=${INSTALL_GPU_SUPPORT:-false}
+    volumes:
+      - ./MLFlow/mlruns:/app/mlruns:rw
+      - ./MLFlow/data:/app/data:rw
+      - ./MLFlow/src:/app/src:rw
+      - ./MLFlow/config:/app/config:rw
+      - ./MLFlow/scripts:/app/scripts:rw
+      - ./MLFlow/logs:/app/logs:rw
+      - ./MLFlow/models:/app/models:rw
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-tracking:5000
+      - MLFLOW_ARTIFACT_ROOT=/app/mlruns
+      - MLFLOW_EXPERIMENT_NAME=${EXPERIMENT_NAME:-apple_demand_experiment}
+      - MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING=true
+      - MODEL_NAME=${MODEL_NAME:-apple_demand_predictor}
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - OMP_NUM_THREADS=4
+      - OPENBLAS_NUM_THREADS=4
+    working_dir: /app
+    depends_on:
+      mlflow-tracking:
+        condition: service_healthy
+    profiles:
+      - training
+    # Ressources optimisées pour l'entraînement
+    deploy:
+      resources:
+        limits:
+          cpus: "${TRAINING_CPU_LIMIT:-4.0}"
+          memory: ${TRAINING_MEMORY_LIMIT:-8G}
+        reservations:
+          cpus: "2.0"
+          memory: 4G
+    restart: unless-stopped
+
+  # ===========================================
+  # SERVICE DE SERVING DE MODÈLES
+  # ===========================================
+  mlflow-model:
+    container_name: mlflow_model
+    build:
+      context: ./MLFlow
+      dockerfile: Dockerfile.mlflow.model
+      args:
+        - MLFLOW_VERSION=${MLFLOW_VERSION:-2.8.0}
+        - INSTALL_EXTRAS=true
+        - BUILD_ENV=production
+        - MODEL_PORT=${MODEL_PORT:-5001}
+    ports:
+      - "${MODEL_EXTERNAL_PORT:-8000}:${MODEL_PORT:-5001}"
+    volumes:
+      - ./MLFlow/mlruns:/app/mlruns:ro
+      - ./MLFlow/models:/app/models:ro
+    environment:
+      - TRACKING_URI=http://mlflow-tracking:5000
+      - MODEL_URI=runs:/7b46206452614e5a93e98d556fe2bd37/apple_demand_model
+      - MODEL_PORT=5001
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow-tracking:5000
+      - MLFLOW_ARTIFACT_ROOT=/app/mlruns
+      - MLFLOW_EXPERIMENT_ID=2
+    working_dir: /app
+    depends_on:
+      mlflow-tracking:
+        condition: service_healthy
+    profiles:
+      - training
+      - development
+    # Ressources pour serving
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 1G
+    restart: unless-stopped
+
+  # ===========================================
+  # SERVICES UTILITAIRES
+  # ===========================================
+
+  # # Service de monitoring (optionnel)
+  # monitoring:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus_monitoring
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #   profiles:
+  #     - monitoring
+  #   restart: unless-stopped
+
+  # # Service de base de données avancée (optionnel)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: postgres_mlflow
+  #   environment:
+  #     - POSTGRES_DB=${POSTGRES_DB:-mlflow}
+  #     - POSTGRES_USER=${POSTGRES_USER:-mlflow}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlflow}
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   profiles:
+  #     - postgres
+  #   restart: unless-stopped
+
+  # # Service Redis pour cache (optionnel)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: redis_cache
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   profiles:
+  #     - cache
+  #   restart: unless-stopped
+
+# ===========================================
+# RÉSEAUX
+# ===========================================
+networks:
+  default:
+    driver: bridge
+    name: ${DOCKER_NETWORK_NAME:-mlflow_network}
+
+# ===========================================
+# VOLUMES PERSISTANTS
+# ===========================================
+volumes:
+  # Données MLflow
+  mlflow_data:
+    driver: local
+
+  # # Base de données
+  # postgres_data:
+  #   driver: local
+  # redis_data:
+  #   driver: local
+
+# ===========================================
+# CONFIGURATION DES PROFILS
+# ===========================================
+
+# Profils disponibles :
+# - training     : Service d'entraînement ML
+# - jupyter      : JupyterLab pour développement
+# - development  : Training + JupyterLab
+# - monitoring   : Prometheus pour monitoring
+# - postgres     : Base PostgreSQL au lieu de SQLite
+# - cache        : Redis pour cache
+# - vscode       : VS Code dans le navigateur
+# - docs         : Documentation avec MkDocs
+
+# Exemples d'utilisation :
+# docker-compose --profile development up                    # Training + JupyterLab
+# docker-compose --profile training up                       # Entraînement seulement
+# docker-compose --profile jupyter up                        # JupyterLab seulement
+# docker-compose --profile training --profile monitoring up  # Training + Monitoring
+# docker-compose --profile postgres up mlflow-server         # MLflow avec PostgreSQL

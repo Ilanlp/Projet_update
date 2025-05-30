@@ -2,10 +2,14 @@ from snowflake.snowpark.functions import to_date, coalesce
 from snowflake.snowpark.window import Window
 from snowflake.snowpark.functions import row_number, col,lit
 from snowflake.snowpark import Session
+import datetime
 
 def model(dbt, session: Session):
     # 1) Chargement des tables et alias
-    raw      = session.table("RAW.RAW_OFFRE").alias("r")
+    today = datetime.date.today()
+    raw = session.table("RAW.RAW_OFFRE").filter(
+        col("DATE_EXTRACTION").cast("date") == today
+    ).alias("r")
     dim_date = session.table("SILVER.DIM_DATE")
 
     dc = dim_date.alias("dc")   # pour DATE_CREATED
@@ -43,7 +47,7 @@ def model(dbt, session: Session):
 
     # 4) Sélection finale
     result = best.select(
-        raw["id"].alias("id"),
+        raw["id_offre"].alias("id_offre"),
         raw["ID_LOCAL"].alias("id_local"),
         # si dc.id_date est NULL, on prend 1900-01-01
         coalesce(dc["id_date"], default_date).alias("id_date_created"),

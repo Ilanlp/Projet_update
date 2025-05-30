@@ -1,12 +1,15 @@
 # models/src/matched_contrat_py_copy.py
-
+import datetime
 from snowflake.snowpark.functions import (
     col, lower, lit, when, row_number
 )
 from snowflake.snowpark.window import Window
 
 def model(dbt, session):
-    raw         = session.table("RAW.RAW_OFFRE")
+    today = datetime.date.today()
+    raw = session.table("RAW.RAW_OFFRE").filter(
+        col("DATE_EXTRACTION").cast("date") == today
+    )
     dim_contrat = session.table("SILVER.DIM_CONTRAT")
 
     # 1) Matchings exact & partiel
@@ -109,7 +112,8 @@ def model(dbt, session):
     df = (
         raw.join(dim_contrat, join_cond, how="left")
            .select(
-               raw["id"].alias("id"),
+               raw["id_offre"].alias("id_offre"),
+               raw["id_local"].alias("id"),
                raw["ID_LOCAL"].alias("id_local"),
                dim_contrat["id_contrat"].alias("id_contrat"),
                dim_contrat["type_contrat"].alias("type_contrat"),

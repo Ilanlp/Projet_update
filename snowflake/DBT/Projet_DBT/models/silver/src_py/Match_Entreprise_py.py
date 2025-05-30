@@ -2,9 +2,14 @@ from snowflake.snowpark.functions import (
     split, lower, when, lit, col, row_number, element_at,trim,translate
 )
 from snowflake.snowpark.window import Window
+import datetime
 
 def model(dbt, session):
-    raw = session.table("RAW.RAW_OFFRE")
+    today = datetime.date.today()
+    raw = session.table("RAW.RAW_OFFRE").filter(
+        col("DATE_EXTRACTION").cast("date") == today
+    )
+
     dim = session.table("SILVER.DIM_ENTREPRISE")
 
       # 0) Nettoyer les espaces en début/fin
@@ -29,7 +34,7 @@ def model(dbt, session):
     df = (
         raw.join(dim, join_cond, how="left")
            .select(
-               raw["id"],
+               raw["id_offre"],
                raw["id_local"],
                raw["company_name"],
                raw_first,
