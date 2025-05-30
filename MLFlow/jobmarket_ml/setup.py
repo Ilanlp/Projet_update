@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="pipeline_grid_search",
+    name="jobmarket_ml",
     version="0.1.0",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
@@ -22,7 +22,7 @@ setup(
         "nltk==3.9.1",
     ],
     python_requires=">=3.8",
-    author="Mika",
+    author="maikimike",
     description="Pipeline de matching d'emplois avec MLflow",
     classifiers=[
         "Programming Language :: Python :: 3",

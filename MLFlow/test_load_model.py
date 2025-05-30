@@ -3,7 +3,8 @@
 import mlflow.pyfunc
 import pandas as pd
 import numpy as np
-from pipeline_grid_search.config.config import OFFERS_PATH, OFFER_COLUMNS
+from jobmarket_ml.config.config import OFFERS_PATH, OFFER_COLUMNS
+
 
 def test_load_model():
     """Test du chargement et de l'utilisation du modèle MLflow."""

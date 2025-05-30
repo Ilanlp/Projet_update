@@ -4,15 +4,15 @@ import pandas as pd
 import mlflow
 from mlflow.models.signature import ModelSignature
 from mlflow.types.schema import Schema, ColSpec
-from pipeline_grid_search.config.config import (
+from jobmarket_ml.config.config import (
     OFFERS_PATH, CANDIDATES_PATH, OFFER_COLUMNS,
     CANDIDATE_COLUMNS, CUSTOM_STOPWORDS, MLFLOW_TRACKING_URI,
     MLFLOW_EXPERIMENT_NAME, PIPELINE_CONFIG
 )
-from pipeline_grid_search.custom_transformers.text_preprocessor import TextPreprocessor
-from pipeline_grid_search.custom_transformers.bert_encoder import BertEncoder
-from pipeline_grid_search.custom_transformers.knn_matcher import KNNMatcher
-from pipeline_grid_search.utils.scoring import compute_similarity_score
+from jobmarket_ml.custom_transformers.text_preprocessor import TextPreprocessor
+from jobmarket_ml.custom_transformers.bert_encoder import BertEncoder
+from jobmarket_ml.custom_transformers.knn_matcher import KNNMatcher
+from jobmarket_ml.utils.scoring import compute_similarity_score
 from sklearn.pipeline import Pipeline
 import time
 import numpy as np
