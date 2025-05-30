@@ -1,19 +1,2 @@
-# Dépendances principales
-setuptools
-wheel==0.42.0
-numpy==1.24.3
-pandas==2.0.3
-scikit-learn==1.6.0
-mlflow==2.22.0
-
-# NLP et transformers
-spacy==3.8.4
-transformers==4.51.3
-sentence-transformers==4.1.0
-huggingface-hub
-tqdm==4.66.1
-nltk==3.9.1
-
-# Modèle français pour spaCy
-fr-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0.tar.gz
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
+-e ./jobmarket_ml
+pytest>=6.0.0
