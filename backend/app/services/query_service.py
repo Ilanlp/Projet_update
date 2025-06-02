@@ -5,7 +5,8 @@ from pathlib import Path
 from pydantic import BaseModel
 from app.db.snowflake import execute_query
 import logging
-from app.models.schemas import PaginatedResponse, PaginationParams
+from app.models.schemas import PaginatedResponse, PaginationParams, Offre
+from app.models.search_schemas import OffreSearchParams, FilterOperator
 from math import ceil
 from app.utils.exceptions import DatabaseException, ValidationException
 
@@ -216,3 +217,139 @@ def create_paginated_response(
         has_next=pagination.page < pages,
         has_prev=pagination.page > 1,
     )
+
+
+def prepare_search_params(
+    search_params: OffreSearchParams,
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """
+    Prépare les paramètres de template et de requête pour la recherche.
+
+    Args:
+        search_params: Paramètres de recherche
+
+    Returns:
+        Tuple contenant les paramètres de template et les paramètres de requête
+    """
+    logger.debug("Préparation des paramètres de recherche")
+    logger.debug(f"Paramètres reçus: {search_params.model_dump()}")
+
+    # Paramètres de template
+    template_params = {
+        "with_pagination": True,
+        "filters": search_params.filters if search_params.filters else [],
+        "sort": search_params.sort if search_params.sort else [],
+        "search_text": bool(search_params.search_text),
+    }
+
+    # Paramètres de requête de base
+    query_params = {
+        "page_size": search_params.page_size,
+        "offset": (search_params.page - 1) * search_params.page_size,
+    }
+
+    # Traitement des filtres
+    if search_params.filters:
+        for filter in search_params.filters:
+            # Validation du champ
+            if not filter.field or not isinstance(filter.field, str):
+                raise ValidationException(
+                    message=f"Champ de filtre invalide: {filter.field}", field="field"
+                )
+
+            # Construction de la clé du paramètre
+            param_key = f"{filter.field}_value"
+
+            # Traitement selon l'opérateur
+            try:
+                if filter.operator == FilterOperator.LIKE:
+                    query_params[param_key] = f"%{filter.value}%"
+                elif filter.operator == FilterOperator.BETWEEN:
+                    if not isinstance(filter.value, list) or len(filter.value) != 2:
+                        raise ValidationException(
+                            message="La valeur pour l'opérateur BETWEEN doit être une liste de 2 éléments",
+                            field=filter.field,
+                        )
+                    query_params[f"{filter.field}_start"] = filter.value[0]
+                    query_params[f"{filter.field}_end"] = filter.value[1]
+                elif filter.operator == FilterOperator.IN:
+                    if not isinstance(filter.value, (list, tuple)):
+                        raise ValidationException(
+                            message="La valeur pour l'opérateur IN doit être une liste",
+                            field=filter.field,
+                        )
+                    query_params[param_key] = ",".join(map(str, filter.value))
+                else:
+                    # Pour les opérateurs simples (eq, neq, gt, gte, lt, lte)
+                    query_params[param_key] = filter.value
+            except Exception as e:
+                raise ValidationException(
+                    message=f"Erreur lors du traitement du filtre {filter.field}: {str(e)}",
+                    field=filter.field,
+                )
+
+    # Traitement de la recherche textuelle
+    if search_params.search_text:
+        query_params["search_text"] = f"%{search_params.search_text}%"
+
+    # Log des paramètres finaux
+    logger.debug("Paramètres préparés:")
+    logger.debug(f"Template params: {template_params}")
+    logger.debug(f"Query params: {query_params}")
+
+    return template_params, query_params
+
+
+async def search_offres(search_params: OffreSearchParams) -> Tuple[List[Offre], int]:
+    """
+    Recherche des offres selon les critères spécifiés.
+
+    Args:
+        search_params: Paramètres de recherche
+
+    Returns:
+        Tuple contenant la liste des offres et le nombre total de résultats
+    """
+    try:
+        logger.info("Début de la recherche d'offres")
+        logger.info(f"Paramètres de recherche: {search_params.model_dump()}")
+
+        # Préparation des paramètres
+        template_params, query_params = prepare_search_params(search_params)
+
+        # Log de la requête qui va être exécutée
+        logger.info("Exécution de la requête principale")
+        logger.info(f"Template params: {template_params}")
+        logger.info(f"Query params: {query_params}")
+
+        # Exécution de la requête principale
+        items = await execute_and_map_to_model(
+            "offres/search.sql",
+            Offre,
+            query_params=query_params,
+            template_params=template_params,
+        )
+
+        logger.info(f"Nombre de résultats trouvés: {len(items)}")
+
+        # Exécution de la requête de comptage
+        logger.info("Exécution de la requête de comptage")
+        count_result = await execute_sql_file(
+            "offres/search_count.sql",
+            query_params=query_params,
+            template_params=template_params,
+        )
+        total = count_result[0].get("total", 0) if count_result else 0
+
+        logger.info(f"Nombre total de résultats: {total}")
+
+        return items, total
+
+    except ValidationException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur lors de la recherche d'offres: {str(e)}", exc_info=True)
+        raise DatabaseException(
+            message="Erreur lors de la recherche d'offres",
+            details={"search_params": search_params.model_dump(), "error": str(e)},
+        )

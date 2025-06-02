@@ -373,7 +373,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 
 # Aliases ML spécifiques
-alias train='python src/train_model_synthetic.py'
+alias train='python src/train_model.py'
 alias trainreal='python src/train_model.py'
 alias validate='python scripts/model_validation.py'
 alias logs='tail -f /app/logs/training.log'
@@ -396,12 +396,12 @@ export PAGER=less
 # Fonctions utiles
 quick_train() {
     echo "🚀 Starting quick training..."
-    python src/train_model_synthetic.py --n-samples 1000 --no-hyperparameter-tuning --register
+    python src/train_model.py --n-samples 1000 --no-hyperparameter-tuning --register
 }
 
 full_train() {
     echo "🎯 Starting full training with optimization..."
-    python src/train_model_synthetic.py --n-samples 5000 --feature-engineering --register --stage Production
+    python src/train_model.py --n-samples 5000 --feature-engineering --register --stage Production
 }
 
 check_gpu() {

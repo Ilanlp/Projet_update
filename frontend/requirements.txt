@@ -4,3 +4,4 @@ requests
 dash-bootstrap-components
 pandas
 plotly
+dotenv

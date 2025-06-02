@@ -1,10 +1,90 @@
 # ===========================================
-# Docker Compose avec Dockerfiles séparés optimisés
+# JOBMARKET INFRASTRUCTURE
 # ===========================================
 
 services:
+  jm-elt-snowflake:
+    image: jm-elt-snowflake
+    container_name: jm-elt-snowflake
+    build:
+      context: ./pipeline/src/
+      dockerfile: Dockerfile
+    networks:
+      - jobmarket_network
+    env_file:
+      - ./pipeline/src/.env
+    volumes:
+      - ./pipeline/src/snowflake:/usr/src/snowflake
+      - ./pipeline/src/data:/usr/src/data
+    profiles:
+      - init-db
+
+  jm-elt-dbt:
+    image: jm-elt-dbt
+    container_name: jm-elt-dbt
+    build:
+      context: ./snowflake/DBT/
+      dockerfile: Dockerfile
+    networks:
+      - jobmarket_network
+    env_file:
+      - ./snowflake/DBT/.env
+    volumes:
+      - ./snowflake/DBT:/usr/src/DBT
+    depends_on:
+      - jm-elt-snowflake
+    profiles:
+      - init-db
+
   # ===========================================
-  # SERVICE MLFLOW TRACKING SERVER
+  # FRONTEND : DASHBOARD
+  # ===========================================
+  frontend:
+    image: jm-frontend
+    container_name: jm-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dash
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+    env_file:
+      - ./frontend/.env
+    profiles:
+      - frontend
+      - development
+      - production
+    restart: unless-stopped
+    # networks:
+    #   - jobmarket_network
+
+  # ===========================================
+  # BACKEND : API (FASTAPI)
+  # ===========================================
+  backend:
+    image: jm-backend
+    container_name: jm-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/usr/src/backend
+    profiles:
+      - backend
+      - frontend
+      - development
+      - production
+    restart: unless-stopped
+    # networks:
+    #   - jobmarket_network
+
+  # ===========================================
+  # MLFLOW TRACKING
   # ===========================================
   mlflow-tracking:
     container_name: mlflow_tracking
@@ -31,24 +111,30 @@ services:
       --port 5000
       "
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD", "curl", "-f", "http://mlflow-tracking:5000/health"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    # profiles:
+    #   - init-ml
+    #   - development
+    #   - production
     restart: unless-stopped
+    # networks:
+    #   - jobmarket_network
 
   # ===========================================
-  # SERVICE D'ENTRAÎNEMENT ML
+  # MLFLOW TRAINING
   # ===========================================
   mlflow-training:
     container_name: mlflow_training
     build:
       context: ./MLFlow
-      dockerfile: Dockerfile.mlflow.training
+      dockerfile: Dockerfile.jobmarket_ml
       args:
-        - PYTHON_VERSION=${PYTHON_VERSION:-3.9}
-        - MLFLOW_VERSION=${MLFLOW_VERSION:-2.8.0}
+        - PYTHON_VERSION=${PYTHON_VERSION:-3.11.12}
+        - MLFLOW_VERSION=${MLFLOW_VERSION:-2.22.0}
         - INSTALL_GPU_SUPPORT=${INSTALL_GPU_SUPPORT:-false}
     volumes:
       - ./MLFlow/mlruns:/app/mlruns:rw
@@ -73,6 +159,7 @@ services:
       mlflow-tracking:
         condition: service_healthy
     profiles:
+      - init-ml
       - training
     # Ressources optimisées pour l'entraînement
     deploy:
@@ -84,9 +171,10 @@ services:
           cpus: "2.0"
           memory: 4G
     restart: unless-stopped
-
+    # networks:
+    #   - jobmarket_network
   # ===========================================
-  # SERVICE DE SERVING DE MODÈLES
+  # MLFLOW MODEL
   # ===========================================
   mlflow-model:
     container_name: mlflow_model
@@ -105,7 +193,7 @@ services:
       - ./MLFlow/models:/app/models:ro
     environment:
       - TRACKING_URI=http://mlflow-tracking:5000
-      - MODEL_URI=runs:/7b46206452614e5a93e98d556fe2bd37/apple_demand_model
+      - MODEL_URI=runs:/4aa5ee5ebfa945eaa75d103cca270238/apple_demand_model
       - MODEL_PORT=5001
       - DEBUG=true
       - LOG_LEVEL=DEBUG
@@ -118,8 +206,8 @@ services:
       mlflow-tracking:
         condition: service_healthy
     profiles:
-      - training
       - development
+      - production
     # Ressources pour serving
     deploy:
       resources:
@@ -130,7 +218,8 @@ services:
           cpus: "0.5"
           memory: 1G
     restart: unless-stopped
-
+    # networks:
+    #   - jobmarket_network
   # ===========================================
   # SERVICES UTILITAIRES
   # ===========================================
@@ -181,7 +270,7 @@ services:
 networks:
   default:
     driver: bridge
-    name: ${DOCKER_NETWORK_NAME:-mlflow_network}
+    name: ${DOCKER_NETWORK_NAME:-jobmarket_network}
 
 # ===========================================
 # VOLUMES PERSISTANTS
@@ -196,24 +285,20 @@ volumes:
   #   driver: local
   # redis_data:
   #   driver: local
-
 # ===========================================
 # CONFIGURATION DES PROFILS
 # ===========================================
 
 # Profils disponibles :
 # - training     : Service d'entraînement ML
-# - jupyter      : JupyterLab pour développement
-# - development  : Training + JupyterLab
+# - development  : Training + Model
 # - monitoring   : Prometheus pour monitoring
 # - postgres     : Base PostgreSQL au lieu de SQLite
 # - cache        : Redis pour cache
-# - vscode       : VS Code dans le navigateur
 # - docs         : Documentation avec MkDocs
 
 # Exemples d'utilisation :
-# docker-compose --profile development up                    # Training + JupyterLab
+# docker-compose --profile development up                    # Training + Model
 # docker-compose --profile training up                       # Entraînement seulement
-# docker-compose --profile jupyter up                        # JupyterLab seulement
 # docker-compose --profile training --profile monitoring up  # Training + Monitoring
-# docker-compose --profile postgres up mlflow-server         # MLflow avec PostgreSQL
+# docker-compose --profile postgres up mlflow-tracking         # MLflow avec PostgreSQL

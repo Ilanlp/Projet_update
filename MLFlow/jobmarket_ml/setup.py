@@ -14,12 +14,13 @@ setup(
         "pandas==2.0.3",
         "scikit-learn==1.6.0",
         "mlflow==2.22.0",
-        "spacy==3.8.4",
+        "spacy==3.7.2",
         "transformers==4.51.3",
         "sentence-transformers==4.1.0",
         "huggingface-hub",
         "tqdm==4.66.1",
         "nltk==3.9.1",
+        "seaborn==0.13.2",
     ],
     python_requires=">=3.8",
     author="maikimike",
@@ -31,7 +32,7 @@ setup(
     ],
     # Dépendances spaCy qui nécessitent un traitement spécial
     dependency_links=[
-        "https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0.tar.gz#egg=fr_core_news_sm",
-        "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz#egg=en_core_web_sm"
-    ]
-) 
+        "https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.7.0/fr_core_news_sm-3.7.0.tar.gz#egg=fr_core_news_sm",
+        "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz#egg=en_core_web_sm",
+    ],
+)

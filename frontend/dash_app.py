@@ -2,6 +2,10 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app = dash.Dash(__name__, use_pages=True, suppress_callback_exceptions=True)
 server = app.server
 
@@ -22,4 +26,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8050, dev_tools_hot_reload=True)
+    app.run(debug=True, host="0.0.0.0", port=8080, dev_tools_hot_reload=True)

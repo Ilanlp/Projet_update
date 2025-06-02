@@ -496,7 +496,7 @@ def main():
     parser.add_argument(
         "--experiment-name",
         type=str,
-        default="apple_demand_synthetic",
+        default="apple_demand",
         help="MLflow experiment name",
     )
     parser.add_argument(

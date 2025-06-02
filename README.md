@@ -38,15 +38,18 @@ docker-compose -f docker-compose.elt.init.yaml up --build jm-elt-dbt
 ### Development
 
 ```bash
-docker compose -f docker-compose_workspace.yaml --profile development up -d --build
-docker compose -f docker-compose_workspace.yaml --profile development down -v
+docker compose -f docker-compose.mlflow.yaml --profile development up -d --build
+docker compose -f docker-compose.mlflow.yaml --profile development down -v
 ```
 
 ### Training model
 
 ```bash
 # Démarage du conteneur en mode interactif
-docker compose -f docker-compose_workspace.yaml run --rm mlflow-training --build bash
+docker compose run --rm mlflow-training --build bash
+
+# Workflow d'entrainement rapide
+docker compose -f docker-compose.mlflow.yaml run --rm mlflow-training --build train --register
 ```
 
 ### Register model
@@ -54,7 +57,7 @@ docker compose -f docker-compose_workspace.yaml run --rm mlflow-training --build
 ```bash
 python3 src/register_model.py \
             --tracking_uri "http://127.0.0.1:5010" \
-            --experiment_name "Apple_Models" \
+            --experiment_name "apple_demand" \
             --model_name "apple_demand_predictor"
             # --tags
             # --run_id
@@ -63,7 +66,7 @@ python3 src/register_model.py \
 ```bash
 python3 src/register_model.py \
             --tracking_uri "http://127.0.0.1:5010" \
-            --experiment_name "Apple_Models" \
+            --experiment_name "apple_demand" \
             --model_name "apple_demand_predictor" \
             --tags "version=1.0,environment=production,author=data_team"
             # --run_id
@@ -89,7 +92,8 @@ docker run -p 5020:5001 \
 ```
 
 ```bash
-docker compose -f docker-compose_workspace.yaml run --rm mlflow-training python src/register_model.py 7b46206452614e5a93e98d556fe2bd37 apple_demand_predictor
+export RUN_ID=7b46206452614e5a93e98d556fe2bd37
+docker compose -f docker-compose.mlflow.yaml run --rm mlflow-training python src/register_model.py $RUN_ID apple_demand_model
 ```
 
 ## Request Model

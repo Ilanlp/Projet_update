@@ -1,0 +1,76 @@
+# ===========================================
+# Dockerfile.jobmarket_ml - Container ML optimisé pour jobmarket_ml
+# ===========================================
+
+FROM python:3.11.12-slim AS builder
+
+# Arguments de build
+ARG PYTHON_VERSION=3.11.12
+ARG MLFLOW_VERSION=2.22.0
+
+# Métadonnées
+LABEL maintainer="ML Team" \
+  description="Container optimisé pour jobmarket_ml" \
+  version="1.0"
+
+# Installation des dépendances système essentielles et création de l'environnement Python
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  gcc \
+  g++ \
+  git \
+  make \
+  python3-dev && \
+  python -m venv /opt/venv && \
+  . /opt/venv/bin/activate && \
+  pip install --no-cache-dir --upgrade pip setuptools wheel && \
+  apt-get purge -y --auto-remove gcc g++ make python3-dev && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# ===========================================
+# Image finale
+# ===========================================
+FROM python:3.11.12-slim
+
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  PATH="/opt/venv/bin:$PATH" \
+  MLFLOW_TRACKING_URI=http://mlflow-tracking:5000 \
+  MLFLOW_EXPERIMENT_NAME=jobmarket_matching \
+  MLFLOW_ARTIFACT_ROOT=/app/mlruns \
+  TRAINING_LOG_LEVEL=INFO \
+  TRANSFORMERS_CACHE=/app/cache/transformers \
+  HF_HOME=/app/cache/huggingface \
+  MPLCONFIGDIR=/app/cache/matplotlib \
+  SKLEARN_CACHE_DIR=/app/cache/sklearn \
+  TMPDIR=/app/temp
+
+# Installation des dépendances runtime minimales et configuration
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  git \
+  curl && \ 
+  rm -rf /var/lib/apt/lists/* && \
+  groupadd -r mluser --gid=1000 && \
+  useradd -r -g mluser --uid=1000 -m mluser && \
+  mkdir -p /app/{src,data,models,logs,cache,experiments,temp,config,scripts} && \
+  mkdir -p /app/cache/{matplotlib,transformers,huggingface,sklearn} && \
+  mkdir -p /tmp/mlflow && \
+  chown -R mluser:mluser /app /tmp/mlflow
+
+# Copie de l'environnement virtuel et installation du package
+COPY --from=builder /opt/venv /opt/venv
+COPY --chown=mluser:mluser jobmarket_ml /app/jobmarket_ml
+COPY --chown=mluser:mluser scripts/training_entrypoint.sh /app/scripts/
+
+# Fix permissions for the virtual environment
+RUN chown -R mluser:mluser /opt/venv
+
+USER mluser
+WORKDIR /app/jobmarket_ml
+RUN pip install -e . && chmod 755 /app/scripts/training_entrypoint.sh && \
+  chown mluser:mluser /app/scripts/training_entrypoint.sh
+
+WORKDIR /app
+ENTRYPOINT ["/app/scripts/training_entrypoint.sh"]
+CMD ["bash"]

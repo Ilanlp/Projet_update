@@ -30,13 +30,13 @@ COPY --chown=node:node sql/ sql/
 
 USER node
 
-EXPOSE 8000
+EXPOSE 8081
 
 # Configurer le healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000 || exit 1
+    CMD curl -f http://localhost:8081 || exit 1
 
 #reload pour le dev
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081", "--reload"]
 # CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 # CMD ["fastapi", "run", "app/main.py", "--proxy-headers", "--port", "80"]
