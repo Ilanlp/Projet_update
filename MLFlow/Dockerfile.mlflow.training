@@ -71,7 +71,7 @@ RUN pip install --no-cache-dir \
 COPY jobmarket_ml /app/jobmarket_ml
 WORKDIR /app/jobmarket_ml
 RUN pip install -e .
-WORKDIR /
+WORKDIR /app
 
 # Installation des packages ML core (dans l'ordre optimal)
 

@@ -18,7 +18,7 @@ Si vous découvrez le projet, suivez ces étapes simples :
 3. Initialisez le projet (ETL/ELT) :
 
     ```bash
-    ./manage-jobmarket.sh init-db
+    ./manage-jobmarket.sh init
     ```
 
     Cette étape va :
@@ -26,20 +26,14 @@ Si vous découvrez le projet, suivez ces étapes simples :
     - Exécuter DBT pour transformer les données
     - Préparer l'environnement pour le reste des services
 
-4. Initialisation du modèle machine learning
-
-    ```bash
-    ./manage-jobmarket.sh init-ml
-    ```
-
-5. Démarrez l'environnement complet :
+4. Démarrez l'environnement complet :
 
     ```bash
     ./manage-jobmarket.sh start development
     ```
 
-6. Attendez que tout démarre (cela peut prendre quelques minutes la première fois)
-7. Ouvrez votre navigateur et accédez à :
+5. Attendez que tout démarre (cela peut prendre quelques minutes la première fois)
+6. Ouvrez votre navigateur et accédez à :
     - `http://localhost:8080` pour voir le dashboard
     - `http://localhost:8081/docs` pour voir l'API
     - `http://localhost:5010` pour voir MLflow

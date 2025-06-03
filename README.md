@@ -46,91 +46,35 @@ docker compose -f docker-compose.mlflow.yaml --profile development down -v
 
 ```bash
 # Démarage du conteneur en mode interactif
-docker compose run --rm mlflow-training --build bash
+docker compose run --rm mlflow-training bash
 
 # Workflow d'entrainement rapide
 docker compose -f docker-compose.mlflow.yaml run --rm mlflow-training --build train --register
 ```
 
+### Liste experience
+
+```bash
+python3 src/list_runs.py
+```
+
 ### Register model
 
 ```bash
-python3 src/register_model.py \
-            --tracking_uri "http://127.0.0.1:5010" \
-            --experiment_name "apple_demand" \
-            --model_name "apple_demand_predictor"
-            # --tags
-            # --run_id
-```
-
-```bash
-python3 src/register_model.py \
-            --tracking_uri "http://127.0.0.1:5010" \
-            --experiment_name "apple_demand" \
-            --model_name "apple_demand_predictor" \
-            --tags "version=1.0,environment=production,author=data_team"
-            # --run_id
+# python3 src/register_model.py $RUN_ID $MODEL_NAME
+docker compose run --rm mlflow-training python3 src/register_model.py 2a36b41a11734595b155d8d42927d75d jobmarket
 ```
 
 ### Serve model
 
 ```bash
-python3 src/serve_registry_model.py \
-    --tracking_uri "http://127.0.0.1:5010" \
-    --model_name "apple_demand_predictor" \
-    --version 3 \
-    --port 5020
+# python3 src/register_model.py $RUN_ID $MODEL_NAME
+export RUN_ID=2a36b41a11734595b155d8d42927d75d
+docker compose run --rm mlflow-model python3 src/register_model.py $RUN_ID $MODEL_NAME
 ```
 
-```bash
-docker run -p 5020:5001 \
-  -e TRACKING_URI="http://mlflow-tracking:5000" \
-  -e MODEL_NAME="apple_demand_predictor" \
-  -e MODEL_VERSION="3" \
-  -e MODEL_PORT="5001" \
-  jm-serve-model
-```
+### Request Model
 
 ```bash
-export RUN_ID=7b46206452614e5a93e98d556fe2bd37
-docker compose -f docker-compose.mlflow.yaml run --rm mlflow-training python src/register_model.py $RUN_ID apple_demand_model
-```
-
-## Request Model
-
-```bash
-python3 src/predict.py
-```
-
-```bash
-curl -X POST "http://localhost:8000/invocations" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "dataframe_records": [
-      {
-        "year": 2022,
-        "month": 1,
-        "day_of_year": 1,
-        "day_of_week": 5,
-        "week_of_year": 52,
-        "quarter": 1,
-        "temperature": 17.65,
-        "humidity": 35.38,
-        "rainfall": 1.10,
-        "sunshine_hours": 7.35,
-        "apple_price": 2.23,
-        "economic_index": 100.17,
-        "is_weekend": 1,
-        "trend": 0.0,
-        "season_fall": false,
-        "season_spring": false,
-        "season_summer": false,
-        "season_winter": true,
-        "holiday_back_to_school": false,
-        "holiday_normal": false,
-        "holiday_summer_holidays": false,
-        "holiday_winter_holidays": true
-      }
-    ]
-  }'
+python3 src/request_model.py tracking_uri model_uri models:/jobmarket/latest
 ```

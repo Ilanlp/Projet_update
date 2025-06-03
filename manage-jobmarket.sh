@@ -50,8 +50,26 @@ check_docker() {
 init_project() {
   echo -e "${BLUE}Initialisation du projet JobMarket...${NC}"
 
+  # Vérification des fichiers de configuration
+  echo -e "${YELLOW}Étape 0: Vérification des fichiers de configuration...${NC}"
+
+  if [ ! -f "pipeline/src/.env" ]; then
+    echo -e "${RED}Erreur: Fichier de configuration pipeline ETL manquant${NC}"
+    exit 1
+  fi
+
+  if [ ! -f "snowflake/DBT/.env" ]; then
+    echo -e "${RED}Erreur: Fichier de configuration pipeline ELT manquant${NC}"
+    exit 1
+  fi
+
+  if [ ! -f "MLFlow/.env" ]; then
+    echo -e "${RED}Erreur: Fichier de configuration MLFlow manquant${NC}"
+    exit 1
+  fi
+
   echo -e "${YELLOW}Étape 1: Démarrage du service ETL Snowflake...${NC}"
-  docker compose up --build jm-elt-snowflake
+  docker compose --profile init-db up --build jm-elt-snowflake
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de Snowflake ETL${NC}"
@@ -59,10 +77,70 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 2: Démarrage du service DBT...${NC}"
-  docker compose up --build jm-elt-dbt
+  docker compose --profile init-db up --build jm-elt-dbt
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de DBT${NC}"
+    exit 1
+  fi
+
+  echo -e "${YELLOW}Étape 3: Démarrage du service MLflow Tracking${NC}"
+  docker compose --profile init-ml up -d --build mlflow-tracking
+
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Erreur lors de l'initialisation de MLflow Tracking${NC}"
+    exit 1
+  fi
+
+  echo -e "${YELLOW}Étape 4: Entrainement et enregistrement du modèle...${NC}"
+  docker compose --profile init-ml build mlflow-training
+  train_output=$(docker compose --profile init-ml run --rm mlflow-training train)
+
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Erreur lors de l'entrainement du modèle${NC}"
+    exit 1
+  fi
+
+  run_id=$(echo "$train_output" | grep "Run MLflow ID:" | sed 's/.*Run MLflow ID: \(.*\)/\1/')
+
+  docker compose --profile init-ml run --rm mlflow-training register "$run_id" jobmarket
+
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Erreur lors de l'enregistrement du modèle${NC}"
+    exit 1
+  fi
+
+  echo -e "${YELLOW}Étape 5: Update du fichier de configuration MLFlow Model${NC}"
+
+  # Détection du système d'exploitation pour la commande sed
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    sed -i '' "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env
+    sed -i '' "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env.example
+    sed -i '' "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env
+    sed -i '' "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env.example
+    sed -i '' "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env
+    sed -i '' "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env.example
+  else
+    # Linux
+    sed -i "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env
+    sed -i "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env.example
+    sed -i "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env
+    sed -i "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env.example
+    sed -i "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env
+    sed -i "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env.example
+  fi
+
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Erreur lors de la configuration de MLflow Model${NC}"
+    exit 1
+  fi
+
+  echo -e "${YELLOW}Étape 6: Démarrage de l'environnement de développement...${NC}"
+  docker compose --profile development up -d --build
+
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Erreur lors de l'initialisation de l'environnement de développement${NC}"
     exit 1
   fi
 
@@ -111,7 +189,10 @@ show_status() {
 # Fonction pour nettoyer
 clean_environment() {
   echo -e "${YELLOW}Cleaning up environment...${NC}"
-  docker compose down -v
+  docker compose --profile init-db down -v
+  docker compose --profile init-ml down -v
+  docker compose --profile development down -v
+  docker compose --profile production down -v
   echo -e "${GREEN}Environment cleaned${NC}"
 }
 

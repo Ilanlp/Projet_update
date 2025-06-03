@@ -21,6 +21,7 @@ setup(
         "tqdm==4.66.1",
         "nltk==3.9.1",
         "seaborn==0.13.2",
+        "psutil==7.0.0",
     ],
     python_requires=">=3.8",
     author="maikimike",

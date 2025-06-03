@@ -9,8 +9,8 @@ services:
     build:
       context: ./pipeline/src/
       dockerfile: Dockerfile
-    networks:
-      - jobmarket_network
+    # networks:
+    #   - jobmarket_network
     env_file:
       - ./pipeline/src/.env
     volumes:
@@ -25,8 +25,8 @@ services:
     build:
       context: ./snowflake/DBT/
       dockerfile: Dockerfile
-    networks:
-      - jobmarket_network
+    # networks:
+    #   - jobmarket_network
     env_file:
       - ./snowflake/DBT/.env
     volumes:
@@ -88,6 +88,7 @@ services:
   # ===========================================
   mlflow-tracking:
     container_name: mlflow_tracking
+    image: jm-mlflow-tracking
     build:
       context: ./MLFlow
       dockerfile: Dockerfile.mlflow.tracking
@@ -116,10 +117,10 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    # profiles:
-    #   - init-ml
-    #   - development
-    #   - production
+    profiles:
+      - init-ml
+      - development
+      - production
     restart: unless-stopped
     # networks:
     #   - jobmarket_network
@@ -129,6 +130,7 @@ services:
   # ===========================================
   mlflow-training:
     container_name: mlflow_training
+    image: jm-mlflow-training
     build:
       context: ./MLFlow
       dockerfile: Dockerfile.jobmarket_ml
@@ -149,7 +151,7 @@ services:
       - MLFLOW_ARTIFACT_ROOT=/app/mlruns
       - MLFLOW_EXPERIMENT_NAME=${EXPERIMENT_NAME:-apple_demand_experiment}
       - MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING=true
-      - MODEL_NAME=${MODEL_NAME:-apple_demand_predictor}
+      - MODEL_NAME=${MODEL_NAME:-jobmarket}
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
       - OMP_NUM_THREADS=4
@@ -178,11 +180,12 @@ services:
   # ===========================================
   mlflow-model:
     container_name: mlflow_model
+    image: jm-mlflow-model
     build:
       context: ./MLFlow
       dockerfile: Dockerfile.mlflow.model
       args:
-        - MLFLOW_VERSION=${MLFLOW_VERSION:-2.8.0}
+        - MLFLOW_VERSION=${MLFLOW_VERSION:-2.22.0}
         - INSTALL_EXTRAS=true
         - BUILD_ENV=production
         - MODEL_PORT=${MODEL_PORT:-5001}
