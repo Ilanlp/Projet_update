@@ -3,12 +3,28 @@
 # ===========================================
 
 services:
+  # ===========================================
+  # ETL SERVICES
+  # ===========================================
+  jm-etl-normalizer:
+    image: jm-etl-normalizer
+    container_name: jm-etl-normalizer
+    build:
+      context: ./pipeline/src/
+      dockerfile: Dockerfile.normalizer
+    env_file:
+      - ./pipeline/src/.env
+    volumes:
+      - ./pipeline/src/data:/app/data
+    profiles:
+      - init-db
+
   jm-elt-snowflake:
     image: jm-elt-snowflake
     container_name: jm-elt-snowflake
     build:
       context: ./pipeline/src/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.snowflake
     # networks:
     #   - jobmarket_network
     env_file:
@@ -25,6 +41,7 @@ services:
     build:
       context: ./snowflake/DBT/
       dockerfile: Dockerfile
+    user: node
     # networks:
     #   - jobmarket_network
     env_file:
@@ -84,7 +101,7 @@ services:
     #   - jobmarket_network
 
   # ===========================================
-  # MLFLOW TRACKING
+  # MLFLOW SERVICES
   # ===========================================
   mlflow-tracking:
     container_name: mlflow_tracking
@@ -125,9 +142,6 @@ services:
     # networks:
     #   - jobmarket_network
 
-  # ===========================================
-  # MLFLOW TRAINING
-  # ===========================================
   mlflow-training:
     container_name: mlflow_training
     image: jm-mlflow-training
@@ -223,52 +237,108 @@ services:
     restart: unless-stopped
     # networks:
     #   - jobmarket_network
+
   # ===========================================
-  # SERVICES UTILITAIRES
+  # AIRFLOW SERVICES
   # ===========================================
+  postgres-airflow:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-airflow-db-volume:/var/lib/postgresql/data
+    profiles:
+      - airflow
+    restart: always
 
-  # # Service de monitoring (optionnel)
-  # monitoring:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus_monitoring
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  #   profiles:
-  #     - monitoring
-  #   restart: unless-stopped
+  redis-airflow:
+    image: redis:7.2-bookworm
+    expose:
+      - 6379
+    profiles:
+      - airflow
+    restart: always
 
-  # # Service de base de données avancée (optionnel)
-  # postgres:
-  #   image: postgres:15-alpine
-  #   container_name: postgres_mlflow
-  #   environment:
-  #     - POSTGRES_DB=${POSTGRES_DB:-mlflow}
-  #     - POSTGRES_USER=${POSTGRES_USER:-mlflow}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlflow}
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  #   profiles:
-  #     - postgres
-  #   restart: unless-stopped
+  airflow-webserver:
+    image: apache/airflow:2.7.3
+    command: webserver
+    depends_on:
+      - postgres-airflow
+      - redis-airflow
+    environment:
+      AIRFLOW_UID: 50000
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres-airflow/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis-airflow:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      _AIRFLOW_WWW_USER_USERNAME: airflow
+      _AIRFLOW_WWW_USER_PASSWORD: airflow
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/config:/opt/airflow/config
+    ports:
+      - "8080:8080"
+    profiles:
+      - airflow
+    restart: always
 
-  # # Service Redis pour cache (optionnel)
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: redis_cache
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   profiles:
-  #     - cache
-  #   restart: unless-stopped
+  airflow-scheduler:
+    image: apache/airflow:2.7.3
+    command: scheduler
+    depends_on:
+      - postgres-airflow
+      - redis-airflow
+    environment:
+      AIRFLOW_UID: 50000
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres-airflow/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis-airflow:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/config:/opt/airflow/config
+    profiles:
+      - airflow
+    restart: always
+
+  airflow-worker:
+    image: apache/airflow:2.7.3
+    command: celery worker
+    depends_on:
+      - postgres-airflow
+      - redis-airflow
+    environment:
+      AIRFLOW_UID: 50000
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres-airflow/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis-airflow:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/config:/opt/airflow/config
+    profiles:
+      - airflow
+    restart: always
 
 # ===========================================
-# RÉSEAUX
+# NETWORKS
 # ===========================================
 networks:
   default:
@@ -276,22 +346,17 @@ networks:
     name: ${DOCKER_NETWORK_NAME:-jobmarket_network}
 
 # ===========================================
-# VOLUMES PERSISTANTS
+# VOLUMES
 # ===========================================
 volumes:
-  # Données MLflow
   mlflow_data:
     driver: local
+  postgres-airflow-db-volume:
+    driver: local
 
-  # # Base de données
-  # postgres_data:
-  #   driver: local
-  # redis_data:
-  #   driver: local
 # ===========================================
-# CONFIGURATION DES PROFILS
+# PROFILES
 # ===========================================
-
 # Profils disponibles :
 # - training     : Service d'entraînement ML
 # - development  : Training + Model
@@ -299,9 +364,11 @@ volumes:
 # - postgres     : Base PostgreSQL au lieu de SQLite
 # - cache        : Redis pour cache
 # - docs         : Documentation avec MkDocs
+# - airflow      : Services Airflow (webserver, scheduler, worker, etc.)
 
 # Exemples d'utilisation :
 # docker-compose --profile development up                    # Training + Model
 # docker-compose --profile training up                       # Entraînement seulement
 # docker-compose --profile training --profile monitoring up  # Training + Monitoring
 # docker-compose --profile postgres up mlflow-tracking         # MLflow avec PostgreSQL
+# docker-compose --profile airflow up                           # Services Airflow
