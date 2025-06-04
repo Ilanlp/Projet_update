@@ -12,7 +12,8 @@ app.layout = dbc.Container([
     dbc.Nav([
         dbc.NavLink("🩺 Health Check", href="/", active="exact"),
         dbc.NavLink("🧠 Soft Skills", href="/softskills", active="exact"),
-        dbc.NavLink("🧠 Top Ville", href="/top_ville", active="exact")
+        dbc.NavLink("🧠 Top Ville", href="/top_ville", active="exact"),
+        dbc.NavLink("💼 Search Offer",href="/search",active="exact")
     ], pills=True),
 
     html.Hr(),
