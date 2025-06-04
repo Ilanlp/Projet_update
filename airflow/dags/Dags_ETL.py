@@ -33,8 +33,6 @@ start = DummyOperator(
     dag=dag,
 )
 
-base_path = os.path.abspath("./pipeline/src")
-
 # Tâche ETL Normalizer
 normalizer = DockerOperator(
     task_id='etl_normalizer',
@@ -43,11 +41,21 @@ normalizer = DockerOperator(
     docker_url='unix://var/run/docker.sock',
     api_version='auto',
     auto_remove=True,
-    network_mode='jm_network',
-    mounts=[
-        Mount(source=f'{base_path}/.env', target='/app/.env', type='bind', read_only=True),
-        Mount(source=f'{base_path}/data', target='/app/data', type='bind', read_only=False),
-    ],
+    environment={
+        'ADZUNA_APP_ID': os.getenv('ADZUNA_APP_ID'),
+        'ADZUNA_APP_KEY': os.getenv('ADZUNA_APP_KEY'),
+        'FRANCE_TRAVAIL_ID': os.getenv('FRANCE_TRAVAIL_ID'),
+        'FRANCE_TRAVAIL_KEY': os.getenv('FRANCE_TRAVAIL_KEY'),
+        'SEARCH_TERMS': os.getenv('SEARCH_TERMS'),
+        'CATEGORY_ADZUNA': os.getenv('CATEGORY_ADZUNA'),
+        'CODE_ROME2': os.getenv('CODE_ROME2'),
+        'CODE_ROME': os.getenv('CODE_ROME'),
+        'LOCATION_ADZUNA': os.getenv('LOCATION_ADZUNA'),
+        'LOCATION_FRANCE_TRAVAIL': os.getenv('LOCATION_FRANCE_TRAVAIL'),
+        'MAX_RESULTS_PER_SOURCE': os.getenv('MAX_RESULTS_PER_SOURCE'),
+        'MAX_DAYS_OLD': os.getenv('MAX_DAYS_OLD'),
+        'OUTPUT_DIR': '/app/data',
+    },
     dag=dag,
 )
 
