@@ -4,6 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.utils.dates import days_ago
 from docker.types import Mount
+import os
 
 # Définition des arguments par défaut pour la DAG
 default_args = {
@@ -32,6 +33,8 @@ start = DummyOperator(
     dag=dag,
 )
 
+base_path = os.path.abspath("./pipeline/src")
+
 # Tâche ETL Normalizer
 normalizer = DockerOperator(
     task_id='etl_normalizer',
@@ -42,8 +45,8 @@ normalizer = DockerOperator(
     auto_remove=True,
     network_mode='jm_network',
     mounts=[
-        Mount(source='./pipeline/src/.env', target='/app/.env', type='bind', read_only=True),
-        Mount(source='./pipeline/src/data', target='/app/data', type='bind', read_only=False),
+        Mount(source=f'{base_path}/.env', target='/app/.env', type='bind', read_only=True),
+        Mount(source=f'{base_path}/data', target='/app/data', type='bind', read_only=False),
     ],
     dag=dag,
 )
