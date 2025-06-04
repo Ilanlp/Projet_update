@@ -322,7 +322,7 @@ services:
       - postgres-airflow
       - redis-airflow
     environment:
-      AIRFLOW_UID: 50000
+      AIRFLOW_UID: 0
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres-airflow/airflow
@@ -337,6 +337,7 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/config:/opt/airflow/config
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8080:8080"
     profiles:
@@ -350,7 +351,7 @@ services:
       - postgres-airflow
       - redis-airflow
     environment:
-      AIRFLOW_UID: 50000
+      AIRFLOW_UID: 0
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres-airflow/airflow
@@ -363,6 +364,7 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/config:/opt/airflow/config
+      - /var/run/docker.sock:/var/run/docker.sock
     profiles:
       - airflow
     restart: always
@@ -373,8 +375,10 @@ services:
     depends_on:
       - postgres-airflow
       - redis-airflow
+    env_file:
+      - ./pipeline/src/.env
     environment:
-      AIRFLOW_UID: 50000
+      AIRFLOW_UID: 0
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres-airflow/airflow
@@ -384,11 +388,14 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./pipeline/src/data:/app/data
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/config:/opt/airflow/config
+      - /var/run/docker.sock:/var/run/docker.sock
     profiles:
       - airflow
+    user: "0"
     restart: always
 
     # ===========================================
