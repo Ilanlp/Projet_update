@@ -94,7 +94,7 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 1: Démarrage du service ETL Snowflake...${NC}"
-  docker compose --profile init-db up jm-elt-snowflake
+  docker compose --profile init-db up --build jm-elt-snowflake
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de Snowflake ETL${NC}"
@@ -108,7 +108,7 @@ init_project() {
     echo -e "${RED}Erreur lors de l'initialisation de DBT${NC}"
     exit 1
   fi
-  
+
   echo -e "${YELLOW}Étape 3: Démarrage du service MLflow Tracking${NC}"
   docker compose --profile init-ml up -d mlflow-tracking
 
@@ -118,9 +118,10 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 4: Entrainement et enregistrement du modèle...${NC}"
+  docker compose --profile init-ml build mlflow-training
   sleep 10
   train_output=$(docker compose --profile init-ml run --rm \
-      mlflow-training quick_train)
+    mlflow-training quick_train)
 
   # train_output=$(docker compose --profile init-ml run --rm \
   #     -v "$(pwd)"/MLFlow/scripts/ml_entrypoint.sh:/app/scripts/ml_entrypoint.sh \
@@ -171,17 +172,7 @@ init_project() {
     exit 1
   fi
 
-  echo -e "${YELLOW}Étape 6: Démarrage de l'environnement de développement...${NC}"
-  docker compose --profile development up -d --build
-
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Erreur lors de l'initialisation de l'environnement de développement${NC}"
-    exit 1
-  fi
-
   echo -e "${YELLOW}Étape 5: Initialisation d'Airflow...${NC}"
-  docker compose --profile airflow up -d postgres-airflow redis-airflow
-  sleep 10  # Attendre que PostgreSQL et Redis soient prêts
   docker compose --profile airflow up airflow-init
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation d'Airflow${NC}"
@@ -210,10 +201,10 @@ start_services() {
       --password airflow || true
     echo "Starting PostgreSQL and Redis..."
     docker compose --profile airflow up -d postgres-airflow redis-airflow
-    sleep 10  # Attendre que PostgreSQL et Redis soient prêts
+    sleep 10 # Attendre que PostgreSQL et Redis soient prêts
     echo "Starting Airflow webserver and scheduler..."
     docker compose --profile airflow up -d airflow-webserver airflow-scheduler
-    sleep 5  # Attendre que le webserver et le scheduler soient prêts
+    sleep 5 # Attendre que le webserver et le scheduler soient prêts
     echo "Starting Airflow worker..."
     docker compose --profile airflow up -d airflow-worker
     echo "Services started successfully"
@@ -249,10 +240,12 @@ show_status() {
 # Fonction pour nettoyer
 clean_environment() {
   echo -e "${YELLOW}Cleaning up environment...${NC}"
-  docker compose --profile init-db down -v
-  docker compose --profile init-ml down -v
-  docker compose --profile development down -v
-  docker compose --profile production down -v
+  docker compose --profile init-db down -v --remove-orphans
+  docker compose --profile init-ml down -v --remove-orphans
+  docker compose --profile airflow down -v --remove-orphans
+  docker compose --profile development down -v --remove-orphans
+  docker compose --profile production down -v --remove-orphans
+  # docker compose --profile monitoring down -v --remove-orphans
   echo -e "${GREEN}Environment cleaned${NC}"
 }
 
