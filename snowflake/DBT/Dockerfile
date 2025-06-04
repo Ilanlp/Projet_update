@@ -1,7 +1,8 @@
 FROM python:3.10.17-slim
 
-# Créer un utilisateur non-root
-RUN groupadd -r node && useradd -r -g node node
+# Créer un utilisateur avec un UID/GID spécifique
+RUN groupadd -g 1000 node && \
+    useradd -u 1000 -g node -s /bin/bash -m node
 
 #variables envrionnements qui facilent la vie
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -23,7 +24,7 @@ RUN apt-get autoremove -y && \
     chown -R node:node /usr/src/
 
 # Copier le code de l'application (exclure les fichiers sensibles et temporaires)
-COPY --chown=node:node Projet_DBT/ Projet_DBT/
+COPY --chown=node:node --chmod=755 Projet_DBT/ Projet_DBT/
 
 # Préparation du dossier dbt caché 
 RUN mkdir /usr/.dbt

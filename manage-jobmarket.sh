@@ -94,7 +94,7 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 1: Démarrage du service ETL Snowflake...${NC}"
-  docker compose --profile init-db up --build jm-elt-snowflake
+  docker compose --profile init-db up jm-elt-snowflake
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de Snowflake ETL${NC}"
@@ -102,15 +102,15 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 2: Démarrage du service DBT...${NC}"
-  docker compose --profile init-db up --build jm-elt-dbt
+  docker compose --profile init-db up jm-elt-dbt
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de DBT${NC}"
     exit 1
   fi
-
+  
   echo -e "${YELLOW}Étape 3: Démarrage du service MLflow Tracking${NC}"
-  docker compose --profile init-ml up -d --build mlflow-tracking
+  docker compose --profile init-ml up -d mlflow-tracking
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de MLflow Tracking${NC}"
@@ -118,8 +118,13 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 4: Entrainement et enregistrement du modèle...${NC}"
-  docker compose --profile init-ml build mlflow-training
-  train_output=$(docker compose --profile init-ml run --rm mlflow-training train)
+  sleep 10
+  train_output=$(docker compose --profile init-ml run --rm \
+      mlflow-training quick_train)
+
+  # train_output=$(docker compose --profile init-ml run --rm \
+  #     -v "$(pwd)"/MLFlow/scripts/ml_entrypoint.sh:/app/scripts/ml_entrypoint.sh \
+  #     mlflow-training quick_train)
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'entrainement du modèle${NC}"
@@ -128,7 +133,12 @@ init_project() {
 
   run_id=$(echo "$train_output" | grep "Run MLflow ID:" | sed 's/.*Run MLflow ID: \(.*\)/\1/')
 
-  docker compose --profile init-ml run --rm mlflow-training register "$run_id" jobmarket
+  docker compose --profile init-ml run --rm \
+    mlflow-training register "$run_id" jobmarket
+
+  # docker compose --profile init-ml run --rm \
+  #   -v "$(pwd)"/MLFlow/scripts/ml_entrypoint.sh:/app/scripts/ml_entrypoint.sh \
+  #   mlflow-training register "$run_id" jobmarket
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'enregistrement du modèle${NC}"

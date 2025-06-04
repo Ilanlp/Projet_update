@@ -6,37 +6,202 @@
 
 set -e
 
+# Fonction pour vérifier l'utilisateur actuel
+check_current_user() {
+    local target_user="$1"
+    local current_user=$(whoami)
+    
+    if [ "$current_user" = "$target_user" ]; then
+        echo "✅ Déjà en tant qu'utilisateur $target_user"
+        return 0
+    else
+        echo "ℹ️ Changement vers l'utilisateur $target_user nécessaire"
+        return 1
+    fi
+}
+
+# Détection de l'environnement d'exécution
+detect_environment() {
+    local env_type="linux"
+    
+    # Détection WSL
+    if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
+        env_type="wsl"
+    # Détection macOS
+    elif [ "$(uname)" = "Darwin" ]; then
+        env_type="macos"
+    fi
+    
+    echo "$env_type"
+}
+
+# Configuration des permissions selon l'environnement
+configure_permissions() {
+    local path="$1"
+    local env_type="$(detect_environment)"
+    
+    case "$env_type" in
+        "wsl")
+            # Permissions spéciales pour WSL
+            chmod -R 755 "$path" 2>/dev/null || true
+            ;;
+        "macos")
+            # Permissions macOS
+            chmod -R 755 "$path" 2>/dev/null || true
+            ;;
+        *)
+            # Permissions Linux standard
+            chmod -R 755 "$path" 2>/dev/null || true
+            ;;
+    esac
+}
+
 # Fonctions de logging avec couleurs
 log_info() {
-  echo -e "\033[0;34mℹ️  [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
+    echo -e "\033[0;34mℹ️  [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
 }
 
 log_success() {
-  echo -e "\033[0;32m✅ [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
+    echo -e "\033[0;32m✅ [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
 }
 
 log_warning() {
-  echo -e "\033[0;33m⚠️  [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
+    echo -e "\033[0;33m⚠️  [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
 }
 
 log_error() {
-  echo -e "\033[0;31m❌ [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
+    echo -e "\033[0;31m❌ [$(date '+%Y-%m-%d %H:%M:%S')]\033[0m $1"
 }
 
-# Configuration des répertoires
-setup_directories() {
-  log_info "Setting up working directories..."
+# Fonction pour configurer les permissions avec timeout
+configure_path_permissions() {
+    local path="$1"
+    local is_system_path="$2"
+    local timeout_duration=5
+    local env_type="$(detect_environment)"
 
-  # Création des répertoires principaux
-  mkdir -p /app/{data,models,logs,cache,experiments,temp,config,scripts}
-  mkdir -p /app/cache/{matplotlib,transformers,huggingface,sklearn}
-  mkdir -p /tmp/mlflow
+    # Ajout de logs de débogage
+    log_info "🔍 DEBUG: Current user: $(whoami)"
+    log_info "🔍 DEBUG: MLflow user exists: $(id mlflow >/dev/null 2>&1 && echo 'yes' || echo 'no')"
+    log_info "🔍 DEBUG: Current directory permissions: $(ls -ld "$path" 2>/dev/null || echo 'directory does not exist')"
+    log_info "🔍 DEBUG: Parent directory permissions: $(ls -ld "$(dirname "$path")" 2>/dev/null || echo 'parent directory does not exist')"
 
-  # Permissions
-  chmod 755 /app/{data,models,logs,config,scripts}
-  chmod 777 /app/{cache,temp} /tmp/mlflow
+    if [ ! -d "$path" ]; then
+        log_info "📁 Création du répertoire $path"
+        mkdir -p "$path" || {
+            log_warning "🔍 DEBUG: Erreur lors de la création du répertoire: $?"
+            true
+        }
+    fi
 
-  log_success "Working directories created"
+    log_info "🔧 Configuration des permissions pour $path (Environnement: $env_type)"
+    
+    # Pour les chemins système, on vérifie juste l'accès
+    if [ "$is_system_path" = "true" ]; then
+        log_info "🔍 DEBUG: Vérification accès système pour $path"
+        if su - mlflow -c "test -r '$path'" 2>/dev/null; then
+            log_success "$path est accessible en lecture"
+            return 0
+        else
+            log_warning "🔍 DEBUG: Erreur accès système: $?"
+            log_warning "$path n'est pas accessible en lecture - continuation..."
+            return 0  # On continue malgré l'erreur
+        fi
+    fi
+
+    # Pour les chemins d'application, on essaie de modifier les permissions
+    case "$env_type" in
+        "wsl")
+            # Gestion spéciale pour WSL
+            log_info "🔍 DEBUG: Début chmod WSL pour $path"
+            timeout ${timeout_duration}s bash -c "chmod -R 755 '$path' 2>/dev/null" || {
+                log_warning "🔍 DEBUG: Timeout ou erreur chmod: $?"
+                true
+            }
+            log_info "🔍 DEBUG: Nouvelles permissions: $(ls -ld "$path" 2>/dev/null || echo 'impossible de lire les permissions')"
+            log_success "Permissions WSL configurées pour $path (best effort)"
+            ;;
+        "macos")
+            # Gestion spéciale pour macOS
+            log_info "🔍 DEBUG: Début chown/chmod macOS pour $path"
+            timeout ${timeout_duration}s bash -c "chown -R mlflow:mlflow '$path' 2>/dev/null && chmod -R 755 '$path' 2>/dev/null" || {
+                log_warning "🔍 DEBUG: Timeout ou erreur chown/chmod: $?"
+                true
+            }
+            log_success "Permissions macOS configurées pour $path (best effort)"
+            ;;
+        *)
+            # Linux standard
+            log_info "🔍 DEBUG: Début chown/chmod Linux pour $path"
+            timeout ${timeout_duration}s bash -c "chown -R mlflow:mlflow '$path' 2>/dev/null && chmod -R 755 '$path' 2>/dev/null" || {
+                log_warning "🔍 DEBUG: Timeout ou erreur chown/chmod: $?"
+                true
+            }
+            log_success "Permissions Linux configurées pour $path (best effort)"
+            ;;
+    esac
+
+    # Vérification finale d'accès (non bloquante)
+    log_info "🔍 DEBUG: Vérification finale accès pour $path"
+    if ! su - mlflow -c "test -r '$path'" 2>/dev/null; then
+        log_warning "🔍 DEBUG: Erreur vérification finale: $?"
+        log_warning "Accès limité à $path - les opérations pourraient être restreintes"
+    fi
+
+    return 0  # Toujours retourner succès pour ne pas bloquer le script
+}
+
+# Configuration des répertoires et permissions
+setup_directories_and_permissions() {
+    log_info "Configuration des répertoires et permissions..."
+
+    # Détection de l'environnement
+    local env_type="$(detect_environment)"
+    if [ "$env_type" = "wsl" ]; then
+        log_info "🔍 Environnement WSL détecté - adaptation des permissions..."
+    fi
+
+    # Chemins d'application (peuvent être modifiés)
+    APP_PATHS=(
+        "/app/models"
+        "/app/logs"
+        "/app/data"
+        "/app/config"
+        "/app/cache"
+        "/app/experiments"
+        "/app/temp"
+        "/app/mlruns"
+        "/app/cache/matplotlib"
+        "/app/cache/transformers"
+        "/app/cache/huggingface"
+        "/app/cache/sklearn"
+        "/tmp/mlflow"
+    )
+
+    # Chemins système (lecture seule suffisante)
+    SYSTEM_PATHS=(
+        "/opt/venv"
+    )
+
+    # Configuration des chemins d'application
+    local success=true
+    for path in "${APP_PATHS[@]}"; do
+        configure_path_permissions "$path" false || success=false
+    done
+
+    # Configuration des chemins système (non bloquante)
+    for path in "${SYSTEM_PATHS[@]}"; do
+        configure_path_permissions "$path" true || true  # Erreurs ignorées pour les chemins système
+    done
+
+    if [ "$success" = true ]; then
+        log_success "Configuration des répertoires et permissions terminée avec succès"
+    else
+        log_warning "Configuration des répertoires et permissions terminée avec des avertissements"
+    fi
+
+    # Toujours retourner 0 pour ne pas bloquer le script
+    return 0
 }
 
 # Configuration de l'environnement Python
@@ -75,7 +240,7 @@ setup_logging() {
   log_info "Setting up logging..."
 
   # Création des fichiers de log
-  touch /app/logs/training.log /app/logs/errors.log
+  # touch /app/logs/training.log /app/logs/errors.log
 
   # Niveau de log
   export TRAINING_LOG_LEVEL=${TRAINING_LOG_LEVEL:-"INFO"}
@@ -276,20 +441,26 @@ show_help() {
   echo ""
   echo "MLflow Training Container - Available Commands:"
   echo ""
+  echo "Training Commands:"
+  echo "  train                          Train a new model (full dataset)"
+  echo "  quick_train                    Train with reduced dataset"
+  echo "  full_train                     Train with full optimization"
+  echo ""
   echo "Model Management:"
-  echo "  train                          Train a new model using train_model.py"
   echo "  register RUN_ID MODEL_NAME     Register a trained model in MLflow registry"
   echo "  serve [--port PORT]            Serve a model (default port: 5001)"
   echo "  test                           Run model tests and validation"
   echo ""
   echo "MLflow Operations:"
   echo "  list-runs                      List all experiments and their runs"
-  echo "  setup                          Setup environment only"
-  echo "  help                           Show this help message"
+  echo "  mlflow_status                  Check MLflow server status"
+  echo "  show_model_info MODEL_NAME     Show detailed model information"
   echo ""
-  echo "Shell Access:"
+  echo "Environment:"
+  echo "  setup                          Setup environment only"
   echo "  bash                           Start an interactive bash shell"
   echo "  sh                             Start an interactive sh shell"
+  echo "  help                           Show this help message"
   echo ""
   echo "Environment Variables:"
   echo "  MLFLOW_TRACKING_URI            MLflow tracking server URI"
@@ -297,12 +468,6 @@ show_help() {
   echo "  MLFLOW_ARTIFACT_ROOT           MLflow artifact root directory"
   echo "  MODEL_URI                      URI of the model to serve"
   echo "  TRAINING_LOG_LEVEL             Logging level for training"
-  echo ""
-  echo "Examples:"
-  echo "  $0 train                       # Train a new model"
-  echo "  $0 register abc123 MyModel     # Register run abc123 as MyModel"
-  echo "  $0 serve --port 5001           # Serve model on port 5001"
-  echo "  $0 list-runs                   # List all MLflow runs"
 }
 
 # Test de la configuration complète
@@ -336,81 +501,178 @@ print('✅ Core packages imported successfully')
   log_success "Environment tests completed"
 }
 
-# Fonction principale
+# Fonction principale modifiée
 main() {
-  # Configuration initiale de l'environnement
-  setup_directories
-  setup_python_environment
-  setup_mlflow
-  setup_logging
-  setup_shell_environment
+    local env_type="$(detect_environment)"
+    log_info "Démarrage dans l'environnement: $env_type"
 
-  # Informations système
-  show_system_information
+    # Configuration initiale de l'environnement et des permissions
+    setup_python_environment
+    setup_mlflow
+    setup_logging
+    setup_shell_environment
 
-  # Si aucun argument n'est fourni, afficher l'aide
-  if [ $# -eq 0 ]; then
-    show_help
-    exit 0
-  fi
-
-  # Traitement des commandes shell directes
-  if [[ "$1" == "bash" ]] || [[ "$1" == "sh" ]]; then
-    exec "$1"
-    return
-  fi
-
-  # Traitement des commandes spécifiques
-  case "$1" in
-  train)
-    shift
-    log_info "Starting model training..."
-    python /app/src/train_model.py "$@"
-    ;;
-  register)
-    shift
-    if [ $# -lt 2 ]; then
-      log_error "Usage: register RUN_ID MODEL_NAME"
-      exit 1
+    # Activation de l'environnement virtuel
+    if [ -f /opt/venv/bin/activate ]; then
+        log_info "🐍 Activation de l'environnement virtuel..."
+        . /opt/venv/bin/activate
     fi
-    log_info "Registering model..."
-    python /app/src/register_model.py "$@"
-    ;;
-  serve)
-    shift
-    log_info "Starting model serving..."
-    python /app/src/serve_model.py "$@"
-    ;;
-  test)
-    shift
-    log_info "Running model tests..."
-    python /app/src/test_model.py "$@"
-    ;;
-  list-runs)
-    shift
-    log_info "Listing MLflow runs..."
-    python /app/src/list_runs.py "$@"
-    ;;
-  setup)
-    log_success "Environment setup completed"
-    ;;
-  help)
-    show_help
-    ;;
-  *)
-    log_error "Unknown command: $1"
-    show_help
-    exit 1
-    ;;
-  esac
 
-  log_success "🎉 Command executed successfully!"
+    # Informations système
+    show_system_information
+
+    # Si aucun argument n'est fourni, afficher l'aide
+    if [ $# -eq 0 ]; then
+        show_help
+        exit 0
+    fi
+
+    # Vérification de l'utilisateur et exécution des commandes
+    case "$1" in
+        train)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                run_training
+            fi
+            ;;
+        quick_train)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                python /app/src/train_model.py --n-samples 1000 --no-hyperparameter-tuning
+            fi
+            ;;
+        full_train)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                python /app/src/train_model.py --n-samples 5000 --feature-engineering
+            fi
+            ;;
+        mlflow_status)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                echo "📊 MLflow Status:"
+                echo "   URI: ${MLFLOW_TRACKING_URI}"
+                if curl -s "${MLFLOW_TRACKING_URI}/health" > /dev/null; then
+                    echo "   Status: ✅ Online"
+                else
+                    echo "   Status: ❌ Offline"
+                fi
+            fi
+            ;;
+        show_model_info)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                if [ -z "$2" ]; then
+                    echo "Usage: $0 show_model_info MODEL_NAME"
+                    exit 1
+                fi
+                python /app/src/show_model_info.py "$2"
+            fi
+            ;;
+        register)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                run_registration "$2" "$3"
+            fi
+            ;;
+        serve)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                run_serving "$2"
+            fi
+            ;;
+        test)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                run_testing
+            fi
+            ;;
+        list-runs)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            else
+                mlflow runs list
+            fi
+            ;;
+        setup)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$0" "$@"
+                else
+                    exec su -m mlflow -c "$0 $*"
+                fi
+            fi
+            ;;
+        bash|sh)
+            if ! check_current_user "mlflow"; then
+                if command -v gosu >/dev/null 2>&1; then
+                    exec gosu mlflow "$1"
+                else
+                    exec su -m mlflow -c "$1"
+                fi
+            else
+                exec "$1"
+            fi
+            ;;
+        help|--help|-h)
+            show_help
+            ;;
+        *)
+            log_error "Commande inconnue: $1"
+            show_help
+            exit 1
+            ;;
+    esac
 }
 
 # Gestion des signaux pour arrêt propre
-trap 'log_info "Received shutdown signal"; cleanup; exit 0' SIGTERM SIGINT
+trap "log_info \"Signal d'arrêt reçu\"; cleanup; exit 0" SIGTERM SIGINT
 
 # Si le script est exécuté directement
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  main "$@"
+    main "$@"
 fi

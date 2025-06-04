@@ -1,29 +1,68 @@
-FROM python:3.9-slim
+# ===========================================
+# Dockerfile.mlflow.tracking - Container MLflow Tracking
+# ===========================================
 
-# Installation des dépendances système minimales
-RUN apt-get update && apt-get install -y \
+FROM python:3.9-slim AS builder
+
+# Installation des dépendances système essentielles et création de l'environnement Python
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
-    libpq-dev \
-    curl \
-    libevent-dev \
-    libssl-dev \
-    libffi-dev \
-    python3-dev \
     make \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    python3-dev && \
+    python -m venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    apt-get purge -y --auto-remove gcc g++ make python3-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Création du répertoire de travail
-WORKDIR /app
+# ===========================================
+# Image finale
+# ===========================================
+FROM python:3.9-slim
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db \
+    MLFLOW_DEFAULT_ARTIFACT_ROOT=file:///app/mlruns
+
+# Installation des dépendances système minimales
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    libpq-dev \
+    postgresql-client && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Création de l'utilisateur et du groupe
+    groupadd -r mlflow --gid=${GROUP_ID} && \
+    useradd -r -g mlflow --uid=${USER_ID} -m mlflow && \
+    # Création des répertoires nécessaires
+    mkdir -p /app/mlruns && \
+    mkdir -p /app/data
+
+# Copie de l'environnement virtuel du builder
+COPY --from=builder /opt/venv /opt/venv
 
 # Copie et installation des requirements
-COPY requirements.mlflow.tracking.txt .
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir -r requirements.mlflow.tracking.txt
+COPY requirements.mlflow.tracking.txt /app/
+RUN . /opt/venv/bin/activate && \
+    pip install --no-cache-dir -r /app/requirements.mlflow.tracking.txt
+
+# Configuration finale des permissions
+RUN chown -R mlflow:mlflow /app /opt/venv
+
+# Passage à l'utilisateur non privilégié
+USER mlflow
+WORKDIR /app
 
 # Exposition du port
 EXPOSE 5000
 
 # Commande par défaut
-CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["/opt/venv/bin/mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]

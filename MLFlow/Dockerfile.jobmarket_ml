@@ -4,10 +4,6 @@
 
 FROM python:3.11.12-slim AS builder
 
-# Arguments de build
-ARG PYTHON_VERSION=3.11.12
-ARG MLFLOW_VERSION=2.22.0
-
 # Métadonnées
 LABEL maintainer="ML Team" \
   description="Container optimisé pour jobmarket_ml" \
@@ -32,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ===========================================
 FROM python:3.11.12-slim
 
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # Variables d'environnement
 ENV PYTHONUNBUFFERED=1 \
   PYTHONDONTWRITEBYTECODE=1 \
@@ -46,39 +45,51 @@ ENV PYTHONUNBUFFERED=1 \
   SKLEARN_CACHE_DIR=/app/cache/sklearn \
   TMPDIR=/app/temp
 
-# Installation des dépendances système et configuration initiale (en tant que root)
+# Installation des dépendances système et configuration initiale
 RUN apt-get update && apt-get install -y --no-install-recommends \
   git \
-  curl && \
+  curl \
+  gosu && \
   rm -rf /var/lib/apt/lists/* && \
-  # Création de l'utilisateur et du groupe
-  groupadd -r mluser --gid=1000 && \
-  useradd -r -g mluser --uid=1000 -m mluser && \
+  # Création de l'utilisateur et du groupe avec les IDs spécifiés
+  groupadd -r mlflow --gid=${GROUP_ID:-1000} && \
+  useradd -r -g mlflow --uid=${USER_ID:-1000} -m mlflow && \
   # Création de tous les répertoires nécessaires
-  mkdir -p /app/{src,data,models,logs,cache,experiments,temp,config,scripts} && \
-  mkdir -p /app/cache/{matplotlib,transformers,huggingface,sklearn} && \
+  mkdir -p /app/src && \
+  mkdir -p /app/data && \
+  mkdir -p /app/models && \
+  mkdir -p /app/logs && \
+  mkdir -p /app/cache && \
+  mkdir -p /app/experiments && \
+  mkdir -p /app/temp && \
+  mkdir -p /app/config && \
+  mkdir -p /app/scripts && \
+  mkdir -p /app/cache/matplotlib && \
+  mkdir -p /app/cache/transformers && \
+  mkdir -p /app/cache/huggingface && \
+  mkdir -p /app/cache/sklearn && \
   mkdir -p /tmp/mlflow
 
 # Copie des fichiers avec les bonnes permissions
 COPY --from=builder /opt/venv /opt/venv
-COPY --chown=mluser:mluser jobmarket_ml /app/jobmarket_ml
-COPY --chown=mluser:mluser src/train_model.py /app/src/train_model.py
-COPY --chown=mluser:mluser src/register_model.py /app/src/register_model.py
-COPY --chown=mluser:mluser src/test_model.py /app/src/test_model.py
-COPY --chown=mluser:mluser src/serve_model.py /app/src/serve_model.py
-COPY --chown=mluser:mluser scripts/ml_entrypoint.sh /app/scripts/
+COPY jobmarket_ml /app/jobmarket_ml
+COPY src/train_model.py /app/src/train_model.py
+COPY src/register_model.py /app/src/register_model.py
+COPY src/test_model.py /app/src/test_model.py
+COPY src/serve_model.py /app/src/serve_model.py
+COPY scripts/ml_entrypoint.sh /app/scripts/
 
-# Configuration finale des permissions (en tant que root)
-RUN chmod 755 /app/scripts/ml_entrypoint.sh && \
-  chown -R mluser:mluser /app /tmp/mlflow /opt/venv
+# Installation du package et des modèles spaCy en tant que mluser
+RUN pip install -e /app/jobmarket_ml && \
+  python -m spacy download fr_core_news_sm && \
+  python -m spacy download en_core_web_sm
 
-# Passage à l'utilisateur non privilégié
-USER mluser
-WORKDIR /app/jobmarket_ml
+# Configuration finale des permissions
+RUN chown -R mlflow:mlflow /app /opt/venv
 
-# Installation du package en tant que mluser
-RUN pip install -e .
+USER mlflow
 
 WORKDIR /app
+
 ENTRYPOINT ["/app/scripts/ml_entrypoint.sh"]
 CMD ["help"]
