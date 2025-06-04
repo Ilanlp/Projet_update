@@ -1,0 +1,2 @@
+SELECT COUNT(*) as total
+FROM ONE_BIG_TABLE
