@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Dict, Any, Optional, Annotated
+from typing import List, Dict, Any, Optional
 from app.models.schemas import (
     ResponseBase,
     QueryParams,
     PaginationParams,
     PaginatedResponseBase,
     Offre,
-    SearchOffre
 )
 from app.services.query_service import (
     execute_and_map_to_model,
@@ -14,66 +13,19 @@ from app.services.query_service import (
     paginate_query,
     create_paginated_response,
     execute_query,
+    search_offres,
 )
 from app.utils.exceptions import (
     NotFoundException,
     ValidationException,
     DatabaseException,
 )
+from app.models.search_schemas import OffreSearchParams
 
-router = APIRouter()
-
-
-@router.get(
-    "/offres/filters",
-    response_model=PaginatedResponseBase[Offre],
-    tags=["Offres d'emploi"],
-    summary="Récupérer la liste des offres d'emploi en fonction des filtres",
-    description="""
-    Récupère une liste paginée des offres d'emploi en fonction des filtres.
-    """
-)
-async def get_offre_filtered(filters: Annotated[SearchOffre, Query()],pagination: PaginationParams = Depends()):
-
-    try:
-        template_params = {}
-        offset = (pagination.page - 1) * pagination.page_size
-        query_params = {
-            "page_size": pagination.page_size,
-            "offset": offset,
-            "SEARCH": filters.search,
-            "LOCATION": filters.location,
-            "TYPE_CONTRAT": filters.type_contrat,
-            "TYPE_SENIORITE": filters.type_seniorite,
-            "NOM_DOMAINE": filters.nom_domaine
-        }
-
-        items, total = await paginate_query(
-            "offres/get_by_filter.sql",
-            Offre,
-            pagination,
-            query_params=query_params,
-            template_params={
-                "SEARCH": True,
-                "TITLE": True, 
-                "TYPE_CONTRAT":True,
-                "TYPE_SENIORITE": True,
-                "NOM_DOMAINE": True
-            },
-        )
-
-        paginated_response = create_paginated_response(items, total, pagination)
-        return PaginatedResponseBase(
-            data=paginated_response, message="Liste des offres récupérée avec succès"
-        )
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+router_offre = APIRouter()
 
 
-
-@router.get(
+@router_offre.get(
     "/offres",
     response_model=PaginatedResponseBase[Offre],
     tags=["Offres d'emploi"],
@@ -154,7 +106,7 @@ async def get_offres(pagination: PaginationParams = Depends()):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get(
+@router_offre.get(
     "/offres/{id}",
     response_model=ResponseBase[Offre],
     tags=["Offres d'emploi"],
@@ -236,7 +188,7 @@ async def get_offre(id: int):
         )
 
 
-@router.post(
+@router_offre.post(
     "/offres",
     response_model=ResponseBase[Offre],
     tags=["Offres d'emploi"],
@@ -323,7 +275,7 @@ async def create_offre(offre: Offre):
         )
 
 
-@router.put(
+@router_offre.put(
     "/offres/{id}",
     response_model=ResponseBase[Offre],
     tags=["Offres d'emploi"],
@@ -396,7 +348,7 @@ async def update_offre(id: int, offre: Offre):
         )
 
 
-@router.patch(
+@router_offre.patch(
     "/offres/{id}",
     response_model=ResponseBase[Offre],
     tags=["Offres d'emploi"],
@@ -491,7 +443,7 @@ async def patch_offre(id: int, offre_update: Dict[str, Any]):
         )
 
 
-@router.delete(
+@router_offre.delete(
     "/offres/{id}",
     response_model=ResponseBase[Dict[str, Any]],
     tags=["Offres d'emploi"],
@@ -542,4 +494,91 @@ async def delete_offre(id: int):
         raise DatabaseException(
             message=f"Erreur lors de la suppression de l'offre: {str(e)}",
             details={"id": id},
+        )
+
+
+@router_offre.post(
+    "/offres/search",
+    response_model=PaginatedResponseBase[Offre],
+    tags=["Offres d'emploi"],
+    summary="Recherche avancée d'offres d'emploi",
+    description="""
+    Effectue une recherche avancée d'offres d'emploi avec filtres, tri et pagination.
+    
+    Exemple de requête:
+    ```json
+    {
+        "filters": [
+            {
+                "field": "type_contrat",
+                "operator": "eq",
+                "value": "CDI"
+            },
+            {
+                "field": "ville",
+                "operator": "like",
+                "value": "Paris"
+            },
+            {
+                "field": "salaire",
+                "operator": "between",
+                "value": [35000, 45000]
+            }
+        ],
+        "sort": [
+            {
+                "field": "date_creation",
+                "order": "desc"
+            }
+        ],
+        "search_text": "data engineer python",
+        "page": 1,
+        "page_size": 10
+    }
+    ```
+    
+    Opérateurs disponibles:
+    - eq: égal (=)
+    - neq: non égal (!=)
+    - gt: supérieur (>)
+    - gte: supérieur ou égal (>=)
+    - lt: inférieur (<)
+    - lte: inférieur ou égal (<=)
+    - like: recherche partielle (LIKE %value%)
+    - in: dans une liste (IN)
+    - between: entre deux valeurs (BETWEEN)
+    
+    Champs disponibles pour le tri et le filtrage:
+    - id
+    - title
+    - description
+    - type_contrat
+    - ville
+    - departement
+    - region
+    - pays
+    - type_teletravail
+    - type_seniorite
+    - competences
+    - nom_metier
+    - categorie_entreprise
+    """,
+)
+async def search_offres_route(search_params: OffreSearchParams):
+    try:
+        items, total = await search_offres(search_params)
+
+        pagination = PaginationParams(
+            page=search_params.page, page_size=search_params.page_size
+        )
+
+        paginated_response = create_paginated_response(items, total, pagination)
+
+        return PaginatedResponseBase(
+            data=paginated_response, message="Recherche d'offres effectuée avec succès"
+        )
+    except Exception as e:
+        raise DatabaseException(
+            message=f"Erreur lors de la recherche d'offres: {str(e)}",
+            details={"search_params": search_params.model_dump()},
         )

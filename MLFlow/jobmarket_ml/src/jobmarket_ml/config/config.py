@@ -56,7 +56,7 @@ PARAM_GRID = {
 }
 
 # Configuration MLflow
-MLFLOW_EXPERIMENT_NAME = "matching_offres_candidats_grid_search"
+MLFLOW_EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT_NAME", "matching_offres_candidats_grid_search")
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:8000")
 
 # Configuration du pipeline

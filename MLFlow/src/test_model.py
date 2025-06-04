@@ -6,15 +6,18 @@ import numpy as np
 from jobmarket_ml.config.config import OFFERS_PATH, OFFER_COLUMNS
 
 
-def test_load_model():
+def test_model():
     """Test du chargement et de l'utilisation du modèle MLflow."""
+    
+    print(f"OFFERS_PATH {OFFERS_PATH}")
+    print(f"OFFER_COLUMNS {OFFER_COLUMNS}")
     
     print("1. Configuration de MLflow...")
     mlflow.set_tracking_uri("http://localhost:8000")
     
     print("2. Chargement du modèle et des données de référence...")
     # Chargement de la dernière version du modèle
-    model_uri = f"models:/MatchingPipeline/latest"
+    model_uri = f"models:/jobmarket/2"
     model = mlflow.pyfunc.load_model(model_uri)
     
     # Chargement des offres de référence
@@ -72,4 +75,4 @@ def test_load_model():
         raise
 
 if __name__ == "__main__":
-    test_load_model() 
+    test_model() 

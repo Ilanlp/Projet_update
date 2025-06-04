@@ -1,0 +1,256 @@
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1400" height="900" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="700" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#2c3e50">
+    Schéma détaillé Backend FastAPI et Frontend Dash
+  </text>
+  
+  <!-- Users Section -->
+  <g id="users-section">
+    <rect x="50" y="70" width="300" height="200" rx="10" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+    <text x="200" y="95" text-anchor="middle" font-size="16" font-weight="bold" fill="#3498db">👥 Utilisateurs</text>
+    
+    <!-- Candidat -->
+    <rect x="70" y="110" width="80" height="60" rx="5" fill="#2980b9"/>
+    <text x="110" y="130" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Candidat</text>
+    <text x="110" y="145" text-anchor="middle" font-size="9" fill="white">• Profil</text>
+    <text x="110" y="157" text-anchor="middle" font-size="9" fill="white">• Matching</text>
+    
+    <!-- Admin -->
+    <rect x="160" y="110" width="80" height="60" rx="5" fill="#2980b9"/>
+    <text x="200" y="130" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Admin</text>
+    <text x="200" y="145" text-anchor="middle" font-size="9" fill="white">• Gestion</text>
+    <text x="200" y="157" text-anchor="middle" font-size="9" fill="white">• Stats</text>
+    
+    <!-- Public -->
+    <rect x="250" y="110" width="80" height="60" rx="5" fill="#2980b9"/>
+    <text x="290" y="130" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Public</text>
+    <text x="290" y="145" text-anchor="middle" font-size="9" fill="white">• Recherche</text>
+    <text x="290" y="157" text-anchor="middle" font-size="9" fill="white">• Consultation</text>
+    
+    <!-- Browser -->
+    <rect x="115" y="190" width="170" height="40" rx="5" fill="#34495e"/>
+    <text x="200" y="210" text-anchor="middle" font-size="12" font-weight="bold" fill="white">🌐 Navigateur Web</text>
+    <text x="200" y="222" text-anchor="middle" font-size="9" fill="white">HTTP/HTTPS</text>
+  </g>
+  
+  <!-- Frontend Dash Section -->
+  <g id="frontend-section">
+    <rect x="450" y="70" width="420" height="320" rx="10" fill="#e67e22" opacity="0.1" stroke="#e67e22" stroke-width="2"/>
+    <text x="660" y="95" text-anchor="middle" font-size="16" font-weight="bold" fill="#e67e22">🎨 Frontend - Dash (Port 8050)</text>
+    
+    <!-- Pages -->
+    <g id="pages">
+      <text x="660" y="115" text-anchor="middle" font-size="14" font-weight="bold" fill="#d35400">Pages de l'application</text>
+      
+      <!-- Homepage -->
+      <rect x="470" y="130" width="120" height="70" rx="5" fill="#d35400"/>
+      <text x="530" y="150" text-anchor="middle" font-size="11" font-weight="bold" fill="white">🏠 Homepage</text>
+      <text x="530" y="165" text-anchor="middle" font-size="9" fill="white">• Présentation</text>
+      <text x="530" y="177" text-anchor="middle" font-size="9" fill="white">• Navigation</text>
+      <text x="530" y="189" text-anchor="middle" font-size="9" fill="white">• Accueil</text>
+      
+      <!-- Profil -->
+      <rect x="610" y="130" width="120" height="70" rx="5" fill="#d35400"/>
+      <text x="670" y="150" text-anchor="middle" font-size="11" font-weight="bold" fill="white">👤 Profil</text>
+      <text x="670" y="165" text-anchor="middle" font-size="9" fill="white">• Création</text>
+      <text x="670" y="177" text-anchor="middle" font-size="9" fill="white">• Modification</text>
+      <text x="670" y="189" text-anchor="middle" font-size="9" fill="white">• CV/Compétences</text>
+      
+      <!-- Auth -->
+      <rect x="750" y="130" width="120" height="70" rx="5" fill="#d35400"/>
+      <text x="810" y="150" text-anchor="middle" font-size="11" font-weight="bold" fill="white">🔐 Auth</text>
+      <text x="810" y="165" text-anchor="middle" font-size="9" fill="white">• Connexion</text>
+      <text x="810" y="177" text-anchor="middle" font-size="9" fill="white">• Inscription</text>
+      <text x="810" y="189" text-anchor="middle" font-size="9" fill="white">• JWT Token</text>
+      
+      <!-- Matching -->
+      <rect x="470" y="220" width="120" height="70" rx="5" fill="#d35400"/>
+      <text x="530" y="240" text-anchor="middle" font-size="11" font-weight="bold" fill="white">🎯 Matching</text>
+      <text x="530" y="255" text-anchor="middle" font-size="9" fill="white">• Recommandations</text>
+      <text x="530" y="267" text-anchor="middle" font-size="9" fill="white">• IA Personnalisée</text>
+      <text x="530" y="279" text-anchor="middle" font-size="9" fill="white">• Score affinité</text>
+      
+      <!-- Recherche -->
+      <rect x="610" y="220" width="120" height="70" rx="5" fill="#d35400"/>
+      <text x="670" y="240" text-anchor="middle" font-size="11" font-weight="bold" fill="white">🔍 Recherche</text>
+      <text x="670" y="255" text-anchor="middle" font-size="9" fill="white">• Filtres libres</text>
+      <text x="670" y="267" text-anchor="middle" font-size="9" fill="white">• Recherche ML</text>
+      <text x="670" y="279" text-anchor="middle" font-size="9" fill="white">• Export résultats</text>
+      
+      <!-- Admin Panel -->
+      <rect x="750" y="220" width="120" height="70" rx="5" fill="#d35400"/>
+      <text x="810" y="240" text-anchor="middle" font-size="11" font-weight="bold" fill="white">⚙️ Admin</text>
+      <text x="810" y="255" text-anchor="middle" font-size="9" fill="white">• Gestion users</text>
+      <text x="810" y="267" text-anchor="middle" font-size="9" fill="white">• Stats système</text>
+      <text x="810" y="279" text-anchor="middle" font-size="9" fill="white">• Monitoring</text>
+    </g>
+    
+    <!-- Dash Components -->
+    <rect x="470" y="310" width="380" height="60" rx="5" fill="#c0392b"/>
+    <text x="660" y="330" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Composants Dash</text>
+    <text x="520" y="350" font-size="10" fill="white">• dcc.Graph (Graphiques)</text>
+    <text x="520" y="362" font-size="10" fill="white">• dcc.Dropdown (Sélection)</text>
+    <text x="720" y="350" font-size="10" fill="white">• dash_table (Tableaux)</text>
+    <text x="720" y="362" font-size="10" fill="white">• dbc.Form (Formulaires)</text>
+  </g>
+  
+  <!-- Backend FastAPI Section -->
+  <g id="backend-section">
+    <rect x="970" y="70" width="380" height="500" rx="10" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+    <text x="1160" y="95" text-anchor="middle" font-size="16" font-weight="bold" fill="#27ae60">⚡ Backend - FastAPI (Port 8000)</text>
+    
+    <!-- API Routes -->
+    <g id="api-routes">
+      <text x="1160" y="115" text-anchor="middle" font-size="14" font-weight="bold" fill="#2ecc71">Routes API</text>
+      
+      <!-- Auth Routes -->
+      <rect x="990" y="130" width="160" height="80" rx="5" fill="#2ecc71"/>
+      <text x="1070" y="150" text-anchor="middle" font-size="11" font-weight="bold" fill="white">🔐 /auth</text>
+      <text x="1070" y="165" text-anchor="middle" font-size="9" fill="white">POST /login</text>
+      <text x="1070" y="177" text-anchor="middle" font-size="9" fill="white">POST /register</text>
+      <text x="1070" y="189" text-anchor="middle" font-size="9" fill="white">GET /me</text>
+      <text x="1070" y="201" text-anchor="middle" font-size="9" fill="white">JWT Token validation</text>
+      
+      <!-- Candidats Routes -->
+      <rect x="1170" y="130" width="160" height="80" rx="5" fill="#2ecc71"/>
+      <text x="1250" y="150" text-anchor="middle" font-size="11" font-weight="bold" fill="white">👤 /candidats</text>
+      <text x="1250" y="165" text-anchor="middle" font-size="9" fill="white">GET, POST (libre)</text>
+      <text x="1250" y="177" text-anchor="middle" font-size="9" fill="white">PUT, DELETE (auth)</text>
+      <text x="1250" y="189" text-anchor="middle" font-size="9" fill="white">CRUD complet</text>
+      <text x="1250" y="201" text-anchor="middle" font-size="9" fill="white">Validation Pydantic</text>
+      
+      <!-- Offres Routes -->
+      <rect x="990" y="230" width="160" height="80" rx="5" fill="#2ecc71"/>
+      <text x="1070" y="250" text-anchor="middle" font-size="11" font-weight="bold" fill="white">💼 /offres</text>
+      <text x="1070" y="265" text-anchor="middle" font-size="9" fill="white">GET (libre)</text>
+      <text x="1070" y="277" text-anchor="middle" font-size="9" fill="white">POST, PUT, DELETE (auth)</text>
+      <text x="1070" y="289" text-anchor="middle" font-size="9" fill="white">Filtres avancés</text>
+      <text x="1070" y="301" text-anchor="middle" font-size="9" fill="white">Pagination</text>
+      
+      <!-- ML Routes -->
+      <rect x="1170" y="230" width="160" height="80" rx="5" fill="#2ecc71"/>
+      <text x="1250" y="250" text-anchor="middle" font-size="11" font-weight="bold" fill="white">🤖 /ml</text>
+      <text x="1250" y="265" text-anchor="middle" font-size="9" fill="white">POST /recommend</text>
+      <text x="1250" y="277" text-anchor="middle" font-size="9" fill="white">POST /similarity</text>
+      <text x="1250" y="289" text-anchor="middle" font-size="9" fill="white">Proxy vers MLFlow</text>
+      <text x="1250" y="301" text-anchor="middle" font-size="9" fill="white">Cache résultats</text>
+    </g>
+    
+    <!-- Middleware -->
+    <rect x="990" y="330" width="340" height="60" rx="5" fill="#229954"/>
+    <text x="1160" y="350" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Middleware FastAPI</text>
+    <text x="1020" y="370" font-size="10" fill="white">• CORS (Cross-Origin)</text>
+    <text x="1020" y="382" font-size="10" fill="white">• JWT Authentication</text>
+    <text x="1200" y="370" font-size="10" fill="white">• Rate Limiting</text>
+    <text x="1200" y="382" font-size="10" fill="white">• Request Validation</text>
+    
+    <!-- Dependencies -->
+    <rect x="990" y="410" width="340" height="60" rx="5" fill="#1e8449"/>
+    <text x="1160" y="430" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Dépendances</text>
+    <text x="1020" y="450" font-size="10" fill="white">• SQLAlchemy (ORM)</text>
+    <text x="1020" y="462" font-size="10" fill="white">• Pydantic (Validation)</text>
+    <text x="1200" y="450" font-size="10" fill="white">• Requests (HTTP Client)</text>
+    <text x="1200" y="462" font-size="10" fill="white">• Python-jose (JWT)</text>
+    
+    <!-- Security -->
+    <rect x="990" y="490" width="340" height="60" rx="5" fill="#186a3b"/>
+    <text x="1160" y="510" text-anchor="middle" font-size="12" font-weight="bold" fill="white">🛡️ Sécurité</text>
+    <text x="1020" y="530" font-size="10" fill="white">• Hash passwords (bcrypt)</text>
+    <text x="1020" y="542" font-size="10" fill="white">• API Key validation</text>
+    <text x="1200" y="530" font-size="10" fill="white">• HTTPS en production</text>
+    <text x="1200" y="542" font-size="10" fill="white">• Input sanitization</text>
+  </g>
+  
+  <!-- Data Sources -->
+  <g id="data-sources">
+    <rect x="50" y="630" width="800" height="200" rx="10" fill="#9b59b6" opacity="0.1" stroke="#9b59b6" stroke-width="2"/>
+    <text x="450" y="655" text-anchor="middle" font-size="16" font-weight="bold" fill="#9b59b6">💾 Sources de données</text>
+    
+    <!-- Snowflake -->
+    <rect x="80" y="680" width="150" height="80" rx="5" fill="#8e44ad"/>
+    <text x="155" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="white">☁️ Snowflake</text>
+    <text x="155" y="715" text-anchor="middle" font-size="9" fill="white">• Tables candidats</text>
+    <text x="155" y="727" text-anchor="middle" font-size="9" fill="white">• Tables offres</text>
+    <text x="155" y="739" text-anchor="middle" font-size="9" fill="white">• Données qualifiées</text>
+    <text x="155" y="751" text-anchor="middle" font-size="9" fill="white">• Connexion SQL</text>
+    
+    <!-- MLFlow -->
+    <rect x="250" y="680" width="150" height="80" rx="5" fill="#8e44ad"/>
+    <text x="325" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="white">🤖 MLFlow</text>
+    <text x="325" y="715" text-anchor="middle" font-size="9" fill="white">• Modèles entraînés</text>
+    <text x="325" y="727" text-anchor="middle" font-size="9" fill="white">• API Inference</text>
+    <text x="325" y="739" text-anchor="middle" font-size="9" fill="white">• Recommandations</text>
+    <text x="325" y="751" text-anchor="middle" font-size="9" fill="white">• REST Calls</text>
+    
+    <!-- Cache -->
+    <rect x="420" y="680" width="150" height="80" rx="5" fill="#8e44ad"/>
+    <text x="495" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="white">⚡ Cache</text>
+    <text x="495" y="715" text-anchor="middle" font-size="9" fill="white">• Redis (futur)</text>
+    <text x="495" y="727" text-anchor="middle" font-size="9" fill="white">• Cache ML résultats</text>
+    <text x="495" y="739" text-anchor="middle" font-size="9" fill="white">• Session store</text>
+    <text x="495" y="751" text-anchor="middle" font-size="9" fill="white">• Performance</text>
+    
+    <!-- External APIs -->
+    <rect x="590" y="680" width="150" height="80" rx="5" fill="#8e44ad"/>
+    <text x="665" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="white">🌐 APIs Ext.</text>
+    <text x="665" y="715" text-anchor="middle" font-size="9" fill="white">• France Travail</text>
+    <text x="665" y="727" text-anchor="middle" font-size="9" fill="white">• Adzuna</text>
+    <text x="665" y="739" text-anchor="middle" font-size="9" fill="white">• Webhook callbacks</text>
+    <text x="665" y="751" text-anchor="middle" font-size="9" fill="white">• Rate limiting</text>
+  </g>
+  
+  <!-- Communication Arrows -->
+  <!-- Users to Frontend -->
+  <path d="M 350 210 L 450 210" stroke="#3498db" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="400" y="205" text-anchor="middle" font-size="10" fill="#2c3e50">HTTP Requests</text>
+  
+  <!-- Frontend to Backend -->
+  <path d="M 870 230 L 970 230" stroke="#e67e22" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="920" y="225" text-anchor="middle" font-size="10" fill="#2c3e50">API Calls</text>
+  <text x="920" y="245" text-anchor="middle" font-size="9" fill="#7f8c8d">JSON/REST</text>
+  
+  <!-- Backend to Data Sources -->
+  <path d="M 1160 570 L 325 680" stroke="#27ae60" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 1100 570 L 155 680" stroke="#27ae60" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Bidirectional arrows -->
+  <path d="M 450 250 L 350 250" stroke="#e67e22" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+  <text x="400" y="265" text-anchor="middle" font-size="9" fill="#7f8c8d">Responses</text>
+  
+  <path d="M 970 270 L 870 270" stroke="#27ae60" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+  <text x="920" y="285" text-anchor="middle" font-size="9" fill="#7f8c8d">JSON Data</text>
+  
+  <!-- Protocol annotations -->
+  <text x="920" y="350" text-anchor="middle" font-size="12" fill="#e74c3c" font-weight="bold">🔗 Protocoles</text>
+  <text x="920" y="370" text-anchor="middle" font-size="10" fill="#2c3e50">• Frontend ↔ Backend: HTTP/JSON</text>
+  <text x="920" y="385" text-anchor="middle" font-size="10" fill="#2c3e50">• Backend ↔ Snowflake: SQL/ODBC</text>
+  <text x="920" y="400" text-anchor="middle" font-size="10" fill="#2c3e50">• Backend ↔ MLFlow: REST API</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+  
+  <!-- Performance Notes -->
+  <rect x="950" y="630" width="400" height="200" rx="10" fill="#f39c12" opacity="0.1" stroke="#f39c12" stroke-width="2"/>
+  <text x="1150" y="655" text-anchor="middle" font-size="16" font-weight="bold" fill="#f39c12">⚡ Performance & Monitoring</text>
+  
+  <text x="970" y="680" font-size="12" font-weight="bold" fill="#e67e22">Optimisations Frontend:</text>
+  <text x="970" y="695" font-size="10" fill="#2c3e50">• Composants Dash optimisés (callback patterns)</text>
+  <text x="970" y="707" font-size="10" fill="#2c3e50">• Pagination côté client pour grandes listes</text>
+  <text x="970" y="719" font-size="10" fill="#2c3e50">• Debouncing sur les recherches</text>
+  
+  <text x="970" y="745" font-size="12" font-weight="bold" fill="#e67e22">Optimisations Backend:</text>
+  <text x="970" y="760" font-size="10" fill="#2c3e50">• Connection pooling Snowflake</text>
+  <text x="970" y="772" font-size="10" fill="#2c3e50">• Async endpoints pour MLFlow</text>
+  <text x="970" y="784" font-size="10" fill="#2c3e50">• Compression réponses JSON</text>
+  
+  <text x="970" y="810" font-size="12" font-weight="bold" fill="#e67e22">Monitoring:</text>
+  <text x="970" y="825" font-size="10" fill="#2c3e50">• Logs structurés (JSON)</text>
+  <text x="970" y="837" font-size="10" fill="#2c3e50">• Métriques temps de réponse</text>
+</svg>

@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from colorlog import ColoredFormatter
 
 
-logger = logging.getLogger("init")
+logger = logging.getLogger("core")
 logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
@@ -1015,6 +1015,10 @@ class SnowflakeCore:
             return False
 
         try:
+            # Sélectionner d'abord la base de données
+            self.cursor.execute(f"USE DATABASE {database}")
+            self.cursor.execute(f"USE SCHEMA {schema_name}")
+
             # Vérifier si la table existe
             self.cursor.execute(
                 f"""
@@ -1070,7 +1074,6 @@ if __name__ == "__main__":
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
 
-
     success = loader.process_file_with_copy(
         "JOB_MARKET",
         "RAW",
@@ -1085,15 +1088,13 @@ if __name__ == "__main__":
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
 
-
-
     success = loader.process_file_with_copy(
         "JOB_MARKET",
         "RAW",
         "RAW_OFFRE",
         f"{output_dir}/RAW_OFFRE.csv",
         "CSV_ERROR",
-        "PUBLIC"
+        "PUBLIC",
     )
 
     if success:
@@ -1110,7 +1111,6 @@ if __name__ == "__main__":
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
 
-    
     success = loader.process_file_with_copy(
         "JOB_MARKET", "GOLD", "DIM_ENTREPRISE", f"{output_dir}/DIM_ENTREPRISE.parquet"
     )
@@ -1120,8 +1120,6 @@ if __name__ == "__main__":
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
 
-   
-
     success = loader.process_file_with_copy(
         "JOB_MARKET",
         "SILVER",
@@ -1163,7 +1161,7 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
-    
+
     success = loader.process_file_with_copy(
         "JOB_MARKET",
         "GOLD",
@@ -1177,7 +1175,6 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
-        
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
@@ -1192,7 +1189,7 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
-    
+
     success = loader.process_file_with_copy(
         "JOB_MARKET",
         "GOLD",
@@ -1206,7 +1203,6 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
-
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
@@ -1235,7 +1231,6 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
-
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",
@@ -1278,7 +1273,6 @@ if __name__ == "__main__":
         logging.info(f"Traitement du fichier {loader.filename} terminé avec succès")
     else:
         logging.error(f"Échec du traitement du fichier {loader.filename}")
-
 
     success = loader.process_file_with_copy(
         "JOB_MARKET",

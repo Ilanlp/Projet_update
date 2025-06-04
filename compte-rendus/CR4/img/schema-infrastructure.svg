@@ -1,0 +1,176 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#2c3e50">
+    Infrastructure JobMarket - Architecture Microservices
+  </text>
+  
+  <!-- External APIs Section -->
+  <g id="external-apis">
+    <rect x="50" y="80" width="300" height="120" rx="10" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2"/>
+    <text x="200" y="105" text-anchor="middle" font-size="16" font-weight="bold" fill="#e74c3c">APIs Externes</text>
+    
+    <!-- France Travail -->
+    <rect x="70" y="120" width="120" height="60" rx="5" fill="#3498db" opacity="0.8"/>
+    <text x="130" y="145" text-anchor="middle" font-size="12" font-weight="bold" fill="white">France</text>
+    <text x="130" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Travail API</text>
+    
+    <!-- Adzuna -->
+    <rect x="210" y="120" width="120" height="60" rx="5" fill="#3498db" opacity="0.8"/>
+    <text x="270" y="145" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Adzuna</text>
+    <text x="270" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="white">API</text>
+  </g>
+  
+  <!-- Docker Environment -->
+  <rect x="80" y="230" width="1040" height="520" rx="15" fill="#34495e" opacity="0.05" stroke="#34495e" stroke-width="3" stroke-dasharray="10,5"/>
+  <text x="600" y="255" text-anchor="middle" font-size="18" font-weight="bold" fill="#34495e">
+    🐳 Environnement Docker Compose
+  </text>
+  
+  <!-- ETL/ELT Services -->
+  <g id="data-services">
+    <rect x="120" y="280" width="280" height="180" rx="10" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+    <text x="260" y="305" text-anchor="middle" font-size="14" font-weight="bold" fill="#27ae60">Services de Données</text>
+    
+    <!-- ETL Container -->
+    <rect x="140" y="320" width="110" height="80" rx="5" fill="#2ecc71"/>
+    <text x="195" y="340" text-anchor="middle" font-size="11" font-weight="bold" fill="white">ETL</text>
+    <text x="195" y="355" text-anchor="middle" font-size="9" fill="white">Extraction</text>
+    <text x="195" y="368" text-anchor="middle" font-size="9" fill="white">APIs → Snowflake</text>
+    <text x="195" y="385" text-anchor="middle" font-size="9" fill="white">Python</text>
+    
+    <!-- ELT Container -->
+    <rect x="270" y="320" width="110" height="80" rx="5" fill="#27ae60"/>
+    <text x="325" y="340" text-anchor="middle" font-size="11" font-weight="bold" fill="white">ELT</text>
+    <text x="325" y="355" text-anchor="middle" font-size="9" fill="white">Transformation</text>
+    <text x="325" y="368" text-anchor="middle" font-size="9" fill="white">Bronze→Silver→Gold</text>
+    <text x="325" y="385" text-anchor="middle" font-size="9" fill="white">DBT</text>
+  </g>
+  
+  <!-- MLFlow Services -->
+  <g id="ml-services">
+    <rect x="450" y="280" width="300" height="180" rx="10" fill="#9b59b6" opacity="0.1" stroke="#9b59b6" stroke-width="2"/>
+    <text x="600" y="305" text-anchor="middle" font-size="14" font-weight="bold" fill="#9b59b6">Services MLOps</text>
+    
+    <!-- MLFlow Tracking -->
+    <rect x="470" y="320" width="80" height="80" rx="5" fill="#8e44ad"/>
+    <text x="510" y="340" text-anchor="middle" font-size="10" font-weight="bold" fill="white">MLFlow</text>
+    <text x="510" y="355" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Tracking</text>
+    <text x="510" y="370" text-anchor="middle" font-size="8" fill="white">Expériences</text>
+    <text x="510" y="382" text-anchor="middle" font-size="8" fill="white">Métriques</text>
+    
+    <!-- MLFlow Model -->
+    <rect x="560" y="320" width="80" height="80" rx="5" fill="#8e44ad"/>
+    <text x="600" y="340" text-anchor="middle" font-size="10" font-weight="bold" fill="white">MLFlow</text>
+    <text x="600" y="355" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Model</text>
+    <text x="600" y="370" text-anchor="middle" font-size="8" fill="white">Registry</text>
+    <text x="600" y="382" text-anchor="middle" font-size="8" fill="white">Versioning</text>
+    
+    <!-- MLFlow Training -->
+    <rect x="650" y="320" width="80" height="80" rx="5" fill="#8e44ad"/>
+    <text x="690" y="340" text-anchor="middle" font-size="10" font-weight="bold" fill="white">MLFlow</text>
+    <text x="690" y="355" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Training</text>
+    <text x="690" y="370" text-anchor="middle" font-size="8" fill="white">Entraînement</text>
+    <text x="690" y="382" text-anchor="middle" font-size="8" fill="white">Modèles</text>
+  </g>
+  
+  <!-- Application Services -->
+  <g id="app-services">
+    <rect x="800" y="280" width="280" height="180" rx="10" fill="#f39c12" opacity="0.1" stroke="#f39c12" stroke-width="2"/>
+    <text x="940" y="305" text-anchor="middle" font-size="14" font-weight="bold" fill="#f39c12">Services Application</text>
+    
+    <!-- Backend FastAPI -->
+    <rect x="820" y="320" width="110" height="80" rx="5" fill="#e67e22"/>
+    <text x="875" y="340" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Backend</text>
+    <text x="875" y="355" text-anchor="middle" font-size="11" font-weight="bold" fill="white">FastAPI</text>
+    <text x="875" y="370" text-anchor="middle" font-size="9" fill="white">API Gateway</text>
+    <text x="875" y="382" text-anchor="middle" font-size="9" fill="white">Auth + CRUD</text>
+    
+    <!-- Frontend Dash -->
+    <rect x="950" y="320" width="110" height="80" rx="5" fill="#d35400"/>
+    <text x="1005" y="340" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Frontend</text>
+    <text x="1005" y="355" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Dash</text>
+    <text x="1005" y="370" text-anchor="middle" font-size="9" fill="white">Interface Web</text>
+    <text x="1005" y="382" text-anchor="middle" font-size="9" fill="white">5 Pages</text>
+  </g>
+  
+  <!-- Snowflake Database -->
+  <rect x="450" y="500" width="300" height="80" rx="10" fill="#1abc9c"/>
+  <text x="600" y="530" text-anchor="middle" font-size="16" font-weight="bold" fill="white">☁️ Snowflake</text>
+  <text x="600" y="550" text-anchor="middle" font-size="12" fill="white">Data Warehouse (Cloud)</text>
+  <text x="600" y="565" text-anchor="middle" font-size="10" fill="white">Bronze | Silver | Gold</text>
+  
+  <!-- Users -->
+  <g id="users">
+    <rect x="800" y="620" width="280" height="80" rx="10" fill="#2c3e50"/>
+    <text x="940" y="645" text-anchor="middle" font-size="14" font-weight="bold" fill="white">👥 Utilisateurs</text>
+    
+    <!-- Candidats -->
+    <rect x="820" y="655" width="80" height="35" rx="5" fill="#34495e"/>
+    <text x="860" y="675" text-anchor="middle" font-size="10" fill="white">Candidats</text>
+    
+    <!-- Admins -->
+    <rect x="920" y="655" width="80" height="35" rx="5" fill="#34495e"/>
+    <text x="960" y="675" text-anchor="middle" font-size="10" fill="white">Admins</text>
+    
+    <!-- Recherche libre -->
+    <rect x="1020" y="655" width="50" height="35" rx="5" fill="#34495e"/>
+    <text x="1045" y="675" text-anchor="middle" font-size="9" fill="white">Public</text>
+  </g>
+  
+  <!-- Arrows and connections -->
+  <!-- APIs to ETL -->
+  <path d="M 200 200 L 200 320" stroke="#e74c3c" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- ETL to Snowflake -->
+  <path d="M 260 400 L 500 500" stroke="#27ae60" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- ELT to Snowflake -->
+  <path d="M 325 400 L 500 500" stroke="#27ae60" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Snowflake to MLFlow -->
+  <path d="M 600 500 L 600 400" stroke="#1abc9c" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- MLFlow to Backend -->
+  <path d="M 730 360 L 820 360" stroke="#9b59b6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Snowflake to Backend -->
+  <path d="M 700 520 L 875 400" stroke="#1abc9c" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Backend to Frontend -->
+  <path d="M 930 360 L 950 360" stroke="#e67e22" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Frontend to Users -->
+  <path d="M 1005 400 L 1005 620" stroke="#d35400" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Network annotations -->
+  <text x="120" y="720" font-size="12" fill="#7f8c8d">🔗 Réseau Docker interne</text>
+  <text x="400" y="720" font-size="12" fill="#7f8c8d">🌐 Ports exposés: FastAPI (8000), Dash (8050), MLFlow (5000)</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+  
+  <!-- Legend -->
+  <g id="legend">
+    <rect x="50" y="620" width="200" height="120" rx="5" fill="white" stroke="#bdc3c7" stroke-width="1"/>
+    <text x="150" y="640" text-anchor="middle" font-size="12" font-weight="bold" fill="#2c3e50">Légende</text>
+    
+    <rect x="60" y="650" width="15" height="10" fill="#e74c3c"/>
+    <text x="85" y="660" font-size="10" fill="#2c3e50">APIs Externes</text>
+    
+    <rect x="60" y="670" width="15" height="10" fill="#27ae60"/>
+    <text x="85" y="680" font-size="10" fill="#2c3e50">Services Données</text>
+    
+    <rect x="60" y="690" width="15" height="10" fill="#9b59b6"/>
+    <text x="85" y="700" font-size="10" fill="#2c3e50">Services MLOps</text>
+    
+    <rect x="60" y="710" width="15" height="10" fill="#f39c12"/>
+    <text x="85" y="720" font-size="10" fill="#2c3e50">Services App</text>
+  </g>
+</svg>

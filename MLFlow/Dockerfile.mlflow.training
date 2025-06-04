@@ -2,10 +2,10 @@
 # Dockerfile.training - Container d'entraînement ML optimisé
 # ===========================================
 
-FROM python:3.9-slim AS builder
+FROM python:3.11.12-slim AS builder
 
 # Arguments de build
-ARG PYTHON_VERSION=3.9
+ARG PYTHON_VERSION=3.11.12
 ARG MLFLOW_VERSION=2.8.0
 ARG INSTALL_GPU_SUPPORT=false
 
@@ -15,31 +15,28 @@ LABEL description="Optimized ML training container with MLflow"
 LABEL version="1.0"
 
 # Installation des dépendances de build et librairies systèmes
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Compilateurs et outils de build
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     gfortran \
     make \
     cmake \
-    # Dépendances Python
     python3-dev \
     libpython3-dev \
-    # Librairies mathématiques
     libblas-dev \
     liblapack-dev \
     libatlas-base-dev \
-    # Librairies pour ML
     libffi-dev \
     libssl-dev \
     libhdf5-dev \
     libnetcdf-dev \
-    # Outils système
     git \
     curl \
     wget \
     unzip \
-    # Nettoyage
+    && apt-get autoremove -y \
+    && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/*
 
 # Création d'un environnement virtuel optimisé
@@ -51,25 +48,45 @@ RUN pip install --no-cache-dir --upgrade \
     pip \
     setuptools \
     wheel \
-    cython \
-    numpy
+    cython
+
+# Installation des dépendances principales
+RUN pip install --no-cache-dir \
+    numpy==1.24.3 \
+    pandas==2.0.3 \
+    scikit-learn==1.6.0 \
+    mlflow==2.22.0 \
+    spacy==3.8.4 \
+    transformers==4.51.3 \
+    sentence-transformers==4.1.0 \
+    tqdm==4.66.1 \
+    nltk==3.9.1
+
+# Installation des modèles spaCy
+RUN pip install --no-cache-dir \
+    https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0.tar.gz \
+    https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
+
+# Copie et installation du package jobmarket_ml
+COPY jobmarket_ml /app/jobmarket_ml
+WORKDIR /app/jobmarket_ml
+RUN pip install -e .
+WORKDIR /app
 
 # Installation des packages ML core (dans l'ordre optimal)
-COPY requirements.mlflow.training.txt .
-RUN pip install --no-cache-dir -r requirements.mlflow.training.txt
 
 # Installation conditionnelle du support GPU
-RUN if [ "$INSTALL_GPU_SUPPORT" = "true" ]; then \
-    pip install --no-cache-dir \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
-    tensorflow-gpu \
-    cupy-cuda11x; \
-    fi
+# RUN if [ "$INSTALL_GPU_SUPPORT" = "true" ]; then \
+#     pip install --no-cache-dir \
+#     torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
+#     tensorflow-gpu \
+#     cupy-cuda11x; \
+#     fi
 
 # ===========================================
 # Image finale (runtime optimisée)
 # ===========================================
-FROM python:3.9-slim
+FROM python:3.11.12-slim
 
 # Variables d'environnement pour optimisation
 ENV PYTHON_ENV=training \
@@ -153,7 +170,10 @@ USER root
 COPY scripts/training_entrypoint.sh scripts/
 COPY src/train_model.py src/
 COPY src/utils/ src/utils/
-COPY config/ config/
+COPY src/utils/ src/utils/
+# COPY config/ config/
+COPY test_pipeline.py .
+COPY test_load_model.py .
 
 # Configuration des permissions et format de ligne
 RUN chmod 755 scripts/training_entrypoint.sh && \
@@ -182,7 +202,7 @@ RUN echo '# ML Training Configuration' > config/training_config.yaml \
 
 # Configuration bash pour un meilleur UX
 RUN echo 'export PS1="🤖 [ML-Training] \w $ "' >> ~/.bashrc \
-    && echo 'alias train="python src/train_model_synthetic.py"' >> ~/.bashrc \
+    && echo 'alias train="python src/train_model.py"' >> ~/.bashrc \
     && echo 'alias trainreal="python src/train_model.py"' >> ~/.bashrc \
     && echo 'alias logs="tail -f /app/logs/training.log"' >> ~/.bashrc \
     && echo 'alias models="ls -la /app/models/"' >> ~/.bashrc \
