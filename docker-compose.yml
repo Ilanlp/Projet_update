@@ -30,7 +30,7 @@ services:
     env_file:
       - ./snowflake/DBT/.env
     volumes:
-      - ./snowflake/DBT:/usr/src/DBT
+      - ./snowflake/DBT:/usr/src/DBT:cached
     depends_on:
       - jm-elt-snowflake
     profiles:
@@ -95,24 +95,19 @@ services:
     ports:
       - "${MLFLOW_EXTERNAL_PORT:-5010}:5000"
     volumes:
-      - ./MLFlow/mlruns:/app/mlruns
-      - ./MLFlow/mlflow.db:/app/mlflow.db
-      - ./MLFlow/data:/app/data:ro
+      - ./MLFlow/mlruns:/app/mlruns:rw
+      - ./MLFlow/mlflow.db:/app/mlflow.db:rw
+      - ./MLFlow/data:/app/data:rw
     working_dir: /app
     environment:
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
       - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=file:///app/mlruns
     command: >
-      bash -c "
-      echo '🎯 Starting MLflow Tracking Server...' &&
-      mlflow server 
-      --backend-store-uri sqlite:///mlflow.db
-      --default-artifact-root file:///app/mlruns
-      --host 0.0.0.0 
-      --port 5000
-      "
+      bash -c " echo '🎯 Starting MLflow Tracking Server...' && /opt/venv/bin/mlflow server  --backend-store-uri sqlite:///mlflow.db --default-artifact-root file:///app/mlruns --host 0.0.0.0  --port 5000 "
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://mlflow-tracking:5000/health"]
+      test: [ "CMD", "curl", "-f", "http://mlflow-tracking:5000/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -138,15 +133,25 @@ services:
         - PYTHON_VERSION=${PYTHON_VERSION:-3.11.12}
         - MLFLOW_VERSION=${MLFLOW_VERSION:-2.22.0}
         - INSTALL_GPU_SUPPORT=${INSTALL_GPU_SUPPORT:-false}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_ID=${GROUP_ID:-1000}
     volumes:
-      - ./MLFlow/mlruns:/app/mlruns:rw
-      - ./MLFlow/data:/app/data:rw
-      - ./MLFlow/src:/app/src:rw
-      - ./MLFlow/config:/app/config:rw
-      - ./MLFlow/scripts:/app/scripts:rw
-      - ./MLFlow/logs:/app/logs:rw
-      - ./MLFlow/models:/app/models:rw
+        # Lecture seule - Code et configuration
+        # - ./MLFlow/src:/app/src:ro,cached
+        # - ./MLFlow/config:/app/config:ro,cached
+        # - ./MLFlow/scripts:/app/scripts:ro,cached
+
+        # Écriture fréquente - Logs et cache
+        # - ./MLFlow/logs:/app/logs:delegated
+        # - ./MLFlow/models:/app/models:delegated
+        # - ./MLFlow/cache:/app/cache:delegated
+
+        # Données critiques - Tracking et données
+        - ./MLFlow/mlruns:/app/mlruns:consistent
+        - ./MLFlow/data:/app/data:consistent
     environment:
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
       - MLFLOW_TRACKING_URI=http://mlflow-tracking:5000
       - MLFLOW_ARTIFACT_ROOT=/app/mlruns
       - MLFLOW_EXPERIMENT_NAME=${EXPERIMENT_NAME:-apple_demand_experiment}
@@ -175,9 +180,9 @@ services:
     restart: unless-stopped
     # networks:
     #   - jobmarket_network
-  # ===========================================
-  # MLFLOW MODEL
-  # ===========================================
+    # ===========================================
+    # MLFLOW MODEL
+    # ===========================================
   mlflow-model:
     container_name: mlflow_model
     image: jm-mlflow-model
@@ -189,12 +194,17 @@ services:
         - INSTALL_EXTRAS=true
         - BUILD_ENV=production
         - MODEL_PORT=${MODEL_PORT:-5001}
+        - PYTHON_VERSION=${PYTHON_VERSION:-3.9}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_ID=${GROUP_ID:-1000}
     ports:
       - "${MODEL_EXTERNAL_PORT:-8000}:${MODEL_PORT:-5001}"
     volumes:
-      - ./MLFlow/mlruns:/app/mlruns:ro
-      - ./MLFlow/models:/app/models:ro
+      - ./MLFlow/mlruns:/app/mlruns:rw
+      - ./MLFlow/models:/app/models:rw
     environment:
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
       - TRACKING_URI=http://mlflow-tracking:5000
       - MODEL_URI=runs:/4aa5ee5ebfa945eaa75d103cca270238/apple_demand_model
       - MODEL_PORT=5001
@@ -211,6 +221,7 @@ services:
     profiles:
       - development
       - production
+      - init-ml
     # Ressources pour serving
     deploy:
       resources:
@@ -223,53 +234,53 @@ services:
     restart: unless-stopped
     # networks:
     #   - jobmarket_network
-  # ===========================================
-  # SERVICES UTILITAIRES
-  # ===========================================
+    # ===========================================
+    # SERVICES UTILITAIRES
+    # ===========================================
 
-  # # Service de monitoring (optionnel)
-  # monitoring:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus_monitoring
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  #   profiles:
-  #     - monitoring
-  #   restart: unless-stopped
+    # # Service de monitoring (optionnel)
+    # monitoring:
+    #   image: prom/prometheus:latest
+    #   container_name: prometheus_monitoring
+    #   ports:
+    #     - "9090:9090"
+    #   volumes:
+    #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    #   profiles:
+    #     - monitoring
+    #   restart: unless-stopped
 
-  # # Service de base de données avancée (optionnel)
-  # postgres:
-  #   image: postgres:15-alpine
-  #   container_name: postgres_mlflow
-  #   environment:
-  #     - POSTGRES_DB=${POSTGRES_DB:-mlflow}
-  #     - POSTGRES_USER=${POSTGRES_USER:-mlflow}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlflow}
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  #   profiles:
-  #     - postgres
-  #   restart: unless-stopped
+    # # Service de base de données avancée (optionnel)
+    # postgres:
+    #   image: postgres:15-alpine
+    #   container_name: postgres_mlflow
+    #   environment:
+    #     - POSTGRES_DB=${POSTGRES_DB:-mlflow}
+    #     - POSTGRES_USER=${POSTGRES_USER:-mlflow}
+    #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlflow}
+    #   volumes:
+    #     - postgres_data:/var/lib/postgresql/data
+    #   ports:
+    #     - "5432:5432"
+    #   profiles:
+    #     - postgres
+    #   restart: unless-stopped
 
-  # # Service Redis pour cache (optionnel)
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: redis_cache
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   profiles:
-  #     - cache
-  #   restart: unless-stopped
+    # # Service Redis pour cache (optionnel)
+    # redis:
+    #   image: redis:7-alpine
+    #   container_name: redis_cache
+    #   ports:
+    #     - "6379:6379"
+    #   volumes:
+    #     - redis_data:/data
+    #   profiles:
+    #     - cache
+    #   restart: unless-stopped
 
-# ===========================================
-# RÉSEAUX
-# ===========================================
+    # ===========================================
+    # RÉSEAUX
+    # ===========================================
 networks:
   default:
     driver: bridge
@@ -282,26 +293,25 @@ volumes:
   # Données MLflow
   mlflow_data:
     driver: local
-
   # # Base de données
   # postgres_data:
   #   driver: local
   # redis_data:
   #   driver: local
-# ===========================================
-# CONFIGURATION DES PROFILS
-# ===========================================
+  # ===========================================
+  # CONFIGURATION DES PROFILS
+  # ===========================================
 
-# Profils disponibles :
-# - training     : Service d'entraînement ML
-# - development  : Training + Model
-# - monitoring   : Prometheus pour monitoring
-# - postgres     : Base PostgreSQL au lieu de SQLite
-# - cache        : Redis pour cache
-# - docs         : Documentation avec MkDocs
+  # Profils disponibles :
+  # - training     : Service d'entraînement ML
+  # - development  : Training + Model
+  # - monitoring   : Prometheus pour monitoring
+  # - postgres     : Base PostgreSQL au lieu de SQLite
+  # - cache        : Redis pour cache
+  # - docs         : Documentation avec MkDocs
 
-# Exemples d'utilisation :
-# docker-compose --profile development up                    # Training + Model
-# docker-compose --profile training up                       # Entraînement seulement
-# docker-compose --profile training --profile monitoring up  # Training + Monitoring
-# docker-compose --profile postgres up mlflow-tracking         # MLflow avec PostgreSQL
+  # Exemples d'utilisation :
+  # docker-compose --profile development up                    # Training + Model
+  # docker-compose --profile training up                       # Entraînement seulement
+  # docker-compose --profile training --profile monitoring up  # Training + Monitoring
+  # docker-compose --profile postgres up mlflow-tracking         # MLflow avec PostgreSQL
