@@ -19,22 +19,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
-    gfortran \
-    make \
-    cmake \
     python3-dev \
-    libpython3-dev \
-    libblas-dev \
-    liblapack-dev \
-    libatlas-base-dev \
-    libffi-dev \
-    libssl-dev \
-    libhdf5-dev \
-    libnetcdf-dev \
-    git \
-    curl \
-    wget \
-    unzip \
     && apt-get autoremove -y \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/*
@@ -47,25 +32,24 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade \
     pip \
     setuptools \
-    wheel \
-    cython
+    wheel
 
 # Installation des dépendances principales
-RUN pip install --no-cache-dir \
-    numpy==1.24.3 \
-    pandas==2.0.3 \
-    scikit-learn==1.6.0 \
-    mlflow==2.22.0 \
-    spacy==3.8.4 \
-    transformers==4.51.3 \
-    sentence-transformers==4.1.0 \
-    tqdm==4.66.1 \
-    nltk==3.9.1
+# RUN pip install --no-cache-dir \
+#     numpy==1.24.3 \
+#     pandas==2.0.3 \
+#     scikit-learn==1.6.0 \
+#     mlflow==2.22.0 \
+#     spacy==3.8.4 \
+#     transformers==4.51.3 \
+#     sentence-transformers==4.1.0 \
+#     tqdm==4.66.1 \
+#     nltk==3.9.1
 
 # Installation des modèles spaCy
-RUN pip install --no-cache-dir \
-    https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0.tar.gz \
-    https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
+# RUN pip install --no-cache-dir \
+#     https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0.tar.gz \
+#     https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
 
 # Copie et installation du package jobmarket_ml
 COPY jobmarket_ml /app/jobmarket_ml
@@ -186,30 +170,30 @@ RUN chmod 755 scripts/training_entrypoint.sh && \
 USER mltrainer
 WORKDIR /app
 
-# Configuration de l'environnement Python optimisé
-RUN python -c "import matplotlib.pyplot as plt; plt.ioff(); import seaborn as sns" \
-    && python -c "import sklearn; print('Scikit-learn version:', sklearn.__version__)" \
-    && python -c "import mlflow; print('MLflow version:', mlflow.__version__)"
+# # Configuration de l'environnement Python optimisé
+# RUN python -c "import matplotlib.pyplot as plt; plt.ioff(); import seaborn as sns" \
+#     && python -c "import sklearn; print('Scikit-learn version:', sklearn.__version__)" \
+#     && python -c "import mlflow; print('MLflow version:', mlflow.__version__)"
 
-# Création de fichiers de configuration par défaut
-RUN echo '# ML Training Configuration' > config/training_config.yaml \
-    && echo 'model:' >> config/training_config.yaml \
-    && echo '  type: RandomForestRegressor' >> config/training_config.yaml \
-    && echo '  hyperparameter_tuning: true' >> config/training_config.yaml \
-    && echo 'data:' >> config/training_config.yaml \
-    && echo '  synthetic: true' >> config/training_config.yaml \
-    && echo '  n_samples: 2000' >> config/training_config.yaml \
-    && echo 'mlflow:' >> config/training_config.yaml \
-    && echo '  auto_register: true' >> config/training_config.yaml \
-    && echo '  stage: Staging' >> config/training_config.yaml
+# # Création de fichiers de configuration par défaut
+# RUN echo '# ML Training Configuration' > config/training_config.yaml \
+#     && echo 'model:' >> config/training_config.yaml \
+#     && echo '  type: RandomForestRegressor' >> config/training_config.yaml \
+#     && echo '  hyperparameter_tuning: true' >> config/training_config.yaml \
+#     && echo 'data:' >> config/training_config.yaml \
+#     && echo '  synthetic: true' >> config/training_config.yaml \
+#     && echo '  n_samples: 2000' >> config/training_config.yaml \
+#     && echo 'mlflow:' >> config/training_config.yaml \
+#     && echo '  auto_register: true' >> config/training_config.yaml \
+#     && echo '  stage: Staging' >> config/training_config.yaml
 
-# Configuration bash pour un meilleur UX
-RUN echo 'export PS1="🤖 [ML-Training] \w $ "' >> ~/.bashrc \
-    && echo 'alias train="python src/train_model.py"' >> ~/.bashrc \
-    && echo 'alias trainreal="python src/train_model.py"' >> ~/.bashrc \
-    && echo 'alias logs="tail -f /app/logs/training.log"' >> ~/.bashrc \
-    && echo 'alias models="ls -la /app/models/"' >> ~/.bashrc \
-    && echo 'export PYTHONPATH=/app:$PYTHONPATH' >> ~/.bashrc
+# # Configuration bash pour un meilleur UX
+# RUN echo 'export PS1="🤖 [ML-Training] \w $ "' >> ~/.bashrc \
+#     && echo 'alias train="python src/train_model.py"' >> ~/.bashrc \
+#     && echo 'alias trainreal="python src/train_model.py"' >> ~/.bashrc \
+#     && echo 'alias logs="tail -f /app/logs/training.log"' >> ~/.bashrc \
+#     && echo 'alias models="ls -la /app/models/"' >> ~/.bashrc \
+#     && echo 'export PYTHONPATH=/app:$PYTHONPATH' >> ~/.bashrc
 
 # Health check optimisé pour l'entraînement
 HEALTHCHECK --interval=60s --timeout=30s --start-period=60s --retries=3 \
