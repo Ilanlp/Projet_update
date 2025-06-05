@@ -1,17 +1,26 @@
 import os
 import glob
 from snowflake_core import SnowflakeCore
+import re
+from datetime import datetime
 
 def load_latest_file_to_snowflake():
     try:
-        # 1. Trouver le fichier le plus récent
         data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
         files = glob.glob(os.path.join(data_dir, 'all_jobs_*.csv.gz'))
+
         if not files:
             print("Aucun fichier all_jobs trouvé")
             return False
-        
-        latest_file = max(files, key=os.path.getctime)
+
+        def extract_datetime_from_filename(path):
+            filename = os.path.basename(path)
+            match = re.search(r'all_jobs_(\d{8})_(\d{4})_.*\.csv\.gz', filename)
+            if match:
+                return datetime.strptime(match.group(1) + match.group(2), "%Y%m%d%H%M")
+            return datetime.min  # pour éviter les erreurs si format invalide
+
+        latest_file = max(files, key=extract_datetime_from_filename)
         print(f"Fichier trouvé : {latest_file}")
 
         # 2. Se connecter à Snowflake
