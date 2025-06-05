@@ -1,9 +1,11 @@
 FROM python:3.10.17-slim
 
-# Créer un utilisateur non-root
-RUN groupadd -r node && useradd -r -g node node
+ARG USER_UID=1000
+ARG USER_GID=1000
 
-#variables envrionnements qui facilent la vie
+RUN groupadd -g ${USER_GID} node && \
+    useradd -u ${USER_UID} -g ${USER_GID} node
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
@@ -14,9 +16,9 @@ WORKDIR /usr/src/
 COPY requirements.txt ./
 
 # Installer les dépendances et nettoyer en une seule couche
-RUN apt-get update -y
-RUN pip3 install --no-cache-dir -r requirements.txt
-RUN apt-get autoremove -y && \
+RUN apt-get update -y && \
+    pip3 install --no-cache-dir -r requirements.txt && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     chown -R node:node /usr/src/

@@ -88,6 +88,9 @@ WORKDIR /app
 # ===========================================
 FROM python:3.11.12-slim
 
+ARG USER_UID=1000
+ARG USER_GID=1000
+
 # Variables d'environnement pour optimisation
 ENV PYTHON_ENV=training \
     APP_NAME=ml-training \
@@ -133,8 +136,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get autoclean
 
 # Création de l'utilisateur non-root optimisé
-RUN groupadd -r mltrainer --gid=1001 \
-    && useradd -r -g mltrainer --uid=1001 \
+RUN groupadd -r mltrainer --gid=${USER_GID} \
+    && useradd -r -g mltrainer --uid=${USER_UID} \
     --no-log-init \
     --create-home \
     --home-dir /home/mltrainer \
