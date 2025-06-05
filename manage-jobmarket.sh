@@ -86,7 +86,7 @@ init_project() {
   fi
 
   echo -e "${YELLOW}Étape 0: Démarrage du service ETL Normalizer...${NC}"
-  docker compose --profile init-db up --build jm-etl-normalizer
+  docker compose --profile init-db up jm-etl-normalizer
 
   if [ $? -ne 0 ]; then
     echo -e "${RED}Erreur lors de l'initialisation de ETL Normalizer${NC}"
@@ -108,8 +108,14 @@ init_project() {
     echo -e "${RED}Erreur lors de l'initialisation de DBT${NC}"
     exit 1
   fi
+  
+  echo -e "${YELLOW}Étape 3: Vérification et création de mlflow.db si nécessaire${NC}"
+  if [ ! -f "MLFlow/mlflow.db" ]; then
+    touch MLFlow/mlflow.db
+    echo -e "${GREEN}Fichier mlflow.db créé avec succès${NC}"
+  fi
 
-  echo -e "${YELLOW}Étape 3: Démarrage du service MLflow Tracking${NC}"
+  echo -e "${YELLOW}Étape 4: Démarrage du service MLflow Tracking${NC}"
   docker compose --profile init-ml up -d mlflow-tracking
 
   if [ $? -ne 0 ]; then
@@ -117,8 +123,8 @@ init_project() {
     exit 1
   fi
 
-  echo -e "${YELLOW}Étape 4: Entrainement et enregistrement du modèle...${NC}"
-  docker compose --profile init-ml build mlflow-training
+  echo -e "${YELLOW}Étape 5: Entrainement et enregistrement du modèle...${NC}"
+  docker compose --profile init-ml up -d mlflow-training
   sleep 10
   train_output=$(docker compose --profile init-ml run --rm \
     mlflow-training quick_train)
@@ -146,7 +152,7 @@ init_project() {
     exit 1
   fi
 
-  echo -e "${YELLOW}Étape 5: Update du fichier de configuration MLFlow Model${NC}"
+  echo -e "${YELLOW}Étape 6: Update du fichier de configuration MLFlow Model${NC}"
 
   # Détection du système d'exploitation pour la commande sed
   if [[ "$OSTYPE" == "darwin"* ]]; then
