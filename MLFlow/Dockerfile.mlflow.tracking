@@ -23,8 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ===========================================
 FROM python:3.9-slim
 
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+ARG USER_UID=1000
+ARG USER_GID=1000
 
 # Variables d'environnement
 ENV PYTHONUNBUFFERED=1 \
@@ -40,8 +40,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client && \
     rm -rf /var/lib/apt/lists/* && \
     # Création de l'utilisateur et du groupe
-    groupadd -r mlflow --gid=${GROUP_ID} && \
-    useradd -r -g mlflow --uid=${USER_ID} -m mlflow && \
+    groupadd -r mlflow --gid=${USER_GID} && \
+    useradd -r -g mlflow --uid=${USER_UID} -m mlflow && \
     # Création des répertoires nécessaires
     mkdir -p /app/mlruns && \
     mkdir -p /app/data

@@ -1,18 +1,22 @@
-# Base image
 FROM python:3.10-slim
 
-# Set work directory
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+RUN groupadd -g ${USER_GID} appuser && \
+    useradd -u ${USER_UID} -g ${USER_GID} -m -s /bin/bash appuser
+
+
 WORKDIR /app
 
-# Copy all files
-COPY normalizer.py ./
-COPY adzuna/ ./adzuna/
-COPY france_travail/ ./france_travail/
-COPY /data ./data/        
-COPY requirements.txt ./        
-
-# 4. Installer les dépendances
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Spécifier la commande de démarrage
+COPY --chown=appuser:appuser normalizer.py ./
+COPY --chown=appuser:appuser adzuna/ ./adzuna/
+COPY --chown=appuser:appuser france_travail/ ./france_travail/
+COPY --chown=appuser:appuser /data ./data/
+
+USER appuser
+
 CMD ["python", "normalizer.py"]
