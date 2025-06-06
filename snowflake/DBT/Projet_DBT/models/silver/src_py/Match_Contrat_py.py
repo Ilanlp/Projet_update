@@ -7,7 +7,7 @@ from snowflake.snowpark.window import Window
 
 def model(dbt, session):
     today = datetime.date.today()
-    raw = session.table("RAW.RAW_OFFRE").filter(
+    raw = session.table("RAW.RAW_OFFRE_CLEAN").filter(
         col("DATE_EXTRACTION").cast("date") == today
     )
     dim_contrat = session.table("SILVER.DIM_CONTRAT")

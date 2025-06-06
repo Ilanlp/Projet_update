@@ -6,7 +6,7 @@ offre as (
         id_local,
         skills,
         description
-    from {{ source('RAW', 'RAW_OFFRE') }}
+    from {{ source('RAW', 'RAW_OFFRE_CLEAN') }}
     where date_extraction::date = current_date
 ),
 
