@@ -6,7 +6,6 @@ from app.models.schemas import (
     PaginationParams,
     PaginatedResponseBase,
     Offre,
-    SearchOffre
 )
 from app.services.query_service import (
     execute_and_map_to_model,
@@ -35,7 +34,12 @@ router_offre = APIRouter()
     Récupère une liste paginée des offres d'emploi en fonction des filtres.
     """
 )
-async def get_offre_filtered(filters: Annotated[SearchOffre, Query()],pagination: PaginationParams = Depends()):
+async def get_offre_filtered(
+    title: Optional[str] = Query(None),
+    ville: Optional[str] = Query(None), 
+    region: Optional[str] = Query(None),
+    pagination: PaginationParams = Depends()
+):
 
     try:
         template_params = {}
