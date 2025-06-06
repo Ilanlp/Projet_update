@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     API_DESCRIPTION: str = "API pour interroger Snowflake avec FastAPI"
     API_VERSION: str = "0.1.0"
     
-    # Authentification (NOUVEAU)
+    # Authentification
     AUTH_USERNAME: str = "admin"
     AUTH_PASSWORD: str = "password123"
 
