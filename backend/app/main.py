@@ -17,6 +17,7 @@ from app.api.routes_seniorite import router_seniorite
 from app.auth import verify_basic_auth
 import time
 import uvicorn
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Configuration du logging
 logging.basicConfig(
@@ -44,6 +45,15 @@ app = FastAPI(
         "url": "https://api.jobmarket/support",
     },
 )
+
+# Initialiser l'instrumentateur 
+instrumentator = Instrumentator()
+
+# Instrumenter automatiquement l'application
+instrumentator.instrument(app)
+
+# Exposer les métriques sur /metrics
+instrumentator.expose(app)
 
 # Configuration CORS
 app.add_middleware(
