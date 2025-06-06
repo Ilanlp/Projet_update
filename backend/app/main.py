@@ -14,6 +14,7 @@ from app.api.routes_lieu import router_lieu
 from app.api.routes_metier import router_metier
 from app.api.routes_romecode import router_romecode
 from app.api.routes_seniorite import router_seniorite
+from app.auth import verify_basic_auth
 import time
 import uvicorn
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -62,6 +63,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middleware pour l'authentification HTTP Basic
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    """Middleware d'authentification pour les méthodes PUT, POST, DELETE, PATCH"""
+    
+    if request.method in ["PUT", "POST", "DELETE", "PATCH"]:
+        auth_header = request.headers.get("authorization")
+        
+        if not verify_basic_auth(auth_header):
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "success": False,
+                    "message": "Authentification requise pour cette opération",
+                    "data": None,
+                },
+                headers={"WWW-Authenticate": "Basic realm=\"API\""},
+            )
+    
+    response = await call_next(request)
+    return response
 
 
 # Middleware pour le logging des requêtes

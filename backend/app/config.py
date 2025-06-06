@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     API_TITLE: str = "Snowflake FastAPI"
     API_DESCRIPTION: str = "API pour interroger Snowflake avec FastAPI"
     API_VERSION: str = "0.1.0"
+    
+    # Authentification
+    AUTH_USERNAME: str = "admin"
+    AUTH_PASSWORD: str = "password123"
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True
@@ -23,6 +27,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-
