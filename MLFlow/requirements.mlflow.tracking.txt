@@ -1,4 +1,4 @@
-# requirements.txt (pour MLflow server)
+# Version MLflow avec dépendances pré-compilées
 mlflow[extras]==2.22.0
 psycopg2-binary==2.9.7
 boto3==1.28.0
@@ -6,3 +6,12 @@ botocore==1.31.0
 protobuf==4.24.0
 sqlalchemy==2.0.21
 alembic==1.12.0
+
+# Forcer l'installation de numpy avant pandas pour éviter les conflits
+numpy==1.24.4
+
+# Utiliser une version de pandas avec wheels pré-compilés
+pandas==2.1.4
+
+# Spécifier matplotlib avec une version stable
+matplotlib==3.7.2
