@@ -71,7 +71,12 @@ On a séparé MLFlow en 3 conteneurs différents pour mieux s'organiser :
 - **Quand ça tourne :** Quand on veut créer un nouveau modèle ou l'améliorer
 - **Ressources :** Il utilise beaucoup de calcul, donc on lui donne plus de puissance
 
+![ML : Experience MLFlow](./img/mlflow_experience.png)
+![ML : MLFlow Registry](./img/mlflow_model.png)
+
 ### 3.3 Les conteneurs pour l'application
+
+![Schema d'implémentation back/front](./img/schema_backend_frontend_simple.svg)
 
 **Conteneur Backend (FastAPI)**
 
@@ -85,6 +90,9 @@ On a séparé MLFlow en 3 conteneurs différents pour mieux s'organiser :
   - Seules les personnes connectées peuvent modifier des données
   - Tout le monde peut consulter les offres d'emploi
 
+![Endpoint API des Offres](./img/backend_offre.png)
+![Authentification](./img/backend_offre.png)
+
 **Conteneur Frontend (Dash)**
 
 - **Ce qu'il fait :** C'est le site web que voient les utilisateurs
@@ -96,7 +104,10 @@ On a séparé MLFlow en 3 conteneurs différents pour mieux s'organiser :
   - Page de recherche libre avec filtres
 - **Communication :** Il parle avec le backend pour récupérer les données
 
-![Schema d'implémentation back/front](./img/schema_backend_frontend_simple.svg)
+![Requéter les ofrres](./img/frontend_offre.png)
+![Dashboard OLAP](./img/frontend_offre_olap.png)
+![OLAP mapping](./img/frontend_top_ville.png)
+![Filtrage por code ROME](./img/fronted_rom_softskill.png)
 
 ## 4. Comment tout ça marche ensemble
 
