@@ -31,11 +31,15 @@ models:
   projet_dbt:
     +python: true
 
-    raw:
+    bronze:
       +materialized: table
       +schema: RAW
       raw_offre:
         +materialized: table
+        +schema: RAW
+      raw_offre_clean:
+        +materialized: table
+        +schema: RAW
 
     # Modèles Silver
     silver:

@@ -8,23 +8,21 @@
 
 with raw as (
     select *
-    from {{ ref('RAW_OFFRE') }}
+    from {{ ref('raw_offre_clean') }}
     where date_extraction::date = current_date
 ),
 source as (
 
-  select 
+  select
     raw.id_local,
-    raw.title,
-    raw.description,
-    lieu.id_lieu,
     contrat.id_contrat,
+    domaine.id_domaine,
+    lieu.id_lieu,
     date_created.id_date_created    as id_date_creation,
     date_updated.id_date_updated    as id_date_modification,
     entreprise.id_entreprise,
-    seniorite.id_seniorite,
     teletravail.id_teletravail,
-    domaine.id_domaine,
+    seniorite.id_seniorite,
     rome.id_rome
   from raw         as raw
   left join {{ ref('Match_Lieu_py') }}       as lieu
@@ -48,4 +46,15 @@ source as (
 
 )
 
-select * from source
+select
+    id_local,
+    id_contrat,
+    id_domaine,
+    id_lieu,
+    id_date_creation,
+    id_date_modification,
+    id_entreprise,
+    id_teletravail,
+    id_seniorite,
+    id_rome
+from source

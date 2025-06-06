@@ -4,7 +4,7 @@ with
 
 offre_du_jour as (
     select *
-    from {{ source('RAW', 'RAW_OFFRE') }}
+    from {{ source('RAW', 'RAW_OFFRE_CLEAN') }}
     where date_extraction::date = current_date
 ),
 

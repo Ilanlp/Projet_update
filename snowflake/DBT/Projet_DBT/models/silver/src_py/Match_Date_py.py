@@ -7,7 +7,7 @@ import datetime
 def model(dbt, session: Session):
     # 1) Chargement des tables et alias
     today = datetime.date.today()
-    raw = session.table("RAW.RAW_OFFRE").filter(
+    raw = session.table("RAW.RAW_OFFRE_CLEAN").filter(
         col("DATE_EXTRACTION").cast("date") == today
     ).alias("r")
     dim_date = session.table("SILVER.DIM_DATE")

@@ -59,6 +59,13 @@ sources:
       - name: FAIT_OFFRE
         identifier: FAIT_OFFRE
         description: "Table des faits à implémenter"
+      - name: LIAISON_ROME_METIER_GOLD_SQL
+        identifier: LIAISON_ROME_METIER_GOLD_SQL
+        description: "Table des liaisons entre romecodes et metiers"
+      - name: LIAISON_OFFRE_COMPETENCE
+        identifier: LIAISON_OFFRE_COMPETENCE
+        description: "Table des liaisons entre offres et competences"
+      - name: LIAISON_ROME_SOFT_SKILL_GOLD_SQL
 
   - name: RAW
     database: JOB_MARKET
@@ -67,6 +74,10 @@ sources:
       - name: RAW_OFFRE
         identifier: RAW_OFFRE
         description: "Table d'analyses brutes des offres"
+      - name: RAW_OFFRE_CLEAN
+        identifier: RAW_OFFRE_CLEAN
+        description: "Table d'analyses brutes des offres"
+      
         
       - name: RAW_METIER
         identifier: RAW_METIER
