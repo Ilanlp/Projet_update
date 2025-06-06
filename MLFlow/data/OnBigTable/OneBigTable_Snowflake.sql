@@ -72,7 +72,7 @@ FROM FAIT_OFFRE fo
     LEFT JOIN DIM_ENTREPRISE de ON fo.id_entreprise = de.siren
     LEFT JOIN LIAISON_ROME_METIER_GOLD_SQL lrm ON fo.id_rome = lrm.id_rome
     LEFT JOIN DIM_METIER dm ON lrm.id_metier = dm.id_metier
-    LEFT JOIN LIAISON_OFFRE_COMPETENCE loc ON fo.id_local = loc.id_local
+    LEFT JOIN LIAISON_OFFRE_COMPETENCE loc ON fo.id_offre = loc.id_offre
     LEFT JOIN DIM_COMPETENCE comp ON loc.id_competence = comp.id_competence
     LEFT JOIN LIAISON_ROME_SOFT_SKILL_GOLD_SQL lrs ON fo.id_rome = lrs.id_rome
     LEFT JOIN DIM_SOFTSKILL ss ON lrs.id_softskill = ss.id_softskill

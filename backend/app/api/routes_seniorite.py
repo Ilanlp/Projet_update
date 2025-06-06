@@ -5,7 +5,6 @@ from app.models.schemas import (
     QueryParams,
     PaginationParams,
     PaginatedResponseBase,
-    Offre,
     SENIORITE
 )
 from app.services.query_service import (

@@ -4,6 +4,7 @@ from dash.exceptions import PreventUpdate
 import requests
 import pandas as pd
 import dash_table
+import os
 from .graph_offer import (
     create_offers_by_contract,
     create_offers_by_seniority,
@@ -13,11 +14,13 @@ from .graph_offer import (
     create_offers_by_enterprise,
 )
 
+API_URL = os.getenv('API_URL', 'http://jm-backend:8081')
+
 dash.register_page(__name__, path="/search")
 
 def fetch_contrat_data():
     try:
-        response = requests.get('http://jm-backend:8000/api/contrats')
+        response = requests.get(f'{API_URL}/api/contrats')
         data = response.json()['data']
         return [{'label': item['type_contrat'], 'value': item['type_contrat']} for item in data]
     except:
@@ -25,7 +28,7 @@ def fetch_contrat_data():
 
 def fetch_seniorite_data():
     try:
-        response = requests.get('http://jm-backend:8000/api/seniorite')
+        response = requests.get(f'{API_URL}/api/seniorite')
         data = response.json()['data']
         return [{'label': item['type_seniorite'], 'value': item['type_seniorite']} for item in data]
     except:
@@ -33,7 +36,7 @@ def fetch_seniorite_data():
 
 def fetch_domaine_data():
     try:
-        response = requests.get('http://jm-backend:8000/api2/domaines')
+        response = requests.get(f'{API_URL}/api2/domaines')
         data = response.json()['data']
         return [{'label': item['nom_domaine'], 'value': item['nom_domaine']} for item in data]
     except:
@@ -211,7 +214,7 @@ def update_table_and_graphs(search_params):
         if search_params.get('domaine'):
             params['NOM_DOMAINE'] = search_params['domaine']
 
-        response = requests.get('http://jm-backend:8000/api/offres/filters', params=params)
+        response = requests.get(f'{API_URL}/api/offres/filters', params=params)
         
         if response.status_code != 200:
             return html.P(f"Erreur API: {response.status_code}")

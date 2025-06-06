@@ -1,0 +1,40 @@
+FROM python:3.10.17-slim
+
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+RUN groupadd -g ${USER_GID} node && \
+    useradd -u ${USER_UID} -g ${USER_GID} node
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /usr/src/
+
+COPY requirements.txt ./
+
+# Installer les dépendances et nettoyer en une seule couche
+RUN apt-get update -y && \
+    pip3 install --no-cache-dir -r requirements.txt && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    chown -R node:node /usr/src/
+
+# Copier le code de l'application (exclure les fichiers sensibles et temporaires)
+COPY --chown=node:node snowflake/ snowflake/
+
+RUN mkdir /usr/src/logs
+RUN chown node /usr/src/logs
+
+USER node
+WORKDIR /usr/src/snowflake
+
+CMD python3 snowflake_init.py && \
+    python3 snowflake_core.py && \
+    python3 offre.py
+
+
+

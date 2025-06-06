@@ -1,4 +1,7 @@
-# Multi-stage build avec python:slim (plus compatible)
+# ===========================================
+# Dockerfile.mlflow.model - Container MLflow Model
+# ===========================================
+
 FROM python:3.9-slim AS builder
 
 # Installation des dépendances de build
@@ -7,8 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     python3-dev \
     libffi-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Création d'un environnement virtuel
 RUN python -m venv /opt/venv
@@ -16,13 +19,16 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copie et installation des requirements
 COPY requirements.mlflow.model.txt .
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.mlflow.model.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.mlflow.model.txt
 
 # ================================
 # Image finale (runtime)
 # ================================
 FROM python:3.9-slim
+
+ARG USER_UID=1000
+ARG USER_GID=1000
 
 # Variables d'environnement statiques
 ENV PYTHON_ENV=production \
@@ -33,28 +39,29 @@ ENV PYTHON_ENV=production \
 
 # Variables d'environnement avec valeurs par défaut
 ENV TRACKING_URI=http://mlflow-tracking:5000 \
-    MODEL_NAME=apple_demand_predictor \
+    MODEL_NAME=jobmarket \
     MODEL_VERSION=3 \
     MODEL_PORT=5001
 
 # Installation des dépendances runtime uniquement
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd -r appgroup --gid=1001 \
-    && useradd -r -g appgroup --uid=1001 --no-log-init --create-home appuser
+    curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd -r mlflow --gid=${USER_GID} && \
+    useradd -r -g mlflow --uid=${USER_UID} -m mlflow
 
 # Copie de l'environnement virtuel depuis le builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+
 # Création du répertoire de travail et changement d'utilisateur
 WORKDIR /app
-RUN chown -R appuser:appgroup /app
-USER appuser
+RUN chown -R mlflow:mlflow /app
+USER mlflow
 
 # Copie des fichiers applicatifs
-COPY --chown=appuser:appgroup src/serve_registry_model.py .
+COPY --chown=mlflow:mlflow src/serve_model.py .
 
 # Exposition du port
 EXPOSE $MODEL_PORT
@@ -65,4 +72,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Commande pour démarrer le serveur avec le script custom
 # Utilise les variables d'environnement passées par docker-compose
-CMD ["sh", "-c", "python serve_registry_model.py --tracking_uri \"$TRACKING_URI\" --port \"$MODEL_PORT\""]
+CMD ["sh", "-c", "python serve_model.py --tracking_uri \"$TRACKING_URI\" --port \"$MODEL_PORT\""]
