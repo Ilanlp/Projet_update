@@ -3,17 +3,20 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.api.routes import router
-from app.api.routes2 import router2
+from app.api.routes_offre import router_offre
+from app.api.routes_domaine import router_domaine
+from app.api.routes_teletravail import router_teletravail
+from app.api.routes_softskills import router_softskills
+from app.api.routes_olap import router_olap
 from app.api.routes_competence import router_competence
 from app.api.routes_contrat import router_contrat
 from app.api.routes_lieu import router_lieu
 from app.api.routes_metier import router_metier
 from app.api.routes_romecode import router_romecode
 from app.api.routes_seniorite import router_seniorite
+from app.auth import verify_basic_auth
 import time
 import uvicorn
-from app.auth import verify_basic_auth  # LIGNE AJOUTÉE
 
 # Configuration du logging
 logging.basicConfig(
@@ -51,21 +54,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# NOUVEAU : Middleware d'authentification
+# Middleware pour l'authentification HTTP Basic
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
     """Middleware d'authentification pour les méthodes PUT, POST, DELETE, PATCH"""
     
-    # Vérifier si la méthode nécessite une authentification
     if request.method in ["PUT", "POST", "DELETE", "PATCH"]:
-        logger.info(f"Authentification requise pour {request.method} {request.url.path}")
-        
-        # Récupérer l'header d'autorisation
         auth_header = request.headers.get("authorization")
         
-        # Vérifier les credentials
         if not verify_basic_auth(auth_header):
-            logger.warning(f"Authentification échouée pour {request.method} {request.url.path}")
             return JSONResponse(
                 status_code=401,
                 content={
@@ -75,11 +72,10 @@ async def auth_middleware(request: Request, call_next):
                 },
                 headers={"WWW-Authenticate": "Basic realm=\"API\""},
             )
-        
-        logger.info(f"Authentification réussie pour {request.method} {request.url.path}")
     
     response = await call_next(request)
     return response
+
 
 # Middleware pour le logging des requêtes
 @app.middleware("http")
@@ -95,6 +91,7 @@ async def log_requests(request: Request, call_next):
 
     return response
 
+
 # Gestionnaire d'exceptions global
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -108,30 +105,38 @@ async def global_exception_handler(request: Request, exc: Exception):
         },
     )
 
+
 # Inclusion des routes
-app.include_router(router, prefix="/api")
-app.include_router(router2, prefix="/api2")
+app.include_router(router_offre, prefix="/api")
+app.include_router(router_romecode,prefix="/api")
+app.include_router(router_domaine, prefix="/api")
+app.include_router(router_teletravail, prefix="/api")
+app.include_router(router_softskills, prefix="/api")
 app.include_router(router_competence, prefix="/api")
-app.include_router(router_contrat, prefix="/api")
-app.include_router(router_lieu, prefix="/api")
-app.include_router(router_metier, prefix="/api")
-app.include_router(router_romecode, prefix="/api")
-app.include_router(router_seniorite, prefix="/api")
+app.include_router(router_contrat,prefix="/api")
+app.include_router(router_lieu,prefix="/api")
+app.include_router(router_metier,prefix="/api")
+app.include_router(router_seniorite,prefix="/api")
+app.include_router(router_olap, prefix="/api")
+
 
 # Route de santé
 @app.get("/", tags=["Système"])
 async def root():
     return {"status": "ok", "version": settings.API_VERSION}
 
+
 # Route de santé
 @app.get("/health_check", tags=["Système"])
 async def health_check():
     return {"status": "ok", "version": settings.API_VERSION}
 
+
 # Route de santé
 @app.get("/health/modele/v1", tags=["Système"])
 async def health_v1():
     return {"status": "ok", "version": settings.API_VERSION}
+
 
 # Route de santé
 @app.get("/health/modele/v2", tags=["Système"])
@@ -140,4 +145,4 @@ async def health_v2():
 
 # Pour lancer l'application directement avec python
 if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8081, reload=True)
