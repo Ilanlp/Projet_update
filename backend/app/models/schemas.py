@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any, Generic, TypeVar
 from datetime import datetime
 from enum import Enum
-
+from decimal import Decimal
+import ast
 
 class ErrorCode(str, Enum):
     """Codes d'erreur de l'application"""
@@ -351,6 +352,174 @@ class Offre(BaseModel):
             ]
         },
     }
+
+class SearchOffre(BaseModel):
+    """Modèle pour les offres d'emploi"""
+    search: Optional[List[str]] = Field(
+        alias="SEARCH", default=None, description="Permet de rechercher des offres sur toutes le colonnes"
+    )
+
+    id: Optional[List[int]] = Field(
+        alias="ID", default=None, description="Identifiant unique de l'offre"
+    )
+    id_local: Optional[List[str]] = Field(alias="ID_LOCAL",default=None, description="Identifiant local de l'offre")
+    title: Optional[List[str]] = Field(alias="TITLE",default=None, description="Titre du poste")
+    description: Optional[List[str]] = Field(
+        alias="DESCRIPTION",default=None, description="Description détaillée du poste"
+    )
+    type_contrat: Optional[List[str]] = Field(
+        alias="TYPE_CONTRAT",
+        default=None,
+        description="Type de contrat (CDI, CDD, etc.)",
+    )
+    code_domaine: Optional[List[str]] = Field(
+        alias="CODE_DOMAINE", default=None, description="Code du domaine d'activité"
+    )
+    nom_domaine: Optional[List[str]] = Field(
+        alias="NOM_DOMAINE", default=None, description="Nom du domaine d'activité"
+    )
+    code_postal: Optional[List[int]] = Field(
+        alias="CODE_POSTAL", default=None, description="Code postal du lieu de travail"
+    )
+    location: Optional[str] = Field(
+        alias="LOCATION", default=None, description="Code postal du lieu de travail"
+    )
+    ville: Optional[List[str]] = Field(alias="VILLE",default=[], description="Ville du poste")
+    departement: Optional[List[str]] = Field(alias="DEPARTEMENT",default=[], description="Département du poste")
+    region: Optional[List[str]] = Field(alias="REGION", default=[],description="Région du poste")
+    pays: Optional[List[str]] = Field(alias="PAYS",default=[], description="Pays du poste")
+    latitude: Optional[List[float]] = Field(
+        alias="LATITUDE",
+        default=None,
+        description="Latitude géographique du lieu de travail",
+    )
+    longitude: Optional[List[float]] = Field(
+        alias="LONGITUDE",
+        default=None,
+        description="Longitude géographique du lieu de travail",
+    )
+    population: Optional[List[int]] = Field(
+        alias="POPULATION", default=None, description="Population de la ville"
+    )
+    mois_creation: Optional[List[int]] = Field(
+        alias="MOIS_CREATION",
+        default=None,
+        description="Mois de création de l'offre (1-12)",
+    )
+    jour_creation: Optional[List[int]] = Field(
+        alias="JOUR_CREATION",
+        default=None,
+        description="Jour de création de l'offre (1-31)",
+    )
+    mois_nom_creation: Optional[List[str]] = Field(
+        alias="MOIS_NOM_CREATION", default=None, description="Nom du mois de création"
+    )
+    jour_semaine_creation: Optional[List[str]] = Field(
+        alias="JOUR_SEMAINE_CREATION",
+        default=None,
+        description="Jour de la semaine de création",
+    )
+    week_end_creation: Optional[bool] = Field(
+        alias="WEEK_END_CREATION",
+        default=None,
+        description="Indique si l'offre a été créée pendant un weekend",
+    )
+    mois_modification: Optional[List[int]] = Field(
+        alias="MOIS_MODIFICATION",
+        default=None,
+        description="Mois de dernière modification (1-12)",
+    )
+    jour_modification: Optional[List[int]] = Field(
+        alias="JOUR_MODIFICATION",
+        default=None,
+        description="Jour de dernière modification (1-31)",
+    )
+    mois_nom_modification: Optional[List[str]] = Field(
+        alias="MOIS_NOM_MODIFICATION",
+        default=None,
+        description="Nom du mois de modification",
+    )
+    jour_semaine_modification: Optional[List[str]] = Field(
+        alias="JOUR_SEMAINE_MODIFICATION",
+        default=None,
+        description="Jour de la semaine de modification",
+    )
+    week_end_modification: Optional[bool] = Field(
+        alias="WEEK_END_MODIFICATION",
+        default=None,
+        description="Indique si l'offre a été modifiée pendant un weekend",
+    )
+    type_teletravail: Optional[List[str]] = Field(
+        alias="TYPE_TELETRAVAIL",
+        default=None,
+        description="Type de télétravail proposé",
+    )
+    type_seniorite: Optional[List[str]] = Field(
+        alias="TYPE_SENIORITE", default=None, description="Niveau de séniorité requis"
+    )
+    code_rome: Optional[List[str]] = Field(alias="CODE_ROME",default=None, description="Code ROME du métier")
+    nom_entreprise: Optional[List[str]] = Field(
+        alias="NOM_ENTREPRISE", default=None, description="Nom de l'entreprise"
+    )
+    categorie_entreprise: Optional[List[str]] = Field(
+        alias="CATEGORIE_ENTREPRISE",
+        default=None,
+        description="Catégorie de l'entreprise (PME, Grande entreprise, etc.)",
+    )
+    date_creation_entreprise: Optional[List[str]] = Field(
+        alias="DATE_CREATION_ENTREPRISE",
+        default=None,
+        description="Date de création de l'entreprise",
+    )
+    competences: Optional[List[str]] = Field(
+        alias="COMPETENCES",
+        default=None,
+        description="Liste des compétences techniques requises",
+    )
+    types_competences: Optional[List[str]] = Field(
+        alias="TYPES_COMPETENCES",
+        default=None,
+        description="Types de compétences requises",
+    )
+    softskills_summary: Optional[List[str]] = Field(
+        alias="SOFTSKILLS_SUMMARY",
+        default=None,
+        description="Résumé des compétences comportementales",
+    )
+    softskills_details: Optional[List[str]] = Field(
+        alias="SOFTSKILLS_DETAILS",
+        default=None,
+        description="Détails des compétences comportementales",
+    )
+    nom_metier: Optional[List[str]] = Field(alias="NOM_METIER",default=None,description="Nom du métier")
+
+    model_config = {
+        "populate_by_name": True,
+        "from_attributes": True,
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "ID": 1,
+                    "ID_LOCAL": "12345",
+                    "TITLE": "Data Engineer",
+                    "DESCRIPTION": "Description du poste",
+                    "VILLE": "Paris",
+                    "DEPARTEMENT": "Paris",
+                    "REGION": "Île-de-France",
+                    "PAYS": "France",
+                    "CODE_ROME": "M1805",
+                    "NOM_METIER": "Data Engineer",
+                    "MOIS_CREATION": 4,
+                    "JOUR_CREATION": 28,
+                    "WEEK_END_CREATION": False,
+                    "MOIS_MODIFICATION": 4,
+                    "JOUR_MODIFICATION": 28,
+                    "WEEK_END_MODIFICATION": False,
+                }
+            ]
+        },
+    }
+
 
 class TOP_VILLE(BaseModel):
     ville: str

@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Annotated
 from app.models.schemas import (
     ResponseBase,
     QueryParams,
     PaginationParams,
     PaginatedResponseBase,
     Offre,
+    SearchOffre
 )
 from app.services.query_service import (
     execute_and_map_to_model,
@@ -23,6 +24,55 @@ from app.utils.exceptions import (
 from app.models.search_schemas import OffreSearchParams
 
 router_offre = APIRouter()
+
+
+@router_offre.get(
+    "/offres/filters",
+    response_model=PaginatedResponseBase[Offre],
+    tags=["Offres d'emploi"],
+    summary="Récupérer la liste des offres d'emploi en fonction des filtres",
+    description="""
+    Récupère une liste paginée des offres d'emploi en fonction des filtres.
+    """
+)
+async def get_offre_filtered(filters: Annotated[SearchOffre, Query()],pagination: PaginationParams = Depends()):
+
+    try:
+        template_params = {}
+        offset = (pagination.page - 1) * pagination.page_size
+        query_params = {
+            "page_size": pagination.page_size,
+            "offset": offset,
+            "SEARCH": filters.search,
+            "LOCATION": filters.location,
+            "TYPE_CONTRAT": filters.type_contrat,
+            "TYPE_SENIORITE": filters.type_seniorite,
+            "NOM_DOMAINE": filters.nom_domaine
+        }
+
+        items, total = await paginate_query(
+            "offres/get_by_filter.sql",
+            Offre,
+            pagination,
+            query_params=query_params,
+            template_params={
+                "SEARCH": True,
+                "TITLE": True, 
+                "TYPE_CONTRAT":True,
+                "TYPE_SENIORITE": True,
+                "NOM_DOMAINE": True
+            },
+        )
+
+        paginated_response = create_paginated_response(items, total, pagination)
+        return PaginatedResponseBase(
+            data=paginated_response, message="Liste des offres récupérée avec succès"
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @router_offre.get(
