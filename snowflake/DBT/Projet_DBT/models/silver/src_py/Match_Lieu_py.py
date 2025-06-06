@@ -15,7 +15,7 @@ import datetime
 
 def model(dbt, session):
     today = datetime.date.today()
-    raw = session.table("RAW.RAW_OFFRE").filter(
+    raw = session.table("RAW.RAW_OFFRE_CLEAN").filter(
         col("DATE_EXTRACTION").cast("date") == today
     )
     dim_lieu = session.table("SILVER.DIM_LIEU")

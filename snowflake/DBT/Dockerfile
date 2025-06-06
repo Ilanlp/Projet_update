@@ -40,7 +40,8 @@ CMD python3 config.py && \
     dbt run --select silver --profiles-dir /usr/.dbt && \
     dbt run --select liaison_Rome_Metier_gold_sql liaison_Rome_Soft_Skill_gold_sql --profiles-dir /usr/.dbt && \
     dbt run --select fait_offre --profiles-dir /usr/.dbt && \
-    dbt run --select liaison_Offre_Competence --profiles-dir /usr/.dbt 
+    dbt run --select liaison_Offre_Competence --profiles-dir /usr/.dbt && \
+    dbt run --select One_Big_Table --profiles-dir /usr/.dbt
 
 
 
