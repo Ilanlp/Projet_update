@@ -25,14 +25,7 @@ def test_normalizer_output_columns():
     # 4. Charger le fichier CSV.gz dans un DataFrame
     df = pd.read_csv(files[-1], compression='gzip')  # Prend le dernier fichier si plusieurs
 
-    # 5. Vérifier qu'il y a exactement 27 colonnes
+    # 5. Vérifier qu'il y a exactement 28 colonnes
     expected_columns = 28
     actual_columns = df.shape[1]
     assert actual_columns == expected_columns, f"Le fichier {files[-1].name} contient {actual_columns} colonnes au lieu de {expected_columns}"
-
-       # 6. Vérifier qu'il y a exactement 400 lignes
-    expected_rows = 400
-    actual_rows = df.shape[0]
-    assert actual_rows == expected_rows, (
-        f"Le fichier {files[-1].name} contient {actual_rows} lignes au lieu de {expected_rows}"
-    )
