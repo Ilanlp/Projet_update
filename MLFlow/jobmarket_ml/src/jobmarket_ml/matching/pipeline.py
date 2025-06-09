@@ -25,38 +25,60 @@ class MatchingEngine(BaseEstimator, TransformerMixin):
         self.candidate_vectors_ = y
         return self
 
+    def compute_similarity_matrix(self):
+        """
+        Calcule la matrice de similarité entre les candidats et les offres.
+        """
+        if not hasattr(self, "offer_vectors_") or not hasattr(
+            self, "candidate_vectors_"
+        ):
+            raise ValueError("Le modèle n'a pas été entraîné. Appelez fit() d'abord.")
+
+        return cosine_similarity(self.candidate_vectors_, self.offer_vectors_)
+
     def transform(self, X):
         """
-        Calcule et retourne les meilleurs matches pour chaque candidat
+        Calcule et retourne la matrice de similarité
         """
-        similarity_matrix = cosine_similarity(
-            self.candidate_vectors_, self.offer_vectors_
-        )
-        matches = []
-
-        for i in range(len(self.candidate_vectors_)):
-            # Obtenir les indices des k meilleures offres pour le candidat i
-            top_k_indices = np.argsort(similarity_matrix[i])[-self.k_matches :][::-1]
-            # Obtenir les scores correspondants
-            top_k_scores = similarity_matrix[i][top_k_indices]
-
-            matches.append(
-                {
-                    "candidate_idx": i,
-                    "offer_indices": top_k_indices.tolist(),
-                    "similarity_scores": top_k_scores.tolist(),
-                }
-            )
-
-        return matches
+        similarity_matrix = self.compute_similarity_matrix()
+        return similarity_matrix
 
     def predict(self, X):
         """
         Prédit les meilleurs matches pour chaque candidat.
         Retourne uniquement les indices des offres.
         """
-        matches = self.transform(X)
-        return [match["offer_indices"] for match in matches]
+        matches = self.get_top_matches(self.transform(X))
+        return [match[0] for match in matches]
+
+    def get_params(self, deep=True):
+        """Obtient les paramètres pour cet estimateur.
+
+        Args:
+            deep: Si True, retourne aussi les paramètres des sous-estimateurs
+
+        Returns:
+            dict: Dictionnaire des paramètres
+        """
+        return {
+            "text_weight": self.text_weight,
+            "skills_weight": self.skills_weight,
+            "experience_weight": self.experience_weight,
+            "k_matches": self.k_matches,
+        }
+
+    def set_params(self, **parameters):
+        """Configure les paramètres de cet estimateur.
+
+        Args:
+            **parameters: Paramètres à configurer
+
+        Returns:
+            self: L'estimateur lui-même
+        """
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self
 
     def predict_table(self, X, df_offers=None):
         """
@@ -118,6 +140,25 @@ class MatchingEngine(BaseEstimator, TransformerMixin):
         df_results = df_results.sort_values(["candidate_idx", "rank"])
 
         return df_results
+
+    def get_top_matches(self, similarity_matrix):
+        """
+        Retourne les k meilleurs matchs pour chaque offre.
+
+        Args:
+            similarity_matrix: Matrice de similarité entre offres et candidats
+
+        Returns:
+            matches: Liste de tuples (indices_offres, scores_similarité)
+        """
+        matches = []
+        for i in range(similarity_matrix.shape[0]):
+            # Obtenir les indices des k meilleurs candidats pour l'offre i
+            top_k_indices = np.argsort(similarity_matrix[i])[-self.k_matches :][::-1]
+            # Obtenir les scores correspondants
+            top_k_scores = similarity_matrix[i][top_k_indices]
+            matches.append((top_k_indices.tolist(), top_k_scores.tolist()))
+        return matches
 
 
 def create_matching_pipeline(extra_stopwords=None):

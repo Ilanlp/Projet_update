@@ -1,7 +1,6 @@
 import argparse
 import mlflow
 import pandas as pd
-from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 import os
 
@@ -27,10 +26,11 @@ except ImportError:
     )
 
 # Import des composants de matching
-from matching import (
-    create_matching_pipeline,
-    MatchingEngine,
+from jobmarket_ml.matching import (
+    create_unified_pipeline,
+    define_unified_param_grid,
     MatchingEvaluator,
+    MatchingGridSearchCV,
 )
 from custom_transformers.text_preprocessor import TextPreprocessor
 from custom_transformers.bert_encoder import BertEncoder
@@ -87,73 +87,22 @@ def load_data(nrows_offers=None, nrows_candidates=None):
     return df_o, df_c
 
 
-def define_param_grid():
-    """
-    Définit la grille complète des paramètres pour l'optimisation par GridSearchCV.
-
-    Cette grille explore différentes combinaisons de poids pour le texte, les compétences
-    et l'expérience, ainsi que différents nombres de correspondances à retourner.
-
-    Returns:
-        dict: Grille de paramètres pour GridSearchCV
-    """
-    return {
-        "text_weight": [0.4, 0.5, 0.6, 0.7, 0.8],  # Plus de poids sur le texte
-        "skills_weight": [
-            0.1,
-            0.2,
-            0.3,
-            0.4,
-        ],  # Poids intermédiaire pour les compétences
-        "experience_weight": [0.1, 0.15, 0.2],  # Poids plus faible pour l'expérience
-        "k_matches": [3, 5, 7, 10],  # Nombre de correspondances à retourner
-    }
-
-
-def define_param_grid_test():
-    """Version simplifiée de la grille de paramètres pour les tests."""
-    return {
-        "text_weight": [0.6],
-        "skills_weight": [0.2],
-        "experience_weight": [0.2],
-        "k_matches": [2],  # Réduit car nous avons peu de données
-    }
-
-
 def train_with_grid_search(
     offers_text, candidates_text, cv_folds=5, y=None, is_test=False
 ):
     """Entraîne le modèle avec GridSearchCV."""
-    # Création des pipelines et de l'évaluateur
-    offer_pipeline = Pipeline(
-        [
-            ("preprocessor", TextPreprocessor(extra_stopwords=CUSTOM_STOPWORDS)),
-            ("encoder", BertEncoder()),
-        ]
-    )
-
-    candidate_pipeline = Pipeline(
-        [
-            ("preprocessor", TextPreprocessor(extra_stopwords=CUSTOM_STOPWORDS)),
-            ("encoder", BertEncoder()),
-        ]
-    )
-
-    matching_engine = MatchingEngine()
+    # Création du pipeline et de l'évaluateur
+    pipeline = create_unified_pipeline(extra_stopwords=CUSTOM_STOPWORDS)
     evaluator = MatchingEvaluator(n_splits=cv_folds)
 
     # Conversion des données en DataFrame
     X = pd.DataFrame(offers_text, columns=["TEXT"])
     y = pd.DataFrame(candidates_text, columns=["TEXT"])
 
-    # Prétraitement des données
-    X_encoded = offer_pipeline.fit_transform(X)
-    y_encoded = candidate_pipeline.fit_transform(y)
-
     # Configuration de la recherche sur grille
-    param_grid = define_param_grid_test() if is_test else define_param_grid()
-    grid_search = GridSearchCV(
-        matching_engine,
+    param_grid = define_unified_param_grid(is_random_search=False, is_test=is_test)
+    grid_search = MatchingGridSearchCV(
+        pipeline,
         param_grid,
         cv=2 if is_test else cv_folds,  # Réduit le nombre de folds en mode test
         scoring=evaluator.get_scorer(),
@@ -163,13 +112,31 @@ def train_with_grid_search(
 
     # Entraînement avec MLflow
     with mlflow.start_run() as parent_run:
-        # Entraînement - on utilise les offres comme X et les candidats comme y
-        grid_search.fit(X_encoded, y_encoded)
+        # Log des paramètres de configuration
+        mlflow.log_params(
+            {
+                "cv_folds": cv_folds,
+                "param_grid": str(param_grid),
+                "is_test": is_test,
+            }
+        )
+
+        # Entraînement
+        grid_search.fit(X, y)
 
         # Logging des meilleurs paramètres dans un run imbriqué
         with mlflow.start_run(nested=True) as child_run:
             mlflow.log_params(grid_search.best_params_)
             mlflow.log_metric("best_score", grid_search.best_score_)
+
+            # Évaluation détaillée du meilleur modèle
+            best_model = grid_search.best_estimator_
+            evaluation_results = evaluator.evaluate(
+                best_model.named_steps["matching_engine"],
+                grid_search.X_transformed_,
+                grid_search.y_transformed_,
+            )
+            mlflow.log_metrics(evaluation_results)
 
     return grid_search
 

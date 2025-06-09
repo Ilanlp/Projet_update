@@ -37,6 +37,8 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         """
         if isinstance(text, pd.Series):
             text = text.iloc[0] if len(text) > 0 else ""
+        elif not isinstance(text, str):
+            text = str(text)
 
         # Conversion en minuscules
         text = text.lower()
@@ -61,6 +63,8 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         """
         if isinstance(text, pd.Series):
             text = text.iloc[0] if len(text) > 0 else ""
+        elif not isinstance(text, str):
+            text = str(text)
 
         doc = self.nlp_(text)
 
@@ -117,11 +121,17 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         if self.nlp_ is None:
             raise ValueError("Le modèle n'a pas été initialisé. Appelez fit() d'abord.")
 
-        # Conversion en DataFrame si nécessaire
-        if isinstance(X, pd.DataFrame):
-            X = X.iloc[:, 0]
-        elif isinstance(X, np.ndarray):
+        # Si X est un tableau numpy, on vérifie s'il contient des données numériques
+        if isinstance(X, np.ndarray):
+            if len(X.shape) == 2 and X.shape[1] > 1:
+                # Les données sont déjà encodées
+                return X
             X = pd.Series(X)
+        elif isinstance(X, pd.DataFrame):
+            if len(X.shape) == 2 and X.shape[1] > 1:
+                # Les données sont déjà encodées
+                return X.values
+            X = X.iloc[:, 0]
 
         # Prétraitement des textes
         preprocessed_texts = X.apply(lambda x: self._lemmatize(self._clean(x)))

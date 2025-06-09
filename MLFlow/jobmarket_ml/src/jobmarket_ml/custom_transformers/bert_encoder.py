@@ -1,5 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sentence_transformers import SentenceTransformer
+import numpy as np
+import pandas as pd
 
 
 class BertEncoder(BaseEstimator, TransformerMixin):
@@ -42,11 +44,25 @@ class BertEncoder(BaseEstimator, TransformerMixin):
         elif hasattr(X, "values"):
             X = X.values
 
-        # Convertir en liste si nécessaire
-        if hasattr(X, "tolist"):
-            X = X.tolist()
-        elif isinstance(X, (list, tuple)):
-            X = list(X)
+        # Si les données sont déjà encodées (2D avec plus d'une colonne)
+        if isinstance(X, np.ndarray) and len(X.shape) == 2 and X.shape[1] > 1:
+            return X
+
+        # Convertir en liste de textes
+        if isinstance(X, pd.DataFrame):
+            if len(X.shape) == 2 and X.shape[1] > 1:
+                return X.values
+            X = X.iloc[:, 0]
+        elif isinstance(X, pd.Series):
+            X = X.values
+        elif isinstance(X, np.ndarray):
+            if len(X.shape) == 2:
+                if X.shape[1] > 1:
+                    return X
+                X = X.flatten()
+
+        # Convertir les valeurs numériques en chaînes
+        X = [str(x) if not isinstance(x, str) else x for x in X]
 
         # Encoder les textes
         return self.model_.encode(

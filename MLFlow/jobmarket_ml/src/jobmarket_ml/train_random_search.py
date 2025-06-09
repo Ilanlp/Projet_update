@@ -17,7 +17,12 @@ from config.config import (
 )
 
 # Import des composants de matching
-from matching import OfferPipeline, CandidatePipeline, MatchingEngine, MatchingEvaluator
+from jobmarket_ml.matching import (
+    create_unified_pipeline,
+    define_unified_param_grid,
+    MatchingEvaluator,
+    MatchingRandomizedSearchCV,
+)
 
 
 def parse_args():
@@ -46,6 +51,11 @@ def parse_args():
         default=100,
         help="Nombre d'itérations pour la recherche aléatoire",
     )
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        help="Utiliser la configuration de test (plus rapide)",
+    )
     return parser.parse_args()
 
 
@@ -72,20 +82,6 @@ def load_data(nrows_offers=None, nrows_candidates=None):
     return df_o, df_c
 
 
-def create_matching_pipeline():
-    """Crée le pipeline complet de matching."""
-    return Pipeline(
-        [
-            ("offer_pipeline", OfferPipeline(custom_stopwords=CUSTOM_STOPWORDS)),
-            (
-                "candidate_pipeline",
-                CandidatePipeline(custom_stopwords=CUSTOM_STOPWORDS),
-            ),
-            ("matching_engine", MatchingEngine()),
-        ]
-    )
-
-
 def define_param_distributions():
     """Définit les distributions de paramètres pour RandomSearchCV."""
     return {
@@ -102,21 +98,25 @@ def define_param_distributions():
     }
 
 
-def train_with_random_search(offers_text, candidates_text, cv_folds=5, n_iter=100):
-    """Entraîne le modèle avec RandomSearchCV."""
+def train_with_random_search(
+    offers_text, candidates_text, cv_folds=5, n_iter=100, is_test=False
+):
+    """Entraîne le modèle avec RandomizedSearchCV."""
     # Création du pipeline et de l'évaluateur
-    pipeline = create_matching_pipeline()
+    pipeline = create_unified_pipeline(extra_stopwords=CUSTOM_STOPWORDS)
     evaluator = MatchingEvaluator(n_splits=cv_folds)
 
     # Configuration de la recherche aléatoire
-    param_distributions = define_param_distributions()
-    random_search = RandomizedSearchCV(
+    param_distributions = define_unified_param_grid(
+        is_random_search=True, is_test=is_test
+    )
+    random_search = MatchingRandomizedSearchCV(
         pipeline,
         param_distributions,
-        n_iter=n_iter,
-        cv=cv_folds,
+        n_iter=5 if is_test else n_iter,  # Réduit le nombre d'itérations en mode test
+        cv=2 if is_test else cv_folds,  # Réduit le nombre de folds en mode test
         scoring=evaluator.get_scorer(),
-        n_jobs=-1,
+        n_jobs=1 if is_test else -1,  # Désactive la parallélisation en mode test
         verbose=2,
         random_state=42,
     )
@@ -128,10 +128,15 @@ def train_with_random_search(offers_text, candidates_text, cv_folds=5, n_iter=10
                 "n_iter": n_iter,
                 "cv_folds": cv_folds,
                 "param_space": str(param_distributions),
+                "is_test": is_test,
             }
         )
 
-        random_search.fit(offers_text, candidates_text)
+        # Conversion des données en DataFrame
+        X = pd.DataFrame(offers_text, columns=["TEXT"])
+        y = pd.DataFrame(candidates_text, columns=["TEXT"])
+
+        random_search.fit(X, y)
 
         # Logging des résultats
         mlflow.log_param("best_score", random_search.best_score_)
@@ -141,8 +146,8 @@ def train_with_random_search(offers_text, candidates_text, cv_folds=5, n_iter=10
         best_model = random_search.best_estimator_
         evaluation_results = evaluator.evaluate(
             best_model.named_steps["matching_engine"],
-            best_model.named_steps["offer_pipeline"].transform(offers_text),
-            best_model.named_steps["candidate_pipeline"].transform(candidates_text),
+            random_search.X_transformed_,
+            random_search.y_transformed_,
         )
 
         mlflow.log_metrics(evaluation_results)
@@ -161,7 +166,9 @@ def train_with_random_search(offers_text, candidates_text, cv_folds=5, n_iter=10
     return random_search
 
 
-def main(nrows_offers=None, nrows_candidates=None, cv_folds=5, n_iter=100):
+def main(
+    nrows_offers=None, nrows_candidates=None, cv_folds=5, n_iter=100, is_test=False
+):
     """Fonction principale."""
     # Configuration de MLflow
     mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
@@ -176,7 +183,11 @@ def main(nrows_offers=None, nrows_candidates=None, cv_folds=5, n_iter=100):
     print(f"3. Configuration de la recherche aléatoire (n_iter={n_iter})...")
     try:
         random_search = train_with_random_search(
-            offers_text, candidates_text, cv_folds=cv_folds, n_iter=n_iter
+            offers_text,
+            candidates_text,
+            cv_folds=cv_folds,
+            n_iter=n_iter,
+            is_test=is_test,
         )
 
         print("\nMeilleurs paramètres trouvés:")
@@ -199,4 +210,6 @@ def main(nrows_offers=None, nrows_candidates=None, cv_folds=5, n_iter=100):
 
 if __name__ == "__main__":
     args = parse_args()
-    main(args.nrows_offers, args.nrows_candidates, args.cv_folds, args.n_iter)
+    main(
+        args.nrows_offers, args.nrows_candidates, args.cv_folds, args.n_iter, args.test
+    )

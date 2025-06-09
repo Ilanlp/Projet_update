@@ -50,7 +50,7 @@ class MatchingEvaluator:
 
     def evaluate(self, matching_engine, offer_vectors, candidate_vectors):
         """Évalue le système de matching avec validation croisée"""
-        results = {"precision@k": [], "ndcg@k": [], "mean_similarity": []}
+        results = {"precision_at_k": [], "ndcg_at_k": [], "mean_similarity": []}
 
         for train_idx, test_idx in self.kf.split(candidate_vectors):
             # Entraînement sur un sous-ensemble
@@ -59,25 +59,21 @@ class MatchingEvaluator:
 
             # Fit et prédiction
             matching_engine.fit(offer_vectors, train_candidates)
-            similarity_matrix = matching_engine.compute_similarity_matrix()
+            similarity_matrix = matching_engine.transform(offer_vectors)
             matches = matching_engine.get_top_matches(similarity_matrix)
 
             # Calcul des métriques
             for match in matches:
-                results["precision@k"].append(
-                    self.precision_at_k(
-                        match["offer_indices"], match["offer_indices"][:5]
-                    )
+                results["precision_at_k"].append(
+                    self.precision_at_k(match[0], match[1][:5])
                 )
-                results["ndcg@k"].append(
-                    self.ndcg_at_k(match["offer_indices"], match["similarity_scores"])
-                )
-                results["mean_similarity"].append(np.mean(match["similarity_scores"]))
+                results["ndcg_at_k"].append(self.ndcg_at_k(match[0], match[1]))
+                results["mean_similarity"].append(np.mean(match[1]))
 
         # Calcul des moyennes
         return {
-            "mean_precision@k": np.mean(results["precision@k"]),
-            "mean_ndcg@k": np.mean(results["ndcg@k"]),
+            "precision_at_5": np.mean(results["precision_at_k"]),
+            "ndcg_at_5": np.mean(results["ndcg_at_k"]),
             "mean_similarity": np.mean(results["mean_similarity"]),
         }
 
