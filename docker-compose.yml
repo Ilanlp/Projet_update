@@ -184,9 +184,9 @@ services:
         - USER_GID=${USER_GID:-1000}
     volumes:
       # Lecture seule - Code et configuration
-      # - ./MLFlow/src:/app/src:ro,cached
+      - ./MLFlow/src:/app/src:consistent
+      - ./MLFlow/scripts:/app/scripts:consistent
       # - ./MLFlow/config:/app/config:ro,cached
-      # - ./MLFlow/scripts:/app/scripts:ro,cached
 
       # Écriture fréquente - Logs et cache
       # - ./MLFlow/logs:/app/logs:delegated
@@ -433,24 +433,24 @@ services:
 
   # ===========================================
   # MONITORING SERVICES
-  # ===========================================    
+  # ===========================================
   # Service Prometheus - Collecte et stocke les métriques
   prometheus:
     image: prom/prometheus
     volumes:
-      - "./monitoring/prometheus/:/etc/prometheus/"  # Configuration et données de Prometheus
+      - "./monitoring/prometheus/:/etc/prometheus/" # Configuration et données de Prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'  # Fichier de configuration principal
-      - '--storage.tsdb.path=/prometheus'  # Emplacement de stockage des données
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'  # Bibliothèques pour la console web
-      - '--web.console.templates=/usr/share/prometheus/consoles'  # Templates pour la console web
+      - "--config.file=/etc/prometheus/prometheus.yml" # Fichier de configuration principal
+      - "--storage.tsdb.path=/prometheus" # Emplacement de stockage des données
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries" # Bibliothèques pour la console web
+      - "--web.console.templates=/usr/share/prometheus/consoles" # Templates pour la console web
     ports:
-      - 9090:9090  # Interface web de Prometheus
+      - 9090:9090 # Interface web de Prometheus
     links:
-      - cadvisor:cadvisor  # Lien vers cAdvisor pour les métriques Docker
-      - alertmanager:alertmanager  # Lien vers AlertManager pour les alertes
+      - cadvisor:cadvisor # Lien vers cAdvisor pour les métriques Docker
+      - alertmanager:alertmanager # Lien vers AlertManager pour les alertes
     depends_on:
-      - cadvisor  # Dépendance à cAdvisor
+      - cadvisor # Dépendance à cAdvisor
     restart: always
     profiles:
       - monitoring
@@ -459,18 +459,18 @@ services:
   node-exporter:
     image: prom/node-exporter
     volumes:
-      - /proc:/host/proc:ro  # Accès en lecture seule aux informations système
-      - /sys:/host/sys:ro    # Accès en lecture seule aux informations système
-      - /:/rootfs:ro         # Accès en lecture seule au système de fichiers
-      - /:/host:ro           # Accès en lecture seule au système de fichiers
+      - /proc:/host/proc:ro # Accès en lecture seule aux informations système
+      - /sys:/host/sys:ro # Accès en lecture seule aux informations système
+      - /:/rootfs:ro # Accès en lecture seule au système de fichiers
+      - /:/host:ro # Accès en lecture seule au système de fichiers
     command:
-      - '--path.rootfs=/host'  # Chemin racine du système
-      - '--path.procfs=/host/proc'  # Chemin vers les informations processus
-      - '--path.sysfs=/host/sys'    # Chemin vers les informations système
-      - --collector.filesystem.ignored-mount-points  # Points de montage ignorés
+      - "--path.rootfs=/host" # Chemin racine du système
+      - "--path.procfs=/host/proc" # Chemin vers les informations processus
+      - "--path.sysfs=/host/sys" # Chemin vers les informations système
+      - --collector.filesystem.ignored-mount-points # Points de montage ignorés
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
-      - 9100:9100  # Port pour les métriques Node Exporter
+      - 9100:9100 # Port pour les métriques Node Exporter
     restart: always
     profiles:
       - monitoring
@@ -479,12 +479,12 @@ services:
   alertmanager:
     image: prom/alertmanager
     volumes:
-      - "./monitoring/alertmanager/:/etc/alertmanager/"  # Configuration des alertes
+      - "./monitoring/alertmanager/:/etc/alertmanager/" # Configuration des alertes
     ports:
-      - 9093:9093  # Interface web d'AlertManager
+      - 9093:9093 # Interface web d'AlertManager
     command:
-      - '--config.file=/etc/alertmanager/config.yml'  # Fichier de configuration
-      - '--storage.path=/alertmanager'  # Stockage des alertes
+      - "--config.file=/etc/alertmanager/config.yml" # Fichier de configuration
+      - "--storage.path=/alertmanager" # Stockage des alertes
     restart: always
     profiles:
       - monitoring
@@ -493,34 +493,34 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
     volumes:
-      - /:/rootfs:ro  # Accès en lecture seule au système de fichiers
-      - /var/run:/var/run:rw  # Accès en lecture/écriture aux informations Docker
-      - /sys:/sys:ro  # Accès en lecture seule aux informations système
-      - /var/lib/docker/:/var/lib/docker:ro  # Accès en lecture seule aux données Docker
+      - /:/rootfs:ro # Accès en lecture seule au système de fichiers
+      - /var/run:/var/run:rw # Accès en lecture/écriture aux informations Docker
+      - /sys:/sys:ro # Accès en lecture seule aux informations système
+      - /var/lib/docker/:/var/lib/docker:ro # Accès en lecture seule aux données Docker
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - "9091:8080"  # Port par défaut de cAdvisor (8080 interne exposé sur 9091)
+      - "9091:8080" # Port par défaut de cAdvisor (8080 interne exposé sur 9091)
     command:
-      - '--store_container_labels=true'
+      - "--store_container_labels=true"
     restart: always
     deploy:
-      mode: global  # Déploiement sur tous les nœuds
+      mode: global # Déploiement sur tous les nœuds
     profiles:
       - monitoring
 
   # Service Grafana - Interface de visualisation des métriques
   grafana:
     image: grafana/grafana
-    user: "472"  # Utilisateur non-root pour la sécurité
+    user: "472" # Utilisateur non-root pour la sécurité
     depends_on:
-      - prometheus  # Dépendance à Prometheus
+      - prometheus # Dépendance à Prometheus
     ports:
-      - 3000:3000  # Interface web de Grafana
+      - 3000:3000 # Interface web de Grafana
     volumes:
-      - grafana_data:/var/lib/grafana  # Données persistantes de Grafana
-      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/  # Configuration automatique
+      - grafana_data:/var/lib/grafana # Données persistantes de Grafana
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/ # Configuration automatique
     env_file:
-      - ./monitoring/grafana/config.monitoring  # Variables d'environnement
+      - ./monitoring/grafana/config.monitoring # Variables d'environnement
     restart: always
     profiles:
       - monitoring
