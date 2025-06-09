@@ -28,4 +28,7 @@ def test_normalizer_output_columns():
     # 5. Vérifier qu'il y a exactement 28 colonnes
     expected_columns = 28
     actual_columns = df.shape[1]
+    actual_lignes = df.shape[0]
     assert actual_columns == expected_columns, f"Le fichier {files[-1].name} contient {actual_columns} colonnes au lieu de {expected_columns}"
+    print(f"[OK] Le fichier {files[-1].name} contient exactement {expected_columns} colonnes et {actual_lignes} lignes.")
+
