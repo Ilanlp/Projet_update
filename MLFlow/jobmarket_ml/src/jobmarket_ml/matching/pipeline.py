@@ -120,13 +120,13 @@ class MatchingEngine(BaseEstimator, TransformerMixin):
         return df_results
 
 
-def create_matching_pipeline(custom_stopwords=None):
+def create_matching_pipeline(extra_stopwords=None):
     """
     Crée un pipeline de matching complet avec tous les composants nécessaires.
 
     Parameters:
     -----------
-    custom_stopwords : list, optional
+    extra_stopwords : list, optional
         Liste de mots à exclure du traitement
 
     Returns:
@@ -136,7 +136,7 @@ def create_matching_pipeline(custom_stopwords=None):
     # Pipeline pour les offres
     offer_pipeline = Pipeline(
         [
-            ("preprocessor", TextPreprocessor(extra_stopwords=custom_stopwords)),
+            ("preprocessor", TextPreprocessor(extra_stopwords=extra_stopwords)),
             ("encoder", BertEncoder()),
         ]
     )
@@ -144,7 +144,7 @@ def create_matching_pipeline(custom_stopwords=None):
     # Pipeline pour les candidats
     candidate_pipeline = Pipeline(
         [
-            ("preprocessor", TextPreprocessor(extra_stopwords=custom_stopwords)),
+            ("preprocessor", TextPreprocessor(extra_stopwords=extra_stopwords)),
             ("encoder", BertEncoder()),
         ]
     )
