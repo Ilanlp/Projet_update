@@ -526,3 +526,9 @@ class TOP_VILLE(BaseModel):
     count: int
     latitude: float
     longitude: float
+
+class TOP_REGION(BaseModel):
+    region: str
+    count: int
+    latitude: float
+    longitude: float
