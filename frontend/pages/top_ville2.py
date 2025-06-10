@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-API_BASE_URL = os.getenv("API_URL", "http://localhost:8081")
+API_BASE_URL = os.getenv("API_URL", "http://jm-backend:8081")
 
 dash.register_page(__name__, path="/top_ville2")
 
