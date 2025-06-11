@@ -138,6 +138,11 @@ def train_with_grid_search(
             )
             mlflow.log_metrics(evaluation_results)
 
+            # Sauvegarde du meilleur modèle
+            print("\nSauvegarde du meilleur modèle...")
+            mlflow.sklearn.log_model(best_model, "model", input_example=X.head(1))
+            print(f"Modèle sauvegardé avec le run_id: {child_run.info.run_id}")
+
     return grid_search
 
 

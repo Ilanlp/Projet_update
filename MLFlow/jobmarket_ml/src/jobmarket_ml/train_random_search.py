@@ -122,7 +122,7 @@ def train_with_random_search(
     )
 
     # Entraînement
-    with mlflow.start_run(run_name="random_search_training"):
+    with mlflow.start_run(run_name="random_search_training") as run:
         mlflow.log_params(
             {
                 "n_iter": n_iter,
@@ -162,6 +162,11 @@ def train_with_random_search(
                 "min_score": np.min(all_scores),
             }
         )
+
+        # Sauvegarde du meilleur modèle
+        print("\nSauvegarde du meilleur modèle...")
+        mlflow.sklearn.log_model(best_model, "model", input_example=X.head(1))
+        print(f"Modèle sauvegardé avec le run_id: {run.info.run_id}")
 
     return random_search
 
