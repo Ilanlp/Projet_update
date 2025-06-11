@@ -77,7 +77,7 @@ def main():
     
     # Chargement des données (échantillon pour test)
     print("Chargement des données...")
-    df_offers, df_candidates = load_data(nrows_offers=100, nrows_candidates=10)
+    df_offers, df_candidates = load_data(nrows_offers=100, nrows_candidates=100)
     
     # Création du pipeline
     pipeline = create_pipeline()

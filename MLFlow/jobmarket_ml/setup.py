@@ -23,7 +23,7 @@ setup(
         "seaborn==0.13.2",
         "psutil==7.0.0",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.11",
     author="maikimike",
     description="Pipeline de matching d'emplois avec MLflow",
     classifiers=[
