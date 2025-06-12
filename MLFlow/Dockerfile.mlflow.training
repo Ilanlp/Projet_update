@@ -1,206 +1,99 @@
 # ===========================================
-# Dockerfile.training - Container d'entraînement ML optimisé
+# Dockerfile.jobmarket_ml - Container ML optimisé pour jobmarket_ml
 # ===========================================
 
 FROM python:3.11.12-slim AS builder
 
-# Arguments de build
-ARG PYTHON_VERSION=3.11.12
-ARG MLFLOW_VERSION=2.8.0
-ARG INSTALL_GPU_SUPPORT=false
-
 # Métadonnées
-LABEL maintainer="ML Team"
-LABEL description="Optimized ML training container with MLflow"
-LABEL version="1.0"
+LABEL maintainer="ML Team" \
+  description="Container optimisé pour jobmarket_ml" \
+  version="1.0"
 
-# Installation des dépendances de build et librairies systèmes
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
-    python3-dev \
-    && apt-get autoremove -y \
-    && apt-get autoclean \
-    && rm -rf /var/lib/apt/lists/*
+# Installation des dépendances système essentielles et création de l'environnement Python
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  gcc \
+  g++ \
+  git \
+  make && \
+  python -m venv /opt/venv && \
+  . /opt/venv/bin/activate && \
+  pip install --no-cache-dir --upgrade pip
 
-# Création d'un environnement virtuel optimisé
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Upgrade des outils de base
-RUN pip install --no-cache-dir --upgrade \
-    pip \
-    setuptools \
-    wheel
-
-# Installation des dépendances principales
-# RUN pip install --no-cache-dir \
-#     numpy==1.24.3 \
-#     pandas==2.0.3 \
-#     scikit-learn==1.6.0 \
-#     mlflow==2.22.0 \
-#     spacy==3.8.4 \
-#     transformers==4.51.3 \
-#     sentence-transformers==4.1.0 \
-#     tqdm==4.66.1 \
-#     nltk==3.9.1
-
-# Installation des modèles spaCy
-# RUN pip install --no-cache-dir \
-#     https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0.tar.gz \
-#     https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
-
-# Copie et installation du package jobmarket_ml
+# Copie des fichiers source dans le builder
 COPY jobmarket_ml /app/jobmarket_ml
-WORKDIR /app/jobmarket_ml
-RUN pip install -e .
-WORKDIR /app
+COPY src/train_model.py /app/src/train_model.py
+COPY src/register_model.py /app/src/register_model.py
+COPY src/test_model.py /app/src/test_model.py
+COPY src/serve_model.py /app/src/serve_model.py
 
-# Installation des packages ML core (dans l'ordre optimal)
-
-# Installation conditionnelle du support GPU
-# RUN if [ "$INSTALL_GPU_SUPPORT" = "true" ]; then \
-#     pip install --no-cache-dir \
-#     torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
-#     tensorflow-gpu \
-#     cupy-cuda11x; \
-#     fi
+# Installation du package et des modèles dans le builder
+RUN . /opt/venv/bin/activate && \
+  pip install -e /app/jobmarket_ml && \
+  python -m spacy download fr_core_news_sm && \
+  python -m spacy download en_core_web_sm && \
+  # Nettoyage des dépendances de build
+  apt-get purge -y --auto-remove gcc g++ make && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ===========================================
-# Image finale (runtime optimisée)
+# Image finale
 # ===========================================
 FROM python:3.11.12-slim
 
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-# Variables d'environnement pour optimisation
-ENV PYTHON_ENV=training \
-    APP_NAME=ml-training \
-    PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONHASHSEED=0 \
-    PYTHONIOENCODING=utf-8
-
-# Variables d'optimisation ML
-ENV OMP_NUM_THREADS=4 \
-    OPENBLAS_NUM_THREADS=4 \
-    MKL_NUM_THREADS=4 \
-    NUMBA_NUM_THREADS=4 \
-    JOBLIB_TEMP_FOLDER=/tmp
-
-# Variables MLflow
-ENV MLFLOW_TRACKING_URI=http://mlflow-tracking:5000 \
-    MLFLOW_ARTIFACT_ROOT=/app/mlruns \
-    MLFLOW_EXPERIMENT_NAME=default \
-    MLFLOW_RUN_NAME="" \
-    MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING=true
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  PATH="/opt/venv/bin:$PATH" \
+  MLFLOW_TRACKING_URI=http://mlflow-tracking:5000 \
+  MLFLOW_EXPERIMENT_NAME=jobmarket_matching \
+  MLFLOW_ARTIFACT_ROOT=/app/mlruns \
+  TRAINING_LOG_LEVEL=INFO \
+  TRANSFORMERS_CACHE=/app/cache/transformers \
+  HF_HOME=/app/cache/huggingface \
+  MPLCONFIGDIR=/app/cache/matplotlib \
+  SKLEARN_CACHE_DIR=/app/cache/sklearn \
+  TMPDIR=/app/temp
 
 # Installation des dépendances runtime minimales
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Librairies runtime mathématiques
-    libblas3 \
-    liblapack3 \
-    libatlas3-base \
-    libhdf5-103 \
-    # Outils système essentiels
-    curl \
-    wget \
-    git \
-    procps \
-    htop \
-    tree \
-    # Outils de monitoring
-    iotop \
-    nethogs \
-    # Nettoyage
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get autoremove -y \
-    && apt-get autoclean
+  git \
+  curl \
+  gosu && \
+  rm -rf /var/lib/apt/lists/* && \
+  # Création de l'utilisateur et du groupe avec les IDs spécifiés
+  groupadd -r mlflow --gid=${USER_GID:-1000} && \
+  useradd -r -g mlflow --uid=${USER_UID:-1000} -m mlflow && \
+  # Création de tous les répertoires nécessaires
+  mkdir -p /app/src && \
+  mkdir -p /app/data && \
+  mkdir -p /app/models && \
+  mkdir -p /app/logs && \
+  mkdir -p /app/cache && \
+  mkdir -p /app/experiments && \
+  mkdir -p /app/temp && \
+  mkdir -p /app/config && \
+  mkdir -p /app/scripts && \
+  mkdir -p /app/cache/matplotlib && \
+  mkdir -p /app/cache/transformers && \
+  mkdir -p /app/cache/huggingface && \
+  mkdir -p /app/cache/sklearn && \
+  mkdir -p /tmp/mlflow
 
-# Création de l'utilisateur non-root optimisé
-RUN groupadd -r mltrainer --gid=${USER_GID} \
-    && useradd -r -g mltrainer --uid=${USER_UID} \
-    --no-log-init \
-    --create-home \
-    --home-dir /home/mltrainer \
-    --shell /bin/bash \
-    mltrainer
+# Copie des fichiers avec les bonnes permissions
+COPY --from=builder --chown=mlflow:mlflow /opt/venv /opt/venv
+COPY --from=builder --chown=mlflow:mlflow /app /app
+COPY --chown=mlflow:mlflow scripts/ml_entrypoint.sh /app/scripts/
 
-# Copie de l'environnement virtuel optimisé
-COPY --from=builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# Configuration finale des permissions
+RUN chown -R mlflow:mlflow /app /opt/venv
 
-# Création de la structure de répertoires optimisée
-RUN mkdir -p \
-    /app/src \
-    /app/data \
-    /app/models \
-    /app/experiments \
-    /app/logs \
-    /app/cache \
-    /app/temp \
-    /app/config \
-    /app/scripts \
-    /tmp/mlflow \
-    && chown -R mltrainer:mltrainer /app /tmp/mlflow
+USER mlflow
 
-# Configuration du cache et des répertoires temporaires
-ENV TMPDIR=/app/temp \
-    MPLCONFIGDIR=/app/cache/matplotlib \
-    TRANSFORMERS_CACHE=/app/cache/transformers \
-    HF_HOME=/app/cache/huggingface
-
-# Copie des scripts d'entraînement
-USER root
-COPY scripts/training_entrypoint.sh scripts/
-COPY src/train_model.py src/
-COPY src/utils/ src/utils/
-COPY src/utils/ src/utils/
-# COPY config/ config/
-COPY test_pipeline.py .
-COPY test_load_model.py .
-
-# Configuration des permissions et format de ligne
-RUN chmod 755 scripts/training_entrypoint.sh && \
-    sed -i 's/\r$//' scripts/training_entrypoint.sh && \
-    chown -R mltrainer:mltrainer /app
-
-USER mltrainer
 WORKDIR /app
 
-# # Configuration de l'environnement Python optimisé
-# RUN python -c "import matplotlib.pyplot as plt; plt.ioff(); import seaborn as sns" \
-#     && python -c "import sklearn; print('Scikit-learn version:', sklearn.__version__)" \
-#     && python -c "import mlflow; print('MLflow version:', mlflow.__version__)"
-
-# # Création de fichiers de configuration par défaut
-# RUN echo '# ML Training Configuration' > config/training_config.yaml \
-#     && echo 'model:' >> config/training_config.yaml \
-#     && echo '  type: RandomForestRegressor' >> config/training_config.yaml \
-#     && echo '  hyperparameter_tuning: true' >> config/training_config.yaml \
-#     && echo 'data:' >> config/training_config.yaml \
-#     && echo '  synthetic: true' >> config/training_config.yaml \
-#     && echo '  n_samples: 2000' >> config/training_config.yaml \
-#     && echo 'mlflow:' >> config/training_config.yaml \
-#     && echo '  auto_register: true' >> config/training_config.yaml \
-#     && echo '  stage: Staging' >> config/training_config.yaml
-
-# # Configuration bash pour un meilleur UX
-# RUN echo 'export PS1="🤖 [ML-Training] \w $ "' >> ~/.bashrc \
-#     && echo 'alias train="python src/train_model.py"' >> ~/.bashrc \
-#     && echo 'alias trainreal="python src/train_model.py"' >> ~/.bashrc \
-#     && echo 'alias logs="tail -f /app/logs/training.log"' >> ~/.bashrc \
-#     && echo 'alias models="ls -la /app/models/"' >> ~/.bashrc \
-#     && echo 'export PYTHONPATH=/app:$PYTHONPATH' >> ~/.bashrc
-
-# Health check optimisé pour l'entraînement
-HEALTHCHECK --interval=60s --timeout=30s --start-period=60s --retries=3 \
-    CMD python -c "import mlflow; mlflow.set_tracking_uri('$MLFLOW_TRACKING_URI'); print('Training service healthy')" || exit 1
-
-# Point d'entrée avec script de configuration
-ENTRYPOINT ["/bin/bash", "/app/scripts/training_entrypoint.sh"]
-
-# Commande par défaut - mode interactif
-CMD ["bash"]
+ENTRYPOINT ["/app/scripts/ml_entrypoint.sh"]
+CMD ["help"]

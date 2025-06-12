@@ -69,8 +69,8 @@ docker compose run --rm mlflow-training python3 src/register_model.py 2a36b41a11
 
 ```bash
 # python3 src/register_model.py $RUN_ID $MODEL_NAME
-export RUN_ID=2a36b41a11734595b155d8d42927d75d
-docker compose run --rm mlflow-model python3 src/register_model.py $RUN_ID $MODEL_NAME
+export MLFLOW_RUN_ID=2a36b41a11734595b155d8d42927d75d
+docker compose run --rm mlflow-model python3 src/register_model.py $MLFLOW_RUN_ID $MLFLOW_MODEL_NAME
 ```
 
 ### Request Model

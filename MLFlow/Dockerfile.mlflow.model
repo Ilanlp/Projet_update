@@ -38,10 +38,10 @@ ENV PYTHON_ENV=production \
     PYTHONDONTWRITEBYTECODE=1
 
 # Variables d'environnement avec valeurs par défaut
-ENV TRACKING_URI=http://mlflow-tracking:5000 \
-    MODEL_NAME=jobmarket \
-    MODEL_VERSION=3 \
-    MODEL_PORT=5001
+ENV MLFLOW_TRACKING_URI=http://mlflow-tracking:5000 \
+    MLFLOW_MODEL_NAME=jobmarket \
+    MLFLOW_MODEL_VERSION=1 \
+    MLFLOW_MODEL_PORT=5001
 
 # Installation des dépendances runtime uniquement
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -64,12 +64,12 @@ USER mlflow
 COPY --chown=mlflow:mlflow src/serve_model.py .
 
 # Exposition du port
-EXPOSE $MODEL_PORT
+EXPOSE $MLFLOW_MODEL_PORT
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:$MODEL_PORT || exit 1
+    CMD curl -f http://localhost:$MLFLOW_MODEL_PORT || exit 1
 
 # Commande pour démarrer le serveur avec le script custom
 # Utilise les variables d'environnement passées par docker-compose
-CMD ["sh", "-c", "python serve_model.py --tracking_uri \"$TRACKING_URI\" --port \"$MODEL_PORT\""]
+CMD ["sh", "-c", "python serve_model.py --tracking_uri \"$MLFLOW_TRACKING_URI\" --port \"$MLFLOW_MODEL_PORT\""]

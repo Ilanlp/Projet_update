@@ -204,20 +204,18 @@ init_train_model() {
   # Détection du système d'exploitation pour la commande sed
   if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
-    sed -i '' "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env
-    sed -i '' "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env.example
-    sed -i '' "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env
-    sed -i '' "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env.example
-    sed -i '' "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env
-    sed -i '' "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env.example
+    sed -i '' "s#MLFLOW_RUN_ID=.*#MLFLOW_RUN_ID=$run_id#" MLFlow/.env
+    sed -i '' "s#MLFLOW_MODEL_URI=.*#MLFLOW_MODEL_URI=runs:$run_id/jobmarket#" MLFlow/.env
+    sed -i '' "s#MLFLOW_MODEL_NAME=.*#MLFLOW_MODEL_NAME=jobmarket#" MLFlow/.env
+    sed -i '' "s#MLFLOW_MODEL_VERSION=.*#MLFLOW_MODEL_VERSION=1#" MLFlow/.env
+    sed -i '' "s#MLFLOW_MODEL_STAGE=.*#MLFLOW_MODEL_STAGE=Development#" MLFlow/.env
   else
     # Linux
-    sed -i "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env
-    sed -i "s/RUN_ID=.*/RUN_ID=$run_id/" MLFlow/.env.example
-    sed -i "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env
-    sed -i "s/MODEL_NAME=.*/MODEL_NAME=jobmarket/" MLFlow/.env.example
-    sed -i "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env
-    sed -i "s/MODEL_STAGE=.*/MODEL_STAGE=Development/" MLFlow/.env.example
+    sed -i "s#MLFLOW_RUN_ID=.*#MLFLOW_RUN_ID=$run_id#" MLFlow/.env
+    sed -i "s#MLFLOW_MODEL_URI=.*#MLFLOW_MODEL_URI=runs:$run_id/jobmarket#" MLFlow/.env
+    sed -i "s#MLFLOW_MODEL_NAME=.*#MLFLOW_MODEL_NAME=jobmarket#" MLFlow/.env
+    sed -i "s#MLFLOW_MODEL_VERSION=.*#MLFLOW_MODEL_VERSION=1#" MLFlow/.env
+    sed -i "s#MLFLOW_MODEL_STAGE=.*#MLFLOW_MODEL_STAGE=Development#" MLFlow/.env
   fi
 
   echo -e "${GREEN}Entrainement et enregistrement du modèle terminé avec succès!${NC}"
@@ -276,7 +274,7 @@ init_airflow() {
   mkdir -p airflow/{dags,logs,plugins,config}
   if [ ! -f "airflow/.env" ]; then
     echo "AIRFLOW_UID=$(id -u)" >airflow/.env
-    echo "AIRFLOW_GID=$(id -g)" >>airflow/.env
+    echo "AIRFLOW_GID=0" >>airflow/.env
     echo "_AIRFLOW_WWW_USER_USERNAME=airflow" >>airflow/.env
     echo "_AIRFLOW_WWW_USER_PASSWORD=airflow" >>airflow/.env
   fi
@@ -350,7 +348,8 @@ clean_environment() {
   docker compose --profile init-db down -v --remove-orphans
   docker compose --profile init-ml down -v --remove-orphans
   docker compose --profile development down
-  docker compose --profile airflow down
+  docker compose --profile airflow down -v --remove-orphans
+  # docker compose --profile airflow down -v --rmi all
   docker compose --profile production down
   # docker compose --profile monitoring down -v --remove-orphans
   echo -e "${GREEN}Environment cleaned${NC}"

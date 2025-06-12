@@ -113,9 +113,9 @@ def register_model(run_id, model_name):
             raise Exception(f"Run {run_id} not found")
 
         # Register the model
-        model_uri = f"runs:/{run_id}/apple_demand_model"
+        model_uri = f"runs:/{run_id}/{model_name}"
         result = mlflow.register_model(model_uri, model_name)
-        print(f"\nModel registered successfully:")
+        print("\nModel registered successfully:")
         print(f"Name: {result.name}")
         print(f"Version: {result.version}")
         print(f"Status: {result.status}")
