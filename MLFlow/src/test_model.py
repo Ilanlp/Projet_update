@@ -3,7 +3,7 @@
 import mlflow.pyfunc
 import pandas as pd
 import numpy as np
-from jobmarket_ml.config.config import OFFERS_PATH, OFFER_COLUMNS
+from jobmarket_ml.config.config import OFFERS_PATH, OFFER_COLUMNS, MLFLOW_TRACKING_URI
 
 
 def test_model():
@@ -13,7 +13,7 @@ def test_model():
     print(f"OFFER_COLUMNS {OFFER_COLUMNS}")
     
     print("1. Configuration de MLflow...")
-    mlflow.set_tracking_uri("http://localhost:8000")
+    mlflow.set_tracking_uri(MLFLOW_MODEL_URI)
     
     print("2. Chargement du modèle et des données de référence...")
     # Chargement de la dernière version du modèle

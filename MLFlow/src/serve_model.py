@@ -123,9 +123,9 @@ def main():
         print(f"Using tracking URI: {args.tracking_uri}")
 
         # Get model URI from environment variable
-        model_uri = os.environ.get("MODEL_URI")
+        model_uri = os.environ.get("MLFLOW_MODEL_URI")
         if not model_uri:
-            raise Exception("MODEL_URI environment variable is not set")
+            raise Exception("MLFLOW_MODEL_URI environment variable is not set")
 
         # Serve model
         serve_model(model_uri, args.port)
