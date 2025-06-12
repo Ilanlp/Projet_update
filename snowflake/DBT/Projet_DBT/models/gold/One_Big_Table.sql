@@ -92,7 +92,7 @@ WITH base AS (
 )
 
 SELECT
-    id_offre,
+    id_offre as id,
     id_local,
     title,
     description,
