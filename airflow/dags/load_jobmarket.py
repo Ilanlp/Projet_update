@@ -3,8 +3,10 @@ from airflow.utils.dates import days_ago
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.docker_operator import DockerOperator
 from docker.types import Mount
+import os
 
-path = "/Users/maikimike/Documents/datascientest/data-engineer/mar25_bootcamp_de_job_market"
+path = os.getenv("PROJECT_PATH")
+
 
 with DAG(
     dag_id="load_jobmarket",
@@ -16,19 +18,10 @@ with DAG(
     schedule_interval="0 17 * * *",
     catchup=False,
 ) as dag:
-    # jobmarket_sensor = FileSensor(
-    #     task_id='jobmarket_sensor',
-    #     filepath='data/all_jobs.csv',
-    #     poke_interval=20,
-    #     timeout=120,
-    #     mode='poke'
-    # )
     run_extract_offers = DockerOperator(
         task_id="run_extract_offers",
         image="jm-etl-normalizer:latest",
-        # api_version="auto",
         auto_remove=True,
-        # command='python3 normalizer.py',
         mounts=[
             Mount(
                 source=f"{path}/pipeline/src/.env",
@@ -47,14 +40,14 @@ with DAG(
     run_load_offers = DockerOperator(
         task_id="run_load_offers",
         image="jm-elt-snowflake:latest",
+        mount_tmp_dir=False,
         api_version="auto",
         auto_remove=True,
-        # network_mode="jm_network",
         command="python3 offre.py",
         mounts=[
             Mount(
-                source=f"{path}/pipeline/src/.env",
-                target="/usr/src/snowflake/.env",
+                source=f"{path}/pipeline/src/snowflake",
+                target="/usr/src/snowflake",
                 type="bind",
                 read_only=True,
             ),
@@ -72,10 +65,10 @@ with DAG(
         auto_remove=True,
         mounts=[
             Mount(
-                source=f"{path}/snowflake/DBT/.env",
-                target="/usr/src/DBT/Projet_DBT/.env",
+                source=f"{path}/snowflake/DBT/Projet_DBT",
+                target="/usr/src/DBT/Projet_DBT",
                 type="bind",
-                read_only=True,
+                read_only=False,
             ),
         ],
     )

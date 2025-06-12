@@ -19,6 +19,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__SMTP__SMTP_USER: "de.airflow@gmail.com"
     AIRFLOW__SMTP__SMTP_PASSWORD: "cfsrvkongsobheta"
     AIRFLOW__SMTP__SMTP_MAIL_FROM: "de.airflow@gmail.com"
+    PROJECT_PATH: ${PWD}
 
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- pymongo apache-airflow-providers-docker apache-airflow-providers-snowflake}
   volumes:
@@ -415,11 +416,7 @@ services:
     <<: *airflow-common
     command: scheduler
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"',
-        ]
+      test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
       interval: 10s
       timeout: 10s
       retries: 5
@@ -453,12 +450,12 @@ services:
     ports:
       - 5555:5555
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
+      test: [ "CMD", "curl", "--fail", "http://localhost:5555/" ]
       interval: 10s
       timeout: 10s
       retries: 5
     restart: always
-  
+
   # ===========================================
   # MONITORING SERVICES
   # ===========================================
@@ -568,21 +565,21 @@ volumes:
   mlflow_data:
   postgres-db-volume:
 
-# ===========================================
-# PROFILES
-# ===========================================
-# Profils disponibles :
-# - training     : Service d'entraînement ML
-# - development  : Training + Model
-# - monitoring   : Prometheus pour monitoring
-# - postgres     : Base PostgreSQL au lieu de SQLite
-# - cache        : Redis pour cache
-# - docs         : Documentation avec MkDocs
-# - airflow      : Services Airflow (webserver, scheduler, worker, etc.)
+    # ===========================================
+    # PROFILES
+    # ===========================================
+    # Profils disponibles :
+    # - training     : Service d'entraînement ML
+    # - development  : Training + Model
+    # - monitoring   : Prometheus pour monitoring
+    # - postgres     : Base PostgreSQL au lieu de SQLite
+    # - cache        : Redis pour cache
+    # - docs         : Documentation avec MkDocs
+    # - airflow      : Services Airflow (webserver, scheduler, worker, etc.)
 
-# Exemples d'utilisation :
-# docker-compose --profile development up                       # Training + Model
-# docker-compose --profile training up                          # Entraînement seulement
-# docker-compose --profile training --profile monitoring up     # Training + Monitoring
-# docker-compose --profile postgres up mlflow-tracking          # MLflow avec PostgreSQL
-# docker-compose --profile airflow up                           # Services Airflow
+    # Exemples d'utilisation :
+    # docker-compose --profile development up                       # Training + Model
+    # docker-compose --profile training up                          # Entraînement seulement
+    # docker-compose --profile training --profile monitoring up     # Training + Monitoring
+    # docker-compose --profile postgres up mlflow-tracking          # MLflow avec PostgreSQL
+    # docker-compose --profile airflow up                           # Services Airflow
