@@ -236,18 +236,12 @@ train_model() {
     echo -e "${GREEN}Fichier mlflow.db créé avec succès${NC}"
   fi
 
-  echo -e "${YELLOW}Étape 3: Lancement du container pour l'entrainement du modèle...${NC}"
-  docker compose --profile init-ml run --rm \
-    mlflow-training bash
-
-  # train_output=$(docker compose --profile init-ml run --rm \
-  #     -v "$(pwd)"/MLFlow/scripts/ml_entrypoint.sh:/app/scripts/ml_entrypoint.sh \
-  #     mlflow-training quick_train)
-
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Erreur lors du lancement du container pour l'entrainement du modèle${NC}"
+  echo -e "${YELLOW}Étape 4: Lancement du container pour l'entrainement du modèle...${NC}"
+  if ! docker compose --profile init-ml run --rm mlflow-training bash; then
+    echo -e "${RED}Erreur lors du démarrage du container mlflow-training${NC}"
     exit 1
   fi
+
 }
 
 init_mlflow() {
@@ -321,8 +315,10 @@ start_services() {
 
 # Fonction pour arrêter les services
 stop_services() {
-  echo -e "${YELLOW}Stopping all services...${NC}"
-  docker compose down
+  local profile=$1
+  echo -e "${YELLOW}Stopping all services of profile $profile ...${NC}"
+  docker compose -p $profile down
+  # docker compose down
   echo -e "${GREEN}All services stopped${NC}"
 }
 
@@ -348,7 +344,7 @@ clean_environment() {
   docker compose --profile init-db down -v --remove-orphans
   docker compose --profile init-ml down -v --remove-orphans
   docker compose --profile development down
-  docker compose --profile airflow down -v --remove-orphans
+  docker compose --profile airflow down
   # docker compose --profile airflow down -v --rmi all
   docker compose --profile production down
   # docker compose --profile monitoring down -v --remove-orphans
@@ -396,7 +392,7 @@ start)
   start_services "$2"
   ;;
 stop)
-  stop_services
+  stop_services "$2"
   ;;
 logs)
   show_logs "$2"
