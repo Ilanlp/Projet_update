@@ -14,6 +14,7 @@ from config.config import (
     CANDIDATE_COLUMNS,
     CUSTOM_STOPWORDS,
     MLFLOW_EXPERIMENT_NAME,
+    MLFLOW_MODEL_NAME,
 )
 
 # Import des composants de matching
@@ -165,7 +166,7 @@ def train_with_random_search(
 
         # Sauvegarde du meilleur modèle
         print("\nSauvegarde du meilleur modèle...")
-        mlflow.sklearn.log_model(best_model, "model", input_example=X.head(1))
+        mlflow.sklearn.log_model(best_model, MLFLOW_MODEL_NAME, input_example=X.head(1))
         print(f"Modèle sauvegardé avec le run_id: {run.info.run_id}")
 
     return random_search
