@@ -14,6 +14,7 @@ from app.api.routes_lieu import router_lieu
 from app.api.routes_metier import router_metier
 from app.api.routes_romecode import router_romecode
 from app.api.routes_seniorite import router_seniorite
+from app.api.routes_model import router as router_model
 from app.auth import verify_basic_auth
 import time
 import uvicorn
@@ -128,6 +129,7 @@ app.include_router(router_lieu,prefix="/api")
 app.include_router(router_metier,prefix="/api")
 app.include_router(router_seniorite,prefix="/api")
 app.include_router(router_olap, prefix="/api")
+app.include_router(router_model)
 
 
 # Route de santé
