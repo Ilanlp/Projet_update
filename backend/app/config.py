@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     AUTH_USERNAME: str = "admin"
     AUTH_PASSWORD: str = "password123"
 
+    # MLflow
+    MLFLOW_MODEL_URL: str = "http://mlflow-model:5001"
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True
     )

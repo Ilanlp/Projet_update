@@ -37,7 +37,7 @@ x-airflow-common: &airflow-common
       condition: service_healthy
   profiles:
     - airflow
-    - development
+    # - development
     - production
 
 services:
@@ -193,7 +193,7 @@ services:
       - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=file:///app/mlruns
     command: >
-      bash -c " echo '🎯 Starting MLflow Tracking Server...' && /opt/venv/bin/mlflow server  --backend-store-uri sqlite:///mlflow.db --default-artifact-root file:///app/mlruns --host 0.0.0.0  --port 5000 "
+      bash -c " echo '🎯 Starting MLflow Tracking Server...' && /opt/venv/bin/mlflow server  --backend-store-uri sqlite:///mlflow.db --default-artifact-root file:///app/mlruns --host 0.0.0.0  --port 5000"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://mlflow-tracking:5000/health" ]
       interval: 10s
@@ -202,6 +202,7 @@ services:
       start_period: 30s
     profiles:
       - init-ml
+      - training
       - development
       - production
     restart: unless-stopped
@@ -240,7 +241,7 @@ services:
       - MLFLOW_ARTIFACT_ROOT=/app/mlruns
       - MLFLOW_EXPERIMENT_NAME=${EXPERIMENT_NAME:-jobmarket}
       - MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING=true
-      - MODEL_NAME=${MODEL_NAME:-jobmarket}
+      - MLFLOW_MODEL_NAME=${MLFLOW_MODEL_NAME:-jobmarket}
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
       - OMP_NUM_THREADS=4
@@ -268,12 +269,13 @@ services:
     image: jm-mlflow-model
     build:
       context: ./MLFlow
-      dockerfile: Dockerfile.mlflow.model
+      dockerfile: Dockerfile.mlflow.model2
       args:
+        - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-http://mlflow-tracking:5000}
         - MLFLOW_VERSION=${MLFLOW_VERSION:-2.22.0}
         - INSTALL_EXTRAS=true
         - BUILD_ENV=production
-        - MODEL_PORT=${MODEL_PORT:-5001}
+        - MLFLOW_MODEL_PORT=${MODEL_PORT:-5001}
         - PYTHON_VERSION=${PYTHON_VERSION:-3.9}
         - USER_UID=${USER_UID:-1000}
         - USER_GID=${USER_GID:-1000}
@@ -290,9 +292,9 @@ services:
       - MLFLOW_MODEL_PORT=${MLFLOW_MODEL_PORT:-5001}
       - MLFLOW_EXPERIMENT_NAME=${MLFLOW_EXPERIMENT_NAME:-jobmarket}
       - MLFLOW_EXPERIMENT_ID=${MLFLOW_EXPERIMENT_ID:-1}
-      - MLFLOW_RUN_ID=${MLFLOW_RUN_ID:-4aa5ee5ebfa945eaa75d103cca270238}
+      - MLFLOW_RUN_ID=${MLFLOW_RUN_ID:-127dbd70e2ae4710985a6263e6828549}
       - MLFLOW_MODEL_NAME=${MLFLOW_MODEL_NAME:-jobmarket}
-      - MLFLOW_MODEL_URI=${MLFLOW_MODEL_URI:-runs:/${RUN_ID:-4aa5ee5ebfa945eaa75d103cca270238}/jobmarket}
+      - MLFLOW_MODEL_URI=${MLFLOW_MODEL_URI:-runs:/${RUN_ID:-127dbd70e2ae4710985a6263e6828549}/jobmarket}
       - MLFLOW_ARTIFACT_ROOT=${MLFLOW_ARTIFACT_ROOT:-/app/mlruns}
       - PYTHONUNBUFFERED=1
       - DEBUG=true
@@ -304,9 +306,9 @@ services:
       mlflow-tracking:
         condition: service_healthy
     profiles:
+      - init-ml
       - development
       - production
-      - init-ml
     # Ressources pour serving
     deploy:
       resources:

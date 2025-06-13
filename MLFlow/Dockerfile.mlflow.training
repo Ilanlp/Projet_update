@@ -50,6 +50,7 @@ ENV PYTHONUNBUFFERED=1 \
   PATH="/opt/venv/bin:$PATH" \
   MLFLOW_TRACKING_URI=http://mlflow-tracking:5000 \
   MLFLOW_EXPERIMENT_NAME=jobmarket_matching \
+  MLFLOW_MODEL_NAME=jobmarket \
   MLFLOW_ARTIFACT_ROOT=/app/mlruns \
   TRAINING_LOG_LEVEL=INFO \
   TRANSFORMERS_CACHE=/app/cache/transformers \
