@@ -103,7 +103,7 @@ EXPOSE $MLFLOW_MODEL_PORT
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:$MLFLOW_MODEL_PORT || exit 1
+    CMD curl -f http://localhost:$MLFLOW_MODEL_PORT/health || exit 1
 
 # Commande pour démarrer le serveur avec le script custom
 # Utilise les variables d'environnement passées par docker-compose
