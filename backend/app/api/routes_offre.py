@@ -6,6 +6,7 @@ from app.models.schemas import (
     PaginationParams,
     PaginatedResponseBase,
     Offre,
+    SearchOffre
 )
 from app.services.query_service import (
     execute_and_map_to_model,
@@ -24,7 +25,6 @@ from app.models.search_schemas import OffreSearchParams
 
 router_offre = APIRouter()
 
-
 @router_offre.get(
     "/offres/filters",
     response_model=PaginatedResponseBase[Offre],
@@ -34,12 +34,7 @@ router_offre = APIRouter()
     Récupère une liste paginée des offres d'emploi en fonction des filtres.
     """
 )
-async def get_offre_filtered(
-    title: Optional[str] = Query(None),
-    ville: Optional[str] = Query(None), 
-    region: Optional[str] = Query(None),
-    pagination: PaginationParams = Depends()
-):
+async def get_offre_filtered(filters: Annotated[SearchOffre, Query()],pagination: PaginationParams = Depends()):
 
     try:
         template_params = {}
@@ -76,7 +71,6 @@ async def get_offre_filtered(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 @router_offre.get(
