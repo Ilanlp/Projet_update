@@ -17,7 +17,7 @@ class ProfileText(BaseModel):
 
 class ProfileMatch(BaseModel):
     title: str
-    company: str
+    company: Optional[str] = None
     location: str
     score: float
     description: Optional[str] = None
@@ -132,7 +132,6 @@ async def match_profile(profile: ProfileText):
                         nom_domaine=offer.get("NOM_DOMAINE")
                     )
                 )
-            
             return ModelResponse(matches=formatted_matches)
             
     except httpx.RequestError as e:
