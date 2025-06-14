@@ -1,6 +1,7 @@
 import dash
 from dash import html, dcc, Input, Output, State
 from dash.exceptions import PreventUpdate
+import dash_bootstrap_components as dbc
 import requests
 import pandas as pd
 import dash_table
@@ -36,7 +37,7 @@ def fetch_seniorite_data():
 
 def fetch_domaine_data():
     try:
-        response = requests.get(f'{API_URL}/api2/domaines')
+        response = requests.get(f'{API_URL}/api/domaines')
         data = response.json()['data']
         return [{'label': item['nom_domaine'], 'value': item['nom_domaine']} for item in data]
     except:
@@ -117,10 +118,11 @@ layout = html.Div([
         }),
         
         html.Div([
-            html.Button(
+            dbc.Button(
                 'Rechercher',
                 id='search-button',
                 n_clicks=0,
+                className="nav-button",
                 style={
                     'padding': '12px 30px',
                     'cursor': 'pointer',
