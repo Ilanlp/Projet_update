@@ -36,7 +36,7 @@ def fetch_seniorite_data():
 
 def fetch_domaine_data():
     try:
-        response = requests.get(f'{API_URL}/api2/domaines')
+        response = requests.get(f'{API_URL}/api/domaines')
         data = response.json()['data']
         return [{'label': item['nom_domaine'], 'value': item['nom_domaine']} for item in data]
     except:
