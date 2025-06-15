@@ -177,6 +177,9 @@ def load_domaine(_):
     prevent_initial_call=True
 )
 def save_search_params(n_clicks, search_value, location_value, contrat_value, seniorite_value, domaine_value):
+    if not n_clicks or n_clicks == 0:
+        raise PreventUpdate
+        
     if not search_value:
         raise PreventUpdate
     

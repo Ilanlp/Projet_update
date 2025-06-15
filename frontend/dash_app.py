@@ -48,7 +48,9 @@ app.layout = dbc.Container(
                     [
                         dbc.NavLink("🩺 Health Check", href="/", active="exact", className="nav-button"),
                         dbc.NavLink("🔍 Recherche d'offres", href="/search", active="exact", className="nav-button"),
-                        dbc.NavLink("📍 Carte Villes / Régions", href="/top_ville2", active="exact", className="nav-button")
+                        dbc.NavLink("📍 Carte Villes / Régions", href="/top_ville2", active="exact", className="nav-button"),
+                        dbc.NavLink("👤 Profile", href="/profile", active="exact", className="nav-button")
+
                     ],
                     pills=True,
                     justified=True,
