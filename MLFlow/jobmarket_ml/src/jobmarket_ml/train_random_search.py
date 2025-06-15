@@ -5,6 +5,7 @@ import pandas as pd
 from scipy.stats import uniform, randint
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
+import csv
 
 # Import des configurations
 from config.config import (
@@ -63,9 +64,66 @@ def parse_args():
 def load_data(nrows_offers=None, nrows_candidates=None):
     """Charge les données d'offres et de candidats."""
     # Chargement des offres
+    columns = [
+        'id',                    # ID auto-incrémental
+        'id_local',             # Faits
+        'title',
+        'description',
+        'type_contrat',         # Contrat
+        'code_domaine',         # Domaine
+        'nom_domaine',
+        'code_postal',          # Lieu
+        'ville',
+        'departement',
+        'region',
+        'pays',
+        'latitude',
+        'longitude',
+        'population',
+        'mois_creation',        # Dates création
+        'jour_creation',
+        'mois_nom_creation',
+        'jour_semaine_creation',
+        'week_end_creation',
+        'mois_modification',    # Dates modification
+        'jour_modification',
+        'mois_nom_modification',
+        'jour_semaine_modification',
+        'week_end_modification',
+        'type_teletravail',     # Télétravail
+        'type_seniorite',       # Seniorité
+        'code_rome',            # Rome
+        'nom_entreprise',       # Entreprise
+        'categorie_entreprise',
+        'date_creation_entreprise',
+        'competences',          # Compétences concaténées
+        'types_competences',
+        'softskills_summary',   # Softskills concaténés
+        'softskills_details',
+        'nom_metier'            # Métiers concaténés
+    ]
+
+    # Chargement des offres
     df_o = pd.read_csv(
-        OFFERS_PATH, compression="gzip", sep=",", encoding="utf-8", nrows=nrows_offers
+        OFFERS_PATH, 
+        compression="gzip", 
+        sep=',',
+        encoding='utf-8',
+        quoting=csv.QUOTE_ALL,  # Force l'utilisation des guillemets pour tous les champs
+        escapechar='\\',        # Définit le caractère d'échappement
+        doublequote=True,       # Permet les guillemets doubles dans les champs
+        on_bad_lines='warn',    # Avertit sur les lignes problématiques au lieu d'échouer
+        names=columns,          # Utilise les noms de colonnes définis
+        header=0,               # La première ligne contient les en-têtes
+        nrows=nrows_offers
     )
+
+    # Conversion des noms de colonnes en majuscules
+    df_o.columns = df_o.columns.str.upper()
+    
+    # Sélection des colonnes nécessaires
+    df_o = df_o[OFFER_COLUMNS]
+    
 
     # Chargement des candidats
     df_c = pd.read_csv(

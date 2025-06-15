@@ -60,7 +60,7 @@ services:
       - USER_UID=${USER_UID:-1000}
       - USER_GID=${USER_GID:-1000}
     volumes:
-      - ./pipeline/src/data:/app/data:consistent
+      - ./data:/app/data:consistent
     profiles:
       - init-db
 
@@ -82,7 +82,7 @@ services:
       - USER_GID=${USER_GID:-1000}
     volumes:
       - ./pipeline/src/snowflake:/usr/src/snowflake:consistent
-      - ./pipeline/src/data:/usr/src/data:consistent
+      - ./data:/usr/src/data:consistent
     profiles:
       - init-db
 
@@ -258,10 +258,10 @@ services:
       resources:
         limits:
           cpus: "${TRAINING_CPU_LIMIT:-4.0}"
-          memory: ${TRAINING_MEMORY_LIMIT:-8G}
+          memory: ${TRAINING_MEMORY_LIMIT:-16G}
         reservations:
           cpus: "2.0"
-          memory: 4G
+          memory: 8G
     restart: unless-stopped
 
   mlflow-model:
