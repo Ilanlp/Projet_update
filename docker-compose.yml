@@ -258,10 +258,10 @@ services:
       resources:
         limits:
           cpus: "${TRAINING_CPU_LIMIT:-4.0}"
-          memory: ${TRAINING_MEMORY_LIMIT:-8G}
+          memory: ${TRAINING_MEMORY_LIMIT:-16G}
         reservations:
           cpus: "2.0"
-          memory: 4G
+          memory: 8G
     restart: unless-stopped
 
   mlflow-model:
