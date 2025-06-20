@@ -20,27 +20,9 @@ class EnumWithValues(Enum):
         return self.value
 
 
-class CountryCode(str, EnumWithValues):
+class CountryCode(str, Enum):
     """Codes pays supportés par l'API Adzuna"""
-    GB = "gb"
-    US = "us"
-    AT = "at"
-    AU = "au"
-    BE = "be"
-    BR = "br"
-    CA = "ca"
-    CH = "ch"
-    DE = "de"
-    ES = "es"
     FR = "fr"
-    IN = "in"
-    IT = "it"
-    MX = "mx"
-    NL = "nl"
-    NZ = "nz"
-    PL = "pl"
-    SG = "sg"
-    ZA = "za"
 
 
 class SortDirection(str, EnumWithValues):
@@ -49,13 +31,9 @@ class SortDirection(str, EnumWithValues):
     DOWN = "down"
 
 
-class SortBy(str, EnumWithValues):
+class SortBy(str, Enum):
     """Critère de tri pour les résultats"""
-    DEFAULT = "default"
-    HYBRID = "hybrid"
     DATE = "date"
-    SALARY = "salary"
-    RELEVANCE = "relevance"
 
 
 # Modèles de base
@@ -65,37 +43,31 @@ class Category(BaseModel):
 
 
 class Location(BaseModel):
-    area: Optional[List[str]] = Field(None, description="A description of the location, as an array of strings, each refining the location more than the previous.")
-    display_name: Optional[str] = Field(None, description="A human readable name for the location.")
+    display_name: Optional[str] = None
 
 
 class Company(BaseModel):
-    count: Optional[int] = Field(None, description="The total number of job advertisements posted by this company. Only provided for statistics queries.")
-    canonical_name: Optional[str] = Field(None, description="A normalised string of the company name.")
-    average_salary: Optional[float] = Field(None, description="The average salary in job advertisements posted by this company. Only provided for statistics queries.")
-    display_name: Optional[str] = Field(None, description="The name of the company, in the form provided by the advertiser.")
+    display_name: Optional[str] = None
 
 
 class Job(BaseModel):
-    id: str = Field(description="A string uniquely identifying this advertisement.")
-    title: str = Field(description="A summary of the advertisement.")
-    description: str = Field(description="The details of the advertisement, truncated to 500 characters.")
-    created: str = Field(description="The date the advertisement was placed, as an ISO 8601 date time string.")
-    location: Optional[Location] = Field(None, description="The nearest locality to the advertisement.")
-    category: Optional[Category] = Field(None, description="The category of the advertisement.")
-    company: Optional[Company] = Field(None, description="The company behind the advertisement.")
-    salary_min: Optional[float] = Field(None, description="The bottom end of the pay scale for this job, given in the local currency.")
-    salary_max: Optional[float] = Field(None, description="The top end of the pay scale for this job, given in the local currency.")
-    salary_is_predicted: Optional[bool] = Field(None, description="True if the salary was predicted by our Jobsworth tool.")
-    contract_time: Optional[str] = Field(None, description="Either 'full_time' or 'part_time' to indicate the hours of the job.")
-    contract_type: Optional[str] = Field(None, description="Either 'permanent' or 'contract' to indicate whether the job is permanent or just a short-term contract.")
-    latitude: Optional[float] = Field(None, description="The latitude of the workspace in degrees.")
-    longitude: Optional[float] = Field(None, description="The longitude of the workspace in degrees.")
-    redirect_url: Optional[str] = Field(None, description="A URL which will redirect to the advertisement as displayed on the advertiser's site.")
+    id: str
+    title: str
+    description: Optional[str] = None
+    created: Optional[str] = None
+    location: Optional[Location] = None
+    company: Optional[Company] = None
+    salary_min: Optional[float] = None
+    salary_max: Optional[float] = None
+    contract_type: Optional[str] = None
+    contract_time: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    redirect_url: Optional[str] = None
 
 
 class JobSearchResults(BaseModel):
-    results: List[Job] = Field(description="Results of the job search in the order requested.")
+    results: List[Job]
 
 
 class LocationJobs(BaseModel):
